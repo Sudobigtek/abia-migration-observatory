@@ -1,0 +1,69 @@
+# Core Layer: PostgreSQL + Redis + Django
+# Per Architecture Contract §2.1, §5.3
+
+services:
+  abia-postgres:
+    image: postgis/postgis:15-3.3
+    container_name: abia-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: abia_migration
+    volumes:
+      - abia-postgres-data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - abia-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  abia-redis:
+    image: redis:7-alpine
+    container_name: abia-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - abia-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  abia-django:
+    build:
+      context: ./abia-app
+      dockerfile: Dockerfile
+    container_name: abia-django
+    command: tail -f /dev/null
+    volumes:
+      - ./abia-app:/app
+    working_dir: /app
+    environment:
+      - DJANGO_SETTINGS_MODULE=abia.settings
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - DATABASE_URL=postgres://postgres:${POSTGRES_PASSWORD:-postgres}@abia-postgres:5432/abia_migration
+      - REDIS_URL=redis://abia-redis:6379/0
+      - CELERY_BROKER_URL=redis://abia-redis:6379/0
+    depends_on:
+      abia-postgres:
+        condition: service_healthy
+      abia-redis:
+        condition: service_healthy
+    networks:
+      - abia-network
+    stdin_open: true
+    tty: true
+
+volumes:
+  abia-postgres-data:
+    driver: local
+
+networks:
+  abia-network:
+    driver: bridge

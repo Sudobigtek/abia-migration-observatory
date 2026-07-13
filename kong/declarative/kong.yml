@@ -1,0 +1,26 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: abia-django-api
+    url: http://abia-django:8000
+    routes:
+      - name: api-routes
+        paths:
+          - /api
+          - /
+        strip_path: false
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 100
+          policy: local
+      - name: key-auth
+        config:
+          key_names:
+            - api-key
+
+consumers:
+  - username: abia-admin
+    keyauth_credentials:
+      - key: abia-dev-key-2026

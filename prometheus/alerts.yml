@@ -1,0 +1,45 @@
+groups:
+  - name: abia-alerts
+    rules:
+      - alert: DatabaseDown
+        expr: up{job="postgres"} == 0
+        for: 2m
+        labels:
+          severity: p1
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL has been down for more than 2 minutes."
+
+      - alert: APIDegraded
+        expr: django_http_request_duration_seconds_bucket{le="0.5"} / django_http_request_duration_seconds_count < 0.95
+        for: 5m
+        labels:
+          severity: p2
+        annotations:
+          summary: "API p95 latency > 500ms"
+          description: "More than 5% of requests are taking longer than 500ms."
+
+      - alert: HighErrorRate
+        expr: rate(django_http_requests_total{status_code=~"5.."}[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: p2
+        annotations:
+          summary: "Error rate > 1%"
+          description: "High rate of 5xx errors detected."
+
+      - alert: DjangoDown
+        expr: up{job="django"} == 0
+        for: 1m
+        labels:
+          severity: p1
+        annotations:
+          summary: "Django is down"
+
+      - alert: SlowQueries
+        expr: django_db_query_duration_seconds_bucket{le="0.05"} / django_db_query_duration_seconds_count < 0.99
+        for: 10m
+        labels:
+          severity: p3
+        annotations:
+          summary: "Slow database queries detected"

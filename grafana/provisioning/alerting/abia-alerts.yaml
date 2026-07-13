@@ -1,0 +1,152 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: abia-p1-critical
+    folder: Abia Critical
+    interval: 30s
+    rules:
+      - uid: abia-p1-db-down
+        title: P1 — Database Down
+        condition: B
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 60
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: up{job="postgres"} == 0
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        noDataState: Alerting
+        execErrState: Alerting
+        for: 30s
+        annotations:
+          summary: "P1 CRITICAL: PostgreSQL is down"
+          description: "abia-postgres has been unreachable for 30 seconds. Immediate action required."
+        labels:
+          severity: p1-critical
+
+      - uid: abia-p1-django-down
+        title: P1 — Django App Down
+        condition: B
+        data:
+          - refId: A
+            datasourceUid: prometheus
+            model:
+              expr: up{job="django"} == 0
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        noDataState: Alerting
+        execErrState: Alerting
+        for: 30s
+        annotations:
+          summary: "P1 CRITICAL: Django is down"
+          description: "abia-django has been unreachable for 30 seconds."
+        labels:
+          severity: p1-critical
+
+  - orgId: 1
+    name: abia-p2-degraded
+    folder: Abia Degraded
+    interval: 60s
+    rules:
+      - uid: abia-p2-api-slow
+        title: P2 — API Response Time Degraded
+        condition: B
+        data:
+          - refId: A
+            datasourceUid: prometheus
+            model:
+              expr: histogram_quantile(0.95, rate(django_http_requests_latency_seconds_bucket[5m])) > 0.5
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        for: 2m
+        annotations:
+          summary: "P2 DEGRADED: API p95 latency > 500ms"
+          description: "API response time has exceeded 500ms for 2 minutes."
+        labels:
+          severity: p2-degraded
+
+      - uid: abia-p2-error-rate
+        title: P2 — Error Rate Elevated
+        condition: B
+        data:
+          - refId: A
+            datasourceUid: prometheus
+            model:
+              expr: rate(django_http_requests_total{status=~"5.."}[5m]) / rate(django_http_requests_total[5m]) > 0.01
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        for: 2m
+        annotations:
+          summary: "P2 DEGRADED: Error rate > 1%"
+          description: "5xx error rate has exceeded 1% for 2 minutes."
+        labels:
+          severity: p2-degraded
+
+  - orgId: 1
+    name: abia-p3-warning
+    folder: Abia Warning
+    interval: 300s
+    rules:
+      - uid: abia-p3-slow-query
+        title: P3 — Slow Database Queries
+        condition: B
+        data:
+          - refId: A
+            datasourceUid: prometheus
+            model:
+              expr: rate(postgresql_stat_database_blks_time[5m]) > 200
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        for: 5m
+        annotations:
+          summary: "P3 WARNING: Slow queries detected"
+          description: "Database query time has exceeded 200ms average for 5 minutes."
+        labels:
+          severity: p3-warning

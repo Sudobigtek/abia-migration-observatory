@@ -1,0 +1,58 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: abia-api
+    url: http://abia-django-prod:8000
+    routes:
+      - name: api-route
+        paths:
+          - /api/
+        strip_path: false
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 100
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+          headers:
+            - Authorization
+            - Content-Type
+          max_age: 3600
+
+  - name: abia-health
+    url: http://abia-django-prod:8000
+    routes:
+      - name: health-route
+        paths:
+          - /health/
+          - /metrics/
+        strip_path: false
+
+  - name: abia-prometheus
+    url: http://abia-prometheus:9090
+    routes:
+      - name: prometheus-route
+        paths:
+          - /prometheus/
+        strip_path: true
+
+  - name: abia-grafana
+    url: http://abia-grafana:3000
+    routes:
+      - name: grafana-route
+        paths:
+          - /grafana/
+        strip_path: true
+
+consumers:
+  - username: abia-admin

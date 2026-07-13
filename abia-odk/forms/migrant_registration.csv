@@ -1,0 +1,81 @@
+survey
+type,name,label,required,relevant,constraint,constraint_message
+start,start,Interview start time,,,,
+deviceid,deviceid,Device ID,,,,
+today,today,Date of interview,,,,
+text,enumerator_id,Enumerator ID (NCFRMI Staff No),yes,,,
+select_one lga,current_lga,Current LGA (where migrant is found),yes,,,
+text,full_name,Full Name of Migrant,yes,,,,
+select_one gender,gender,Gender,yes,,,
+date,date_of_birth,Date of Birth,yes,,,. <= today() and . >= date('1980-01-01'),Must be between 1980 and today
+calculate,age,Age (years),,,round((decimal-date-time(today()) - decimal-date-time(${date_of_birth})) div 365.25),,
+select_one country,country_of_origin,Country of Origin,yes,,,,
+select_one state,state_of_origin,State of Origin (if Nigeria),yes,${country_of_origin} = 'nigeria',,
+select_one lga,lga_of_origin,LGA of Origin (if Nigeria),yes,${country_of_origin} = 'nigeria',,
+text,phone_number,Phone Number,yes,,,regex(., '^\+?[0-9]{10,15}$'),Enter valid phone number (10-15 digits)
+text,id_number,NIN or Passport Number,yes,,,,
+select_one migrant_status,Current Migration Status,yes,,,,
+select_multiple service_needed,services_needed,Services Needed,yes,,,,
+text,destination_intended,Destination Country/City (if applicable),no,,${migrant_status} = 'transit',Required for transit migrants
+geopoint,gps_coords,GPS Coordinates,yes,,,,
+text,photo_ref,Photo Reference ID (taken via ODK),no,,,,
+integer,household_size,Household Size (including self),yes,,,. > 0 and . <= 50,Must be between 1 and 50
+select_one yes_no,vulnerable,Marked as Vulnerable,yes,,,,
+text,vulnerability_notes,Vulnerability Details,no,,${vulnerable} = 'yes',,
+end,end,Interview end time,,,,
+
+choices
+list_name,name,label
+lga,aba_north,Aba North
+lga,aba_south,Aba South
+lga,arochukwu,Arochukwu
+lga,bende,Bende
+lga,ikwuano,Ikwuano
+lga,isiala_ngwa,Isiala Ngwa North
+lga,isiala_ngwa_south,Isiala Ngwa South
+lga,item,Item
+lga,obi_ngwa,Obi Ngwa
+lga,ohafia,Ohafia
+lga,osisioma,Osisioma
+lga,ugwunagbo,Ugwunagbo
+lga,ukwa_east,Ukwa East
+lga,ukwa_west,Ukwa West
+lga,umuahia_north,Umuahia North
+lga,umuahia_south,Umuahia South
+lga,umu_nneochi,Umu Nneochi
+gender,male,Male
+gender,female,Female
+gender,other,Other / Prefer not to say
+country,nigeria,Nigeria
+country,cameroon,Cameroon
+country,gabon,Gabon
+country,ghana,Ghana
+country,equatorial_guinea,Equatorial Guinea
+country,other_africa,Other African Country
+country,europe,Europe
+country,americas,Americas
+country,asia,Asia
+state,abia,Abia
+state,anambra,Anambra
+state,enugu,Enugu
+state,imo,Imo
+state,ebonyi,Ebonyi
+state,other,Other
+migrant_status,returnee,Returnee (coming back)
+migrant_status,transit,In Transit
+migrant_status,destination,At Destination
+migrant_status,internally_displaced,Internally Displaced
+service_needed,medical,Medical Assistance
+service_needed,legal,Legal Aid
+service_needed,shelter,Shelter / Housing
+service_needed,food,Food Assistance
+service_needed,livelihood,Livelihood / Skills Training
+service_needed,psychosocial,Psychosocial Support
+service_needed,reintegration,Reintegration Support
+service_needed,transport,Transport Assistance
+yes_no,yes,Yes
+yes_no,no,No
+
+settings
+form_title,form_id,version,instance_name
+Abia Migrant Registration Form,migrant_registration,2026071101,"concat('MIG-', ${enumerator_id}, '-', format-date(today(), '%Y%m%d'))"
