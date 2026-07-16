@@ -4,7 +4,11 @@ services:
     runtime: python
     plan: free
     region: oregon
-    buildCommand: pip install -r requirements.txt && cd abia-app && python manage.py collectstatic --no-input
+    buildCommand: |
+      pip install -r requirements.txt && 
+      cd abia-app && 
+      python manage.py collectstatic --no-input &&
+      python manage.py migrate --no-input
     startCommand: cd abia-app && gunicorn abia.wsgi:application --bind 0.0.0.0:$PORT --workers 2
     envVars:
       - key: SECRET_KEY
