@@ -2,24 +2,22 @@ services:
   - type: web
     name: abia-migration
     runtime: python
-    buildCommand: "pip install -r requirements.txt && cd abia-app && python manage.py collectstatic --no-input"
-    startCommand: "cd abia-app && gunicorn abia.wsgi:application --bind 0.0.0.0:$PORT --workers 2"
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt && cd abia-app && python manage.py collectstatic --no-input
+    startCommand: cd abia-app && gunicorn abia.wsgi:application --bind 0.0.0.0:$PORT --workers 2
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.12.0
-      - key: DEBUG
-        value: False
       - key: SECRET_KEY
         generateValue: true
+      - key: DEBUG
+        value: "False"
       - key: DATABASE_URL
         fromDatabase:
           name: abia-postgres
           property: connectionString
-      - key: DJANGO_ALLOWED_HOSTS
-        value: ".onrender.com"
-
 databases:
   - name: abia-postgres
     databaseName: abia_migration
     user: abia
     plan: free
+    region: oregon
