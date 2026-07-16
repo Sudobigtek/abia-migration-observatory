@@ -1,0 +1,304 @@
+{
+  "issues": [
+    {
+      "file_path": "/home/abia/abia-migration-observatory/settings_secrets_patch.py",
+      "line": 7,
+      "column": 8,
+      "severity": "error",
+      "tool": "syntax",
+      "message": "invalid syntax (<unknown>, line 7)",
+      "fix_suggestion": null,
+      "category": "syntax"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/abia-app/fix_created_by.py",
+      "line": 30,
+      "column": 31,
+      "severity": "error",
+      "tool": "syntax",
+      "message": "unterminated string literal (detected at line 30) (<unknown>, line 30)",
+      "fix_suggestion": null,
+      "category": "syntax"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/abia/migrants/odk_webhook_view.py",
+      "line": 8,
+      "column": 1,
+      "severity": "error",
+      "tool": "syntax",
+      "message": "invalid syntax (<unknown>, line 8)",
+      "fix_suggestion": null,
+      "category": "syntax"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/abia-app/dynamic_fields/settings_secrets_patch.py",
+      "line": 7,
+      "column": 8,
+      "severity": "error",
+      "tool": "syntax",
+      "message": "invalid syntax (<unknown>, line 7)",
+      "fix_suggestion": null,
+      "category": "syntax"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/abia-app/dynamic_fields/diagnose_repos.py",
+      "line": 13,
+      "column": 7,
+      "severity": "error",
+      "tool": "syntax",
+      "message": "unterminated string literal (detected at line 13) (<unknown>, line 13)",
+      "fix_suggestion": null,
+      "category": "syntax"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/rest_framework/renderers.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/forms/fields.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/contrib/admin/utils.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/contrib/postgres/fields/jsonb.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/contrib/postgres/fields/hstore.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/contrib/postgres/aggregates/general.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/contrib/postgres/forms/hstore.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/core/serializers/xml_serializer.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/db/models/__init__.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/db/models/fields/json.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/db/models/functions/json.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/db/backends/mysql/introspection.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/db/backends/mysql/base.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/db/backends/mysql/operations.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/db/backends/oracle/introspection.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/db/backends/oracle/base.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/db/backends/oracle/operations.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/db/backends/postgresql/introspection.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/db/backends/postgresql/base.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/db/backends/postgresql/psycopg_any.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/db/backends/sqlite3/introspection.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/django/db/backends/sqlite3/base.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/rest_framework/utils/field_mapping.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    },
+    {
+      "file_path": "/home/abia/abia-migration-observatory/.venv/lib/python3.14/site-packages/rest_framework/schemas/openapi.py",
+      "line": 0,
+      "column": null,
+      "severity": "warning",
+      "tool": "dynamic_fields",
+      "message": "JSONField or HStoreField without default/blank might cause database errors.",
+      "fix_suggestion": null,
+      "category": "database"
+    }
+  ],
+  "test_results": {
+    "passed": 0,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "details": []
+  },
+  "summary": "\n# Codebase Audit Summary\nTotal files scanned: 3822\nIssues found: 29\n    Errors: 5\n    Warnings: 24\n    Info: 0\n\nTests: 0 passed, 0 failed, 0 errors.\n\nAuto-fix script generated (use --fix to execute).\n",
+  "ai_recommendation": null,
+  "fix_script": "#!/bin/bash\n# Auto-generated fix script by Codebase Doctor\n\necho 'Running isort...'\nisort . --profile black 2>/dev/null || true\necho 'Running black...'\nblack . 2>/dev/null || true\necho 'Running autopep8...'\nautopep8 --in-place --recursive . 2>/dev/null || true\necho 'Running Django migrations if needed...'\npython manage.py makemigrations 2>/dev/null || true\npython manage.py migrate 2>/dev/null || true\necho 'Running tests to verify fixes...'\npytest 2>/dev/null || true\necho 'Fix script completed.'"
+}

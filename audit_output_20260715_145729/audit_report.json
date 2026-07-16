@@ -1,0 +1,13 @@
+{
+  "issues": [],
+  "test_results": {
+    "passed": 0,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "details": []
+  },
+  "summary": "\n# Codebase Audit Summary\nTotal files scanned: 279\nIssues found: 0\n    Errors: 0\n    Warnings: 0\n    Info: 0\n\nTests: 0 passed, 0 failed, 0 errors.\n\nAuto-fix script generated (use --fix to execute).\n",
+  "ai_recommendation": null,
+  "fix_script": "#!/bin/bash\n# Auto-generated fix script by Codebase Doctor\n\necho 'Running isort...'\nisort . --profile black 2>/dev/null || true\necho 'Running black...'\nblack . 2>/dev/null || true\necho 'Running autopep8...'\nautopep8 --in-place --recursive . 2>/dev/null || true\necho 'Running Django migrations if needed...'\npython manage.py makemigrations 2>/dev/null || true\npython manage.py migrate 2>/dev/null || true\necho 'Running tests to verify fixes...'\npytest 2>/dev/null || true\necho 'Fix script completed.'"
+}
