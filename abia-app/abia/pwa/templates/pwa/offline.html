@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Abia Migration Observatory - Offline</title>
+    <link rel="manifest" href="/pwa/manifest.json">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        h1 { color: #1a5f7a; }
+        input, select, button { width: 100%; padding: 10px; margin: 8px 0; box-sizing: border-box; }
+        button { background: #1a5f7a; color: white; border: none; cursor: pointer; }
+        #status { padding: 10px; background: #e8f5e9; border-radius: 4px; margin-bottom: 15px; }
+        #queueStatus { color: #666; font-size: 14px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Abia Migration Observatory</h1>
+    <div id="status">Online - Ready to collect data</div>
+    <form id="dataForm">
+        <h3>Register Migrant</h3>
+        <input type="text" id="full_name" placeholder="Full Name" required>
+        <input type="tel" id="phone" placeholder="Phone Number">
+        <select id="gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+        <button type="submit">Save (Offline-capable)</button>
+    </form>
+    <button id="syncBtn" onclick="syncData()">Sync with Server</button>
+    <div id="queueStatus">Queued records: 0</div>
+    <script>
+        let queue = JSON.parse(localStorage.getItem("abia_queue") || "[]");
+        function updateStatus() {
+            document.getElementById("queueStatus").textContent = "Queued records: " + queue.length;
+            const online = navigator.onLine;
+            document.getElementById("status").textContent = online ? "Online - Ready" : "Offline - Data queued";
+            document.getElementById("status").style.background = online ? "#e8f5e9" : "#fff3e0";
+        }
+        document.getElementById("dataForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const record = {
+                entity_type: "migrant",
+                full_name: document.getElementById("full_name").value,
+                phone: document.getElementById("phone").value,
+                gender: document.getElementById("gender").value,
+                timestamp: new Date().toISOString()
+            };
+            queue.push(record);
+            localStorage.setItem("abia_queue", JSON.stringify(queue));
+            document.getElementById("dataForm").reset();
+            updateStatus();
+            alert("Record saved to offline queue");
+        });
+        async function syncData() {
+            if (!navigator.onLine) { alert("You are offline. Data will sync when connection returns."); return; }
+            if (queue.length === 0) { alert("No records to sync."); return; }
+            const response = await fetch("/pwa/sync/", {
+                method: "POST",
+                headers: {"Content-Type": "application/json", "X-CSRFToken": getCookie("csrftoken")},
+                body: JSON.stringify({records: queue})
+            });
+            const result = await response.json();
+            if (result.synced > 0) {
+                queue = queue.slice(result.synced);
+                localStorage.setItem("abia_queue", JSON.stringify(queue));
+                updateStatus();
+                alert("Synced " + result.synced + " records.");
+            } else {
+                alert("Sync failed. Will retry later.");
+            }
+        }
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        window.addEventListener("online", updateStatus);
+        window.addEventListener("offline", updateStatus);
+        updateStatus();
+    </script>
+</body>
+</html>

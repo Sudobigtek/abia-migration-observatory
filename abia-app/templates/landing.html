@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abia Migration Observatory | Tracking Migration for Development</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <style>
+        /* ── ABIA STATE COLOR PALETTE ────────────────────────────── */
+        :root {
+            --abia-red: #8B1A1A;
+            --abia-red-light: #B83A3A;
+            --abia-red-dark: #5C0F0F;
+            --abia-gold: #D4A843;
+            --abia-gold-light: #E8C870;
+            --abia-gold-dark: #A8822E;
+            --abia-green: #1B6B3C;
+            --abia-green-light: #2D8F56;
+            --abia-green-dark: #0F4A27;
+            --abia-cream: #F5F0E6;
+            --abia-cream-dark: #E8E0D0;
+            --abia-brown: #6B4226;
+            --abia-charcoal: #1A1A2E;
+            --abia-navy: #16213E;
+            --abia-white: #FFFFFF;
+            --abia-black: #0D0D0D;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--abia-charcoal);
+            color: var(--abia-cream);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ── ANIMATED BACKGROUND ─────────────────────────────────── */
+        .hero-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(139, 26, 26, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(27, 107, 60, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(212, 168, 67, 0.08) 0%, transparent 50%),
+                linear-gradient(135deg, var(--abia-charcoal) 0%, var(--abia-navy) 50%, var(--abia-charcoal) 100%);
+        }
+
+        .floating-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--abia-red);
+            top: 10%;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--abia-green);
+            top: 60%;
+            right: -50px;
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            background: var(--abia-gold);
+            bottom: 10%;
+            left: 30%;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -30px) scale(1.1); }
+            50% { transform: translate(-30px, 50px) scale(0.9); }
+            75% { transform: translate(40px, 20px) scale(1.05); }
+        }
+
+        /* ── PARTICLE CANVAS ─────────────────────────────────────── */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ── NAVIGATION ──────────────────────────────────────────── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 0.5rem 2rem;
+            background: rgba(26, 26, 46, 0.95);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--abia-gold);
+            object-fit: cover;
+            animation: pulse-gold 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212, 168, 67, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(212, 168, 67, 0); }
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--abia-cream);
+            line-height: 1.2;
+        }
+
+        .logo-text span {
+            display: block;
+            font-size: 0.65rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            color: var(--abia-gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--abia-cream);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            position: relative;
+            padding: 0.25rem 0;
+            transition: color 0.3s;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--abia-gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--abia-gold);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: var(--abia-red);
+            color: var(--abia-white);
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--abia-gold);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-cta:hover {
+            color: var(--abia-black);
+            border-color: var(--abia-gold);
+        }
+
+        .nav-cta:hover::before {
+            left: 0;
+        }
+
+        /* ── HERO SECTION ────────────────────────────────────────── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--abia-gold);
+            margin-bottom: 2rem;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--abia-green-light);
+            border-radius: 50%;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--abia-cream);
+        }
+
+        .hero h1 .highlight-red {
+            color: var(--abia-red-light);
+            position: relative;
+        }
+
+        .hero h1 .highlight-gold {
+            color: var(--abia-gold);
+            position: relative;
+        }
+
+        .hero h1 .highlight-green {
+            color: var(--abia-green-light);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            color: rgba(245, 240, 230, 0.7);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            font-weight: 300;
+            line-height: 1.7;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--abia-red);
+            color: var(--abia-white);
+            box-shadow: 0 4px 20px rgba(139, 26, 26, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: var(--abia-red-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(139, 26, 26, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--abia-cream);
+            border: 2px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--abia-gold);
+            color: var(--abia-gold);
+            transform: translateY(-2px);
+        }
+
+        /* ── LIVE STATS TICKER ───────────────────────────────────── */
+        .stats-ticker {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .ticker-item {
+            text-align: center;
+            padding: 1.5rem 2rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            min-width: 160px;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .ticker-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--abia-gold);
+        }
+
+        .ticker-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--abia-gold);
+            display: block;
+            line-height: 1;
+        }
+
+        .ticker-label {
+            font-size: 0.8rem;
+            color: rgba(245, 240, 230, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+
+        /* ── SECTIONS ────────────────────────────────────────────── */
+        section {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: rgba(212, 168, 67, 0.15);
+            color: var(--abia-gold);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            color: var(--abia-cream);
+            margin-bottom: 1rem;
+        }
+
+        .section-desc {
+            color: rgba(245, 240, 230, 0.6);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.05rem;
+        }
+
+        /* ── MAP SECTION ─────────────────────────────────────────── */
+        .map-section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 1200px;
+        }
+
+        #migration-map {
+            height: 500px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(26, 26, 46, 0.9);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            z-index: 500;
+        }
+
+        .map-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        /* ── CHARTS SECTION ──────────────────────────────────────── */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .chart-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--abia-gold);
+        }
+
+        .chart-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            color: var(--abia-cream);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chart-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 250px;
+        }
+
+        /* ── FEATURES GRID ──────────────────────────────────────── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--abia-gold);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--abia-gold);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+            background: rgba(139, 26, 26, 0.2);
+            border: 1px solid rgba(139, 26, 26, 0.3);
+        }
+
+        .feature-card:nth-child(2) .feature-icon {
+            background: rgba(27, 107, 60, 0.2);
+            border-color: rgba(27, 107, 60, 0.3);
+        }
+
+        .feature-card:nth-child(3) .feature-icon {
+            background: rgba(212, 168, 67, 0.2);
+            border-color: rgba(212, 168, 67, 0.3);
+        }
+
+        .feature-card:nth-child(4) .feature-icon {
+            background: rgba(107, 66, 38, 0.2);
+            border-color: rgba(107, 66, 38, 0.3);
+        }
+
+        .feature-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--abia-cream);
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            color: rgba(245, 240, 230, 0.6);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ── DATA TABLE SECTION ──────────────────────────────────── */
+        .data-section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            overflow: hidden;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 1rem;
+            color: var(--abia-gold);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--glass-border);
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            color: rgba(245, 240, 230, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .data-table tr:hover td {
+            background: rgba(212, 168, 67, 0.05);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(27, 107, 60, 0.2);
+            color: var(--abia-green-light);
+        }
+
+        .status-pending {
+            background: rgba(212, 168, 67, 0.2);
+            color: var(--abia-gold);
+        }
+
+        .status-alert {
+            background: rgba(139, 26, 26, 0.2);
+            color: var(--abia-red-light);
+        }
+
+        /* ── FOOTER ──────────────────────────────────────────────── */
+        footer {
+            background: rgba(13, 13, 13, 0.8);
+            border-top: 1px solid var(--glass-border);
+            padding: 4rem 2rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand .logo {
+            margin-bottom: 1rem;
+        }
+
+        .footer-brand p {
+            color: rgba(245, 240, 230, 0.5);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .footer-links h4 {
+            font-family: 'Playfair Display', serif;
+            color: var(--abia-cream);
+            margin-bottom: 1.25rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: rgba(245, 240, 230, 0.5);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--abia-gold);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-bottom p {
+            color: rgba(245, 240, 230, 0.4);
+            font-size: 0.85rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--abia-cream);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--abia-gold);
+            color: var(--abia-black);
+            border-color: var(--abia-gold);
+        }
+
+        /* ── ANIMATIONS ──────────────────────────────────────────── */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── SCROLLBAR ───────────────────────────────────────────── */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--abia-charcoal);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--abia-gold-dark);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--abia-gold);
+        }
+
+        /* ── RESPONSIVE ──────────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 6rem 1rem 3rem;
+            }
+
+            .stats-ticker {
+                gap: 1rem;
+            }
+
+            .ticker-item {
+                min-width: 130px;
+                padding: 1rem;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 4rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Orbs Background -->
+    <div class="hero-bg"></div>
+    <div class="floating-orb orb-1"></div>
+    <div class="floating-orb orb-2"></div>
+    <div class="floating-orb orb-3"></div>
+
+    <!-- Particle Canvas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Seal_of_Abia_State.png/150px-Seal_of_Abia_State.png" alt="Abia State Logo" class="logo-img">
+                <div class="logo-text">
+                    Abia Migration
+                    <span>Observatory</span>
+                </div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#map">Migration Map</a></li>
+                <li><a href="#data">Data</a></li>
+                <li><a href="#api">API</a></li>
+            </ul>
+            <a href="/admin/" class="nav-cta">Staff Login</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                Official Government Platform
+            </div>
+            <h1>
+                Tracking Migration for
+                <span class="highlight-red">Prosperity</span>,
+                <span class="highlight-gold">Progress</span> &
+                <span class="highlight-green">Development</span>
+            </h1>
+            <p class="hero-subtitle">
+                The Abia State Migration Observatory collects, analyzes, and visualizes migration data 
+                to inform policy, protect citizens, and drive sustainable development across all 17 LGAs.
+            </p>
+            <div class="hero-cta-group">
+                <a href="#dashboard" class="btn btn-primary">
+                    Explore Dashboard →
+                </a>
+                <a href="/api/docs/" class="btn btn-secondary">
+                    View API Documentation
+                </a>
+            </div>
+
+            <!-- Live Stats -->
+            <div class="stats-ticker">
+                <div class="ticker-item" data-aos="fade-up" data-aos-delay="100">
+                    <span class="ticker-number" id="stat-migrants">0</span>
+                    <span class="ticker-label">Registered Migrants</span>
+                </div>
+                <div class="ticker-item" data-aos="fade-up" data-aos-delay="200">
+                    <span class="ticker-number" id="stat-lgas">17</span>
+                    <span class="ticker-label">LGAs Covered</span>
+                </div>
+                <div class="ticker-item" data-aos="fade-up" data-aos-delay="300">
+                    <span class="ticker-number" id="stat-cases">0</span>
+                    <span class="ticker-label">Active Cases</span>
+                </div>
+                <div class="ticker-item" data-aos="fade-up" data-aos-delay="400">
+                    <span class="ticker-number" id="stat-referrals">0</span>
+                    <span class="ticker-label">Referrals Made</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard / Charts Section -->
+    <section id="dashboard">
+        <div class="section-header" data-aos="fade-up">
+            <span class="section-tag">Analytics</span>
+            <h2 class="section-title">Migration Intelligence Dashboard</h2>
+            <p class="section-desc">
+                Real-time insights into migration patterns, demographics, and trends across Abia State.
+            </p>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
+                <h3>
+                    <span class="chart-icon" style="background: rgba(139, 26, 26, 0.2);">📊</span>
+                    Migration by LGA
+                </h3>
+                <div class="chart-container">
+                    <canvas id="chart-lga"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card" data-aos="fade-up" data-aos-delay="200">
+                <h3>
+                    <span class="chart-icon" style="background: rgba(27, 107, 60, 0.2);">👥</span>
+                    Demographics
+                </h3>
+                <div class="chart-container">
+                    <canvas id="chart-demographics"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card" data-aos="fade-up" data-aos-delay="300">
+                <h3>
+                    <span class="chart-icon" style="background: rgba(212, 168, 67, 0.2);">📈</span>
+                    Monthly Trends
+                </h3>
+                <div class="chart-container">
+                    <canvas id="chart-trends"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card" data-aos="fade-up" data-aos-delay="400">
+                <h3>
+                    <span class="chart-icon" style="background: rgba(107, 66, 38, 0.2);">🎯</span>
+                    Case Resolution
+                </h3>
+                <div class="chart-container">
+                    <canvas id="chart-cases"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section id="map">
+        <div class="section-header" data-aos="fade-up">
+            <span class="section-tag">Geospatial</span>
+            <h2 class="section-title">Interactive Migration Map</h2>
+            <p class="section-desc">
+                Visualize migration hotspots, routes, and settlement patterns across Abia State.
+            </p>
+        </div>
+
+        <div class="map-section" data-aos="zoom-in" data-aos-duration="1000">
+            <div id="migration-map"></div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="section-header" data-aos="fade-up">
+            <span class="section-tag">Platform</span>
+            <h2 class="section-title">What We Offer</h2>
+            <p class="section-desc">
+                Comprehensive tools for migration data collection, analysis, and policy formulation.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-icon">📱</div>
+                <h3>ODK Mobile Collection</h3>
+                <p>Field officers collect migrant data offline using ODK Collect, syncing when connectivity returns.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon">🗺️</div>
+                <h3>Spatial Analytics</h3>
+                <p>Geo-tagged data reveals migration corridors, settlement patterns, and vulnerability hotspots.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-icon">🔗</div>
+                <h3>Inter-LGA Referrals</h3>
+                <p>Seamless case transfer between LGAs with full audit trail and status tracking.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-icon">🤖</div>
+                <h3>AI-Powered Insights</h3>
+                <p>Local LLM analysis identifies trends, predicts flows, and recommends interventions.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-icon">📊</div>
+                <h3>Real-Time Dashboards</h3>
+                <p>Live data visualization for policymakers, donors, and development partners.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
+                <div class="feature-icon">🔐</div>
+                <h3>Secure & Compliant</h3>
+                <p>End-to-end encryption, row-level security, and full GDPR/NDPR compliance.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Data Section -->
+    <section id="data">
+        <div class="section-header" data-aos="fade-up">
+            <span class="section-tag">Live Data</span>
+            <h2 class="section-title">Recent Registrations</h2>
+            <p class="section-desc">
+                Latest migrant registrations from across Abia State.
+            </p>
+        </div>
+
+        <div class="data-section" data-aos="fade-up">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>LGA of Origin</th>
+                        <th>Destination</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="recent-data-body">
+                    <tr>
+                        <td>MIG-2026-001</td>
+                        <td>Adebayo Chukwuemeka</td>
+                        <td>Aba North</td>
+                        <td>Lagos State</td>
+                        <td>Jul 15, 2026</td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td>MIG-2026-002</td>
+                        <td>Nkechi Okafor</td>
+                        <td>Umuahia South</td>
+                        <td>Abuja FCT</td>
+                        <td>Jul 14, 2026</td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td>MIG-2026-003</td>
+                        <td>Emmanuel Okonkwo</td>
+                        <td>Ohafia</td>
+                        <td>Enugu State</td>
+                        <td>Jul 14, 2026</td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td>MIG-2026-004</td>
+                        <td>Chioma Nwosu</td>
+                        <td>Arochukwu</td>
+                        <td>Imo State</td>
+                        <td>Jul 13, 2026</td>
+                        <td><span class="status-badge status-alert">Needs Review</span></td>
+                    </tr>
+                    <tr>
+                        <td>MIG-2026-005</td>
+                        <td>Oluwaseun Adeleke</td>
+                        <td>Isiala Ngwa</td>
+                        <td>Oyo State</td>
+                        <td>Jul 13, 2026</td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- API Section -->
+    <section id="api">
+        <div class="section-header" data-aos="fade-up">
+            <span class="section-tag">Developers</span>
+            <h2 class="section-title">Open API Access</h2>
+            <p class="section-desc">
+                Integrate migration data into your applications with our RESTful API.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-icon" style="background: rgba(139, 26, 26, 0.2); border-color: rgba(139, 26, 26, 0.3);">📡</div>
+                <h3>RESTful API</h3>
+                <p>Standard JSON API with comprehensive endpoints for migrants, cases, referrals, and analytics.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon" style="background: rgba(27, 107, 60, 0.2); border-color: rgba(27, 107, 60, 0.3);">🔑</div>
+                <h3>JWT Authentication</h3>
+                <p>Secure token-based authentication with role-based access control.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-icon" style="background: rgba(212, 168, 67, 0.2); border-color: rgba(212, 168, 67, 0.3);">📖</div>
+                <h3>Interactive Docs</h3>
+                <p>Swagger UI documentation with live testing and code generation.</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;" data-aos="fade-up">
+            <a href="/api/docs/" class="btn btn-primary">Explore API Documentation →</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="#" class="logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Seal_of_Abia_State.png/150px-Seal_of_Abia_State.png" alt="Abia State Logo" class="logo-img" style="width: 40px; height: 40px;">
+                    <div class="logo-text" style="font-size: 1rem;">
+                        Abia Migration
+                        <span>Observatory</span>
+                    </div>
+                </a>
+                <p>
+                    A flagship initiative of the Abia State Government, supported by the National Commission for Refugees, Migrants and Internally Displaced Persons (NCFRMI).
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Platform</h4>
+                <ul>
+                    <li><a href="#dashboard">Dashboard</a></li>
+                    <li><a href="#map">Migration Map</a></li>
+                    <li><a href="#data">Data Explorer</a></li>
+                    <li><a href="/api/docs/">API</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="#">User Guide</a></li>
+                    <li><a href="#">Data Policy</a></li>
+                    <li><a href="#">Privacy Notice</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Partners</h4>
+                <ul>
+                    <li><a href="#">NCFRMI</a></li>
+                    <li><a href="#">IOM Nigeria</a></li>
+                    <li><a href="#">GIZ</a></li>
+                    <li><a href="#">CSOnetMADE</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 Abia State Government. All rights reserved. | God's Own State — Prosperity Through Enterprise</p>
+            <div class="social-links">
+                <a href="#" title="Twitter">𝕏</a>
+                <a href="#" title="LinkedIn">in</a>
+                <a href="#" title="Email">@</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+        // ── INITIALIZE AOS ANIMATIONS ──────────────────────────────
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 100
+        });
+
+        // ── PARTICLE SYSTEM ────────────────────────────────────────
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(212, 168, 67, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 80; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            // Draw connections
+            particles.forEach((a, i) => {
+                particles.slice(i + 1).forEach(b => {
+                    const dx = a.x - b.x;
+                    const dy = a.y - b.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(a.x, a.y);
+                        ctx.lineTo(b.x, b.y);
+                        ctx.strokeStyle = `rgba(212, 168, 67, ${0.1 * (1 - distance / 150)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                });
+            });
+
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // ── NAVBAR SCROLL EFFECT ──────────────────────────────────
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // ── ANIMATED COUNTERS ──────────────────────────────────────
+        function animateCounter(element, target, duration = 2000) {
+            let start = 0;
+            const increment = target / (duration / 16);
+
+            function update() {
+                start += increment;
+                if (start < target) {
+                    element.textContent = Math.floor(start).toLocaleString();
+                    requestAnimationFrame(update);
+                } else {
+                    element.textContent = target.toLocaleString();
+                }
+            }
+            update();
+        }
+
+        // Animate counters when visible
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter(document.getElementById('stat-migrants'), 15420);
+                    animateCounter(document.getElementById('stat-cases'), 342);
+                    animateCounter(document.getElementById('stat-referrals'), 89);
+                    observer.disconnect();
+                }
+            });
+        });
+        observer.observe(document.querySelector('.stats-ticker'));
+
+        // ── LEAFLET MAP ────────────────────────────────────────────
+        const map = L.map('migration-map').setView([5.45, 7.5], 10);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(map);
+
+        // Abia State LGAs - approximate coordinates
+        const lgas = [
+            { name: 'Aba North', coords: [5.1167, 7.3667], migrants: 3200, cases: 45 },
+            { name: 'Aba South', coords: [5.1000, 7.3500], migrants: 2800, cases: 38 },
+            { name: 'Arochukwu', coords: [5.3833, 7.9167], migrants: 890, cases: 12 },
+            { name: 'Bende', coords: [5.5667, 7.6333], migrants: 1200, cases: 18 },
+            { name: 'Ikwuano', coords: [5.4167, 7.5667], migrants: 750, cases: 9 },
+            { name: 'Isiala Ngwa North', coords: [5.2833, 7.4833], migrants: 1100, cases: 15 },
+            { name: 'Isiala Ngwa South', coords: [5.2333, 7.5167], migrants: 950, cases: 11 },
+            { name: 'Isuikwuato', coords: [5.5333, 7.4833], migrants: 680, cases: 8 },
+            { name: 'Obi Ngwa', coords: [5.0833, 7.4167], migrants: 1400, cases: 22 },
+            { name: 'Ohafia', coords: [5.6167, 7.8333], migrants: 1300, cases: 19 },
+            { name: 'Osisioma', coords: [5.1500, 7.3167], migrants: 1600, cases: 25 },
+            { name: 'Ugwunagbo', coords: [5.0333, 7.3000], migrants: 980, cases: 14 },
+            { name: 'Ukwa East', coords: [4.9167, 7.4000], migrants: 720, cases: 10 },
+            { name: 'Ukwa West', coords: [4.9833, 7.3333], migrants: 850, cases: 12 },
+            { name: 'Umuahia North', coords: [5.5333, 7.4833], migrants: 2100, cases: 32 },
+            { name: 'Umuahia South', coords: [5.5000, 7.5000], migrants: 1800, cases: 28 },
+            { name: 'Umu Nneochi', coords: [5.6833, 7.5833], migrants: 600, cases: 7 }
+        ];
+
+        lgas.forEach(lga => {
+            const radius = Math.sqrt(lga.migrants) * 0.5;
+            const color = lga.migrants > 2000 ? '#8B1A1A' : lga.migrants > 1000 ? '#D4A843' : '#1B6B3C';
+
+            L.circleMarker(lga.coords, {
+                radius: radius,
+                fillColor: color,
+                color: '#fff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.7
+            }).addTo(map)
+            .bindPopup(`
+                <div style="font-family: Inter, sans-serif; min-width: 200px;">
+                    <h4 style="margin: 0 0 8px 0; color: #8B1A1A; font-family: Playfair Display, serif;">${lga.name}</h4>
+                    <p style="margin: 4px 0; font-size: 13px;"><strong>Registered Migrants:</strong> ${lga.migrants.toLocaleString()}</p>
+                    <p style="margin: 4px 0; font-size: 13px;"><strong>Active Cases:</strong> ${lga.cases}</p>
+                    <p style="margin: 4px 0; font-size: 13px;"><strong>Status:</strong> <span style="color: #1B6B3C;">● Active Monitoring</span></p>
+                </div>
+            `);
+        });
+
+        // Add legend
+        const legend = L.control({ position: 'bottomright' });
+        legend.onAdd = function() {
+            const div = L.DomUtil.create('div', 'map-legend');
+            div.innerHTML = `
+                <div style="background: rgba(26, 26, 46, 0.95); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); color: #F5F0E6; font-family: Inter, sans-serif; font-size: 12px;">
+                    <h4 style="margin: 0 0 8px 0; color: #D4A843; font-size: 13px;">Migration Density</h4>
+                    <div class="legend-item"><span class="legend-dot" style="background: #8B1A1A;"></span> High (>2000)</div>
+                    <div class="legend-item"><span class="legend-dot" style="background: #D4A843;"></span> Medium (1000-2000)</div>
+                    <div class="legend-item"><span class="legend-dot" style="background: #1B6B3C;"></span> Low (<1000)</div>
+                </div>
+            `;
+            return div;
+        };
+        legend.addTo(map);
+
+        // ── CHART.JS CHARTS ──────────────────────────────────────
+        Chart.defaults.color = 'rgba(245, 240, 230, 0.7)';
+        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        // LGA Bar Chart
+        new Chart(document.getElementById('chart-lga'), {
+            type: 'bar',
+            data: {
+                labels: ['Aba N', 'Aba S', 'Umuahia N', 'Umuahia S', 'Ohafia', 'Osisioma', 'Obi Ngwa', 'Others'],
+                datasets: [{
+                    label: 'Registered Migrants',
+                    data: [3200, 2800, 2100, 1800, 1300, 1600, 1400, 2720],
+                    backgroundColor: [
+                        'rgba(139, 26, 26, 0.8)',
+                        'rgba(139, 26, 26, 0.7)',
+                        'rgba(212, 168, 67, 0.8)',
+                        'rgba(212, 168, 67, 0.7)',
+                        'rgba(27, 107, 60, 0.8)',
+                        'rgba(27, 107, 60, 0.7)',
+                        'rgba(107, 66, 38, 0.8)',
+                        'rgba(107, 66, 38, 0.6)'
+                    ],
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Demographics Doughnut Chart
+        new Chart(document.getElementById('chart-demographics'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Male', 'Female', 'Youth (18-35)', 'Adult (36-60)', 'Elderly (60+)'],
+                datasets: [{
+                    data: [52, 48, 45, 38, 17],
+                    backgroundColor: [
+                        '#8B1A1A',
+                        '#D4A843',
+                        '#1B6B3C',
+                        '#6B4226',
+                        '#16213E'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { boxWidth: 12, padding: 15 }
+                    }
+                }
+            }
+        });
+
+        // Monthly Trends Line Chart
+        new Chart(document.getElementById('chart-trends'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'New Registrations',
+                    data: [120, 150, 180, 220, 280, 350, 420],
+                    borderColor: '#D4A843',
+                    backgroundColor: 'rgba(212, 168, 67, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#D4A843',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
+                }, {
+                    label: 'Referrals',
+                    data: [8, 12, 15, 18, 22, 28, 35],
+                    borderColor: '#1B6B3C',
+                    backgroundColor: 'rgba(27, 107, 60, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#1B6B3C',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { boxWidth: 12, padding: 15 }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Case Resolution Pie Chart
+        new Chart(document.getElementById('chart-cases'), {
+            type: 'pie',
+            data: {
+                labels: ['Resolved', 'In Progress', 'Pending', 'Escalated'],
+                datasets: [{
+                    data: [65, 20, 10, 5],
+                    backgroundColor: [
+                        '#1B6B3C',
+                        '#D4A843',
+                        '#6B4226',
+                        '#8B1A1A'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { boxWidth: 12, padding: 15 }
+                    }
+                }
+            }
+        });
+
+        // ── FETCH REAL DATA FROM API ───────────────────────────────
+        // Uncomment and update API_BASE when your backend is live
+        /*
+        const API_BASE = 'http://localhost:8000'; // Change to your API URL
+
+        async function fetchStats() {
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/migrants/stats/`);
+                const data = await response.json();
+
+                document.getElementById('stat-migrants').textContent = data.total_migrants.toLocaleString();
+                document.getElementById('stat-cases').textContent = data.active_cases.toLocaleString();
+                document.getElementById('stat-referrals').textContent = data.total_referrals.toLocaleString();
+            } catch (error) {
+                console.log('Using demo data - API not connected');
+            }
+        }
+
+        fetchStats();
+        */
+    </script>
+</body>
+</html>

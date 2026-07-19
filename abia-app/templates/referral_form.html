@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}New Referral | Abia Migration Observatory{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="bi bi-send-fill me-2"></i>Create New Referral</h4>
+                </div>
+                <div class="card-body">
+                    <form id="referralForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Migrant</label>
+                                <select class="form-select" id="migrantSelect" required>
+                                    <option value="">Select migrant...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Case (optional)</label>
+                                <select class="form-select" id="caseSelect">
+                                    <option value="">Select case...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Referral Type</label>
+                                <select class="form-select" id="referralType" required>
+                                    <option value="medical">Medical</option>
+                                    <option value="legal">Legal Aid</option>
+                                    <option value="shelter">Shelter</option>
+                                    <option value="food">Food Assistance</option>
+                                    <option value="psychosocial">Psychosocial Support</option>
+                                    <option value="reintegration">Reintegration</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Priority</label>
+                                <select class="form-select" id="priority">
+                                    <option value="low">Low</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="high">High</option>
+                                    <option value="critical">Critical</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Referral Notes</label>
+                            <textarea class="form-control" id="notes" rows="4" placeholder="Describe the referral reason and needs..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Service Provider</label>
+                            <input type="text" class="form-control" id="provider" placeholder="Name of organization or provider">
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success"><i class="bi bi-send me-1"></i>Submit Referral</button>
+                            <a href="/dashboard/" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                    <div id="formResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const headers = { 'Authorization': 'Token {{ request.session.api_token|default:"" }}', 'Content-Type': 'application/json' };
+    
+    fetch('/api/v1/migrants/', { headers })
+        .then(r => r.json())
+        .then(data => {
+            const select = document.getElementById('migrantSelect');
+            (data.results || []).forEach(m => {
+                select.innerHTML += `<option value="${m.id}">${m.full_name}</option>`;
+            });
+        });
+    
+    fetch('/api/v1/cases/', { headers })
+        .then(r => r.json())
+        .then(data => {
+            const select = document.getElementById('caseSelect');
+            (data.results || []).forEach(c => {
+                select.innerHTML += `<option value="${c.id}">${c.title}</option>`;
+            });
+        });
+
+    document.getElementById('referralForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const payload = {
+            migrant: document.getElementById('migrantSelect').value,
+            case: document.getElementById('caseSelect').value || null,
+            referral_type: document.getElementById('referralType').value,
+            priority: document.getElementById('priority').value,
+            notes: document.getElementById('notes').value,
+            service_provider: document.getElementById('provider').value,
+            status: 'pending'
+        };
+        fetch('/api/v1/referrals/', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(payload)
+        })
+        .then(r => r.json().then(data => ({ ok: r.ok, data })))
+        .then(({ ok, data }) => {
+            const result = document.getElementById('formResult');
+            if (ok) {
+                result.innerHTML = `<div class="alert alert-success">Referral created successfully! <a href="/dashboard/">Go to Dashboard</a></div>`;
+                document.getElementById('referralForm').reset();
+            } else {
+                result.innerHTML = `<div class="alert alert-danger">Error: ${JSON.stringify(data)}</div>`;
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

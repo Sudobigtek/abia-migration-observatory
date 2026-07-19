@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Abia Migration Observatory{% endblock %}
+
+{% block content %}
+<!-- Top Bar -->
+<div class="bg-white border-b px-8 py-4 flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-slate-800">Dashboard</h2>
+    <div class="text-sm text-slate-500" id="last-updated">Loading...</div>
+</div>
+
+<div class="p-8">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="stat-card bg-white rounded-xl p-6 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">Total Migrants</p>
+                    <p class="text-3xl font-bold text-slate-800 mt-1" id="stat-migrants">-</p>
+                </div>
+                <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card bg-white rounded-xl p-6 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">Open Cases</p>
+                    <p class="text-3xl font-bold text-slate-800 mt-1" id="stat-cases">-</p>
+                </div>
+                <div class="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card bg-white rounded-xl p-6 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">Pending Referrals</p>
+                    <p class="text-3xl font-bold text-slate-800 mt-1" id="stat-referrals">-</p>
+                </div>
+                <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card bg-white rounded-xl p-6 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">Critical Cases</p>
+                    <p class="text-3xl font-bold text-red-600 mt-1" id="stat-critical">-</p>
+                </div>
+                <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white rounded-xl p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-slate-800 mb-4">Cases by Status</h3>
+            <canvas id="casesStatusChart" height="200"></canvas>
+        </div>
+        <div class="bg-white rounded-xl p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-slate-800 mb-4">Cases by Type</h3>
+            <canvas id="casesTypeChart" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Map -->
+    <div class="bg-white rounded-xl p-6 border border-gray-100 mb-8">
+        <h3 class="text-lg font-semibold text-slate-800 mb-4">Migrant Locations</h3>
+        <div id="map" class="w-full h-96 rounded-lg"></div>
+    </div>
+
+    <!-- Recent Cases Table -->
+    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-slate-800">Recent Cases</h3>
+            <a href="/api/v1/cases/" target="_blank" class="text-sm text-blue-600 hover:text-blue-800">View All →</a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-gray-50 text-slate-500">
+                    <tr>
+                        <th class="px-6 py-3 font-medium">Case Type</th>
+                        <th class="px-6 py-3 font-medium">Migrant</th>
+                        <th class="px-6 py-3 font-medium">Status</th>
+                        <th class="px-6 py-3 font-medium">Priority</th>
+                        <th class="px-6 py-3 font-medium">Assigned To</th>
+                        <th class="px-6 py-3 font-medium">Created</th>
+                    </tr>
+                </thead>
+                <tbody id="recent-cases-body" class="divide-y divide-gray-100">
+                    <tr><td colspan="6" class="px-6 py-8 text-center text-slate-400">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const API_BASE = '/api/v1';
+
+// Status badge colors
+const statusColors = {
+    'open': 'bg-blue-100 text-blue-800',
+    'in_progress': 'bg-amber-100 text-amber-800',
+    'resolved': 'bg-green-100 text-green-800',
+    'escalated': 'bg-red-100 text-red-800',
+    'closed': 'bg-gray-100 text-gray-800',
+    'pending': 'bg-purple-100 text-purple-800',
+    'accepted': 'bg-blue-100 text-blue-800',
+    'rejected': 'bg-red-100 text-red-800',
+    'completed': 'bg-green-100 text-green-800',
+};
+
+const priorityColors = {
+    'low': 'bg-gray-100 text-gray-600',
+    'medium': 'bg-blue-100 text-blue-600',
+    'high': 'bg-orange-100 text-orange-600',
+    'critical': 'bg-red-100 text-red-600',
+};
+
+function formatDate(dateStr) {
+    if (!dateStr) return '-';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-NG', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function getBadgeClass(status) {
+    return statusColors[status] || 'bg-gray-100 text-gray-800';
+}
+
+function getPriorityClass(priority) {
+    return priorityColors[priority] || 'bg-gray-100 text-gray-600';
+}
+
+// Fetch stats
+async function loadStats() {
+    try {
+        const [migrantsRes, casesRes, referralsRes] = await Promise.all([
+            fetch(`${API_BASE}/migrants/stats/`),
+            fetch(`${API_BASE}/cases/stats/`),
+            fetch(`${API_BASE}/referrals/stats/`),
+        ]);
+
+        const migrants = await migrantsRes.json();
+        const cases = await casesRes.json();
+        const referrals = await referralsRes.json();
+
+        document.getElementById('stat-migrants').textContent = migrants.total_migrants || 0;
+        document.getElementById('stat-cases').textContent = cases.open_cases || 0;
+        document.getElementById('stat-referrals').textContent = referrals.pending || 0;
+        document.getElementById('stat-critical').textContent = cases.critical_cases || 0;
+
+        document.getElementById('last-updated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+
+        // Render charts
+        renderCasesStatusChart(cases.by_status);
+        renderCasesTypeChart(cases.by_type);
+
+    } catch (err) {
+        console.error('Failed to load stats:', err);
+        document.getElementById('last-updated').textContent = 'Error loading data';
+    }
+}
+
+// Cases Status Chart
+function renderCasesStatusChart(data) {
+    const ctx = document.getElementById('casesStatusChart').getContext('2d');
+    const labels = Object.keys(data || {});
+    const values = Object.values(data || {});
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels.map(l => l.replace(/_/g, ' ').replace(/\w/g, c => c.toUpperCase())),
+            datasets: [{
+                data: values,
+                backgroundColor: ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#6b7280'],
+                borderWidth: 0,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+}
+
+// Cases Type Chart
+function renderCasesTypeChart(data) {
+    const ctx = document.getElementById('casesTypeChart').getContext('2d');
+    const labels = Object.keys(data || {});
+    const values = Object.values(data || {});
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels.map(l => l.replace(/_/g, ' ').replace(/\w/g, c => c.toUpperCase())),
+            datasets: [{
+                label: 'Cases',
+                data: values,
+                backgroundColor: '#3b82f6',
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+            plugins: { legend: { display: false } }
+        }
+    });
+}
+
+// Load Map
+async function loadMap() {
+    try {
+        const res = await fetch(`${API_BASE}/migrants/map_data/`);
+        const data = await res.json();
+
+        const map = L.map('map').setView([5.5, 7.5], 8); // Center on Abia State
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        (data.features || []).forEach(feature => {
+            if (feature.geometry && feature.geometry.coordinates) {
+                const [lon, lat] = feature.geometry.coordinates;
+                const props = feature.properties || {};
+                L.marker([lat, lon]).addTo(map)
+                    .bindPopup(`<b>${props.full_name || 'Unknown'}</b><br>Status: ${props.status || 'N/A'}`);
+            }
+        });
+
+    } catch (err) {
+        console.error('Failed to load map:', err);
+        document.getElementById('map').innerHTML = '<div class="flex items-center justify-center h-full text-slate-400">Map data unavailable</div>';
+    }
+}
+
+// Load Recent Cases
+async function loadRecentCases() {
+    try {
+        const res = await fetch(`${API_BASE}/cases/?ordering=-created_at&page_size=10`);
+        const data = await res.json();
+        const cases = data.results || data;
+
+        const tbody = document.getElementById('recent-cases-body');
+        if (!cases || cases.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400">No cases found</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = cases.slice(0, 10).map(c => `
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 font-medium text-slate-800">${(c.case_type || '').replace(/_/g, ' ').replace(/\w/g, x => x.toUpperCase())}</td>
+                <td class="px-6 py-4">${c.migrant_name || '-'}</td>
+                <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ${getBadgeClass(c.status)}">${(c.status || '').replace(/_/g, ' ').replace(/\w/g, x => x.toUpperCase())}</span></td>
+                <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ${getPriorityClass(c.priority)}">${(c.priority || '').replace(/\w/g, x => x.toUpperCase())}</span></td>
+                <td class="px-6 py-4">${c.assigned_to_name || 'Unassigned'}</td>
+                <td class="px-6 py-4 text-slate-500">${formatDate(c.created_at)}</td>
+            </tr>
+        `).join('');
+
+    } catch (err) {
+        console.error('Failed to load cases:', err);
+        document.getElementById('recent-cases-body').innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400">Error loading cases</td></tr>';
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    loadStats();
+    loadMap();
+    loadRecentCases();
+});
+</script>
+{% endblock %}

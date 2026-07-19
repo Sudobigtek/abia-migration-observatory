@@ -1,0 +1,99 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: abia-postgres
+    environment:
+      POSTGRES_DB: abia_app
+      POSTGRES_USER: abia
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - abia-postgres-data:/var/lib/postgresql/data
+    networks:
+      - abia-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U abia -d abia_app"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: abia-redis
+    networks:
+      - abia-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: abia-django
+    environment:
+      DJANGO_SETTINGS_MODULE: abia.settings
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DJANGO_DEBUG: "False"
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_URL: postgres://abia:${POSTGRES_PASSWORD}@postgres:5432/abia_app
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    volumes:
+      - ./logs:/app/logs
+      - staticfiles:/app/staticfiles
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - abia-network
+    command: gunicorn abia.wsgi:application --bind 0.0.0.0:8000 --workers 4 --timeout 60
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: abia-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - staticfiles:/app/staticfiles:ro
+    depends_on:
+      - django
+    networks:
+      - abia-network
+
+  celery-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: abia-celery
+    environment:
+      DJANGO_SETTINGS_MODULE: abia.settings
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DJANGO_DEBUG: "False"
+      DATABASE_URL: postgres://abia:${POSTGRES_PASSWORD}@postgres:5432/abia_app
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - abia-network
+    command: celery -A abia worker -l info
+
+volumes:
+  abia-postgres-data:
+  staticfiles:
+
+networks:
+  abia-network:
+    driver: bridge

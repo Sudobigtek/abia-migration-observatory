@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Migrants | Abia Migration Observatory{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h3 mb-0"><i class="bi bi-people-fill me-2"></i>Migrant Registry</h2>
+        <a href="/dashboard/" class="btn btn-outline-primary"><i class="bi bi-arrow-left me-1"></i>Back to Dashboard</a>
+    </div>
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="migrantTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Gender</th>
+                            <th>Phone</th>
+                            <th>Current LGA</th>
+                            <th>Status</th>
+                            <th>Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="migrantTableBody">
+                        <tr><td colspan="7" class="text-center py-4 text-muted">Loading migrants...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/v1/migrants/', { headers: { 'Authorization': 'Token {{ request.session.api_token|default:"" }}' } })
+        .then(r => r.json())
+        .then(data => {
+            const tbody = document.getElementById('migrantTableBody');
+            if (!data.results || data.results.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">No migrants found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = data.results.map(m => `
+                <tr>
+                    <td><strong>${m.full_name}</strong></td>
+                    <td><span class="badge bg-${m.gender === 'male' ? 'primary' : m.gender === 'female' ? 'danger' : 'secondary'}">${m.gender || 'N/A'}</span></td>
+                    <td>${m.phone || '-'}</td>
+                    <td>${m.current_lga_name || '-'}</td>
+                    <td><span class="badge bg-${m.status === 'active' ? 'success' : m.status === 'deceased' ? 'dark' : 'warning'}">${m.status}</span></td>
+                    <td>${m.created_at ? new Date(m.created_at).toLocaleDateString() : '-'}</td>
+                    <td><a href="/api/v1/migrants/${m.id}/" class="btn btn-sm btn-outline-info">View</a></td>
+                </tr>
+            `).join('');
+        })
+        .catch(() => {
+            document.getElementById('migrantTableBody').innerHTML = '<tr><td colspan="7" class="text-center py-4 text-danger">Failed to load data.</td></tr>';
+        });
+});
+</script>
+{% endblock %}

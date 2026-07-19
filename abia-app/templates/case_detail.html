@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Case Details | Abia Migration Observatory{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h3 mb-0"><i class="bi bi-folder-fill me-2"></i>Case Details</h2>
+        <a href="/dashboard/" class="btn btn-outline-primary"><i class="bi bi-arrow-left me-1"></i>Back to Dashboard</a>
+    </div>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0" id="caseTitle">Loading...</h5>
+                </div>
+                <div class="card-body" id="caseBody">
+                    <div class="text-center py-4 text-muted">Loading case data...</div>
+                </div>
+            </div>
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-chat-left-text me-2"></i>Case Notes</h5>
+                </div>
+                <div class="card-body">
+                    <div id="caseNotes" class="text-muted">No notes available.</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-person me-2"></i>Migrant Info</h5>
+                </div>
+                <div class="card-body" id="migrantInfo">
+                    <div class="text-center text-muted">Loading...</div>
+                </div>
+            </div>
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-activity me-2"></i>Actions</h5>
+                </div>
+                <div class="card-body d-grid gap-2">
+                    <button class="btn btn-success" onclick="updateStatus('resolved')"><i class="bi bi-check-circle me-1"></i>Mark Resolved</button>
+                    <button class="btn btn-warning" onclick="updateStatus('escalated')"><i class="bi bi-exclamation-triangle me-1"></i>Escalate</button>
+                    <button class="btn btn-info" onclick="assignCase()"><i class="bi bi-person-plus me-1"></i>Assign Officer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+const caseId = new URLSearchParams(window.location.search).get('id') || '1';
+function loadCase() {
+    fetch(`/api/v1/cases/${caseId}/`, { headers: { 'Authorization': 'Token {{ request.session.api_token|default:"" }}' } })
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('caseTitle').textContent = data.title || 'Untitled Case';
+            document.getElementById('caseBody').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6"><p><strong>Type:</strong> <span class="badge bg-secondary">${data.case_type}</span></p></div>
+                    <div class="col-md-6"><p><strong>Status:</strong> <span class="badge bg-${data.status === 'open' ? 'danger' : data.status === 'resolved' ? 'success' : 'warning'}">${data.status}</span></p></div>
+                    <div class="col-md-6"><p><strong>Priority:</strong> <span class="badge bg-${data.priority === 'critical' ? 'dark' : data.priority === 'high' ? 'danger' : 'info'}">${data.priority}</span></p></div>
+                    <div class="col-md-6"><p><strong>Opened:</strong> ${new Date(data.opened_at).toLocaleString()}</p></div>
+                    <div class="col-12"><p><strong>Description:</strong></p><p>${data.description || 'No description provided.'}</p></div>
+                </div>
+            `;
+            if (data.migrant) loadMigrant(data.migrant);
+        });
+}
+function loadMigrant(migrantId) {
+    fetch(`/api/v1/migrants/${migrantId}/`, { headers: { 'Authorization': 'Token {{ request.session.api_token|default:"" }}' } })
+        .then(r => r.json())
+        .then(m => {
+            document.getElementById('migrantInfo').innerHTML = `
+                <p><strong>Name:</strong> ${m.full_name}</p>
+                <p><strong>Phone:</strong> ${m.phone || '-'}</p>
+                <p><strong>Gender:</strong> ${m.gender || '-'}</p>
+                <p><strong>Status:</strong> <span class="badge bg-success">${m.status}</span></p>
+            `;
+        });
+}
+function updateStatus(status) {
+    fetch(`/api/v1/cases/${caseId}/`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Token {{ request.session.api_token|default:"" }}' },
+        body: JSON.stringify({ status })
+    }).then(() => loadCase());
+}
+function assignCase() {
+    alert('Assign case functionality - integrate with user dropdown');
+}
+loadCase();
+</script>
+{% endblock %}
