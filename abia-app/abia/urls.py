@@ -1,6 +1,7 @@
 from abia import views
 from django.contrib import admin
 from django.urls import include, path
+from abia.dashboard_view import unified_dashboard
 from abia.ncfrmi_reporting import urls as ncfrmi_urls
 from abia.giz import urls as giz_urls
 from abia.sports import urls as sports_urls
@@ -39,6 +40,7 @@ from abia.search import urls as search_urls
 from abia.common.gateway import gateway_status, gateway_routes, gateway_key_rotate
 
 urlpatterns = [
+ path("dashboard/", unified_dashboard, name="dashboard"),
     path('', TemplateView.as_view(template_name='landing.html'), name='home'),
     path("api/version/", api_version_info, name="api-version"),
     path("api/gateway/key-rotate/", gateway_key_rotate, name="gateway-key-rotate"),
