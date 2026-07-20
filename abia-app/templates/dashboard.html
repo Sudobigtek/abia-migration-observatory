@@ -2,45 +2,44 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Abia Migration Observatory — Unified Command Center</title>
+<title>Abia Migration Observatory</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-* { box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; margin: 0; padding: 24px; color: #1a202c; }
-h1 { font-size: 1.75rem; margin: 0 0 4px; color: #1e3a5f; }
-.subtitle { color: #64748b; margin-bottom: 24px; font-size: 0.95rem; }
-.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
-.kpi { background: linear-gradient(135deg, #1e3a5f, #2d5a87); color: #fff; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.07); }
-.kpi h2 { margin: 0; font-size: 1.8rem; font-weight: 700; }
-.kpi p { margin: 6px 0 0; font-size: 0.9rem; opacity: 0.9; }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; }
-.card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.card h3 { margin: 0 0 16px; font-size: 1.05rem; color: #2d3748; }
-canvas { max-height: 280px; }
+body{font-family:sans-serif;background:#f3f4f6;margin:0}
+.header{background:linear-gradient(90deg,#1e3a8a,#2563eb);color:#fff;padding:1.5rem 2rem}
+.container{max-width:1400px;margin:0 auto;padding:1.5rem}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1.5rem}
+.kpi-card{background:#fff;border-radius:.5rem;padding:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.kpi-card h3{font-size:.875rem;color:#6b7280;text-transform:uppercase}
+.kpi-card .value{font-size:1.875rem;font-weight:700;color:#1e3a8a;margin-top:.5rem}
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:1.5rem}
+.chart-card{background:#fff;border-radius:.5rem;padding:1rem;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+canvas{max-height:300px}
 </style>
 </head>
 <body>
-<h1>🌍 Abia Migration Observatory</h1>
-<p class="subtitle">Unified Command Center — Real-time Migration Intelligence</p>
-
+<div class="header">
+<h1>Abia Migration Observatory</h1>
+<p>Unified Command Center — Real-time Migration Intelligence</p>
+</div>
+<div class="container">
 <div class="kpi-grid">
-  <div class="kpi"><h2>{{ summary.total_migrants }}</h2><p>Total Migrants</p></div>
-  <div class="kpi"><h2>{{ summary.total_cases }}</h2><p>Cases</p></div>
-  <div class="kpi"><h2>{{ summary.total_remittances_ngn|floatformat:0 }}</h2><p>Remittances (NGN)</p></div>
-  <div class="kpi"><h2>{{ summary.total_sports_transfer_value_usd|floatformat:0 }}</h2><p>Sports Value (USD)</p></div>
+<div class="kpi-card"><h3>Total Migrants</h3><div class="value">{{ summary.total_migrants|default:0 }}</div></div>
+<div class="kpi-card"><h3>Cases</h3><div class="value">{{ summary.total_cases|default:0 }}</div></div>
+<div class="kpi-card"><h3>Remittances (NGN)</h3><div class="value">{{ summary.total_remittances_ngn|floatformat:0|default:"0" }}</div></div>
+<div class="kpi-card"><h3>Sports Value (USD)</h3><div class="value">{{ summary.total_sports_transfer_value_usd|floatformat:0|default:"0" }}</div></div>
 </div>
-
-<div class="grid">
-  <div class="card"><h3>Remittances by LGA</h3><canvas id="c1"></canvas></div>
-  <div class="card"><h3>Remittances by Channel</h3><canvas id="c2"></canvas></div>
-  <div class="card"><h3>Trade Balance by Sector</h3><canvas id="c3"></canvas></div>
-  <div class="card"><h3>Labour-Intensive Trade</h3><canvas id="c4"></canvas></div>
-  <div class="card"><h3>ECOWAS Migration Corridors</h3><canvas id="c5"></canvas></div>
-  <div class="card"><h3>Sports Transfers by Destination</h3><canvas id="c6"></canvas></div>
-  <div class="card"><h3>Talent by LGA</h3><canvas id="c7"></canvas></div>
-  <div class="card"><h3>Migrants by LGA</h3><canvas id="c8"></canvas></div>
+<div class="chart-grid">
+<div class="chart-card"><h4>Remittances by LGA</h4><canvas id="remLgaChart"></canvas></div>
+<div class="chart-card"><h4>Remittances by Channel</h4><canvas id="remChannelChart"></canvas></div>
+<div class="chart-card"><h4>Trade Balance by Sector</h4><canvas id="tradeBalChart"></canvas></div>
+<div class="chart-card"><h4>Labour-Intensive Trade</h4><canvas id="labourTradeChart"></canvas></div>
+<div class="chart-card"><h4>ECOWAS Corridors</h4><canvas id="ecowasCorrChart"></canvas></div>
+<div class="chart-card"><h4>Sports Transfers by Destination</h4><canvas id="sportsDestChart"></canvas></div>
+<div class="chart-card"><h4>Talent by LGA</h4><canvas id="sportsLgaChart"></canvas></div>
+<div class="chart-card"><h4>Migrants by LGA</h4><canvas id="migrantsLgaChart"></canvas></div>
 </div>
-
+</div>
 {{ remittances_by_lga|json_script:"remLga" }}
 {{ remittances_by_channel|json_script:"remChannel" }}
 {{ trade_balance|json_script:"tradeBal" }}
@@ -49,38 +48,23 @@ canvas { max-height: 280px; }
 {{ sports_destinations|json_script:"sportsDest" }}
 {{ sports_lga|json_script:"sportsLga" }}
 {{ migrants_by_lga|json_script:"migrantsLga" }}
-
 <script>
-const colors = ['#1e3a5f','#2d5a87','#4a90c6','#87ceeb','#b0e0e6','#e6f3ff','#f0f8ff','#1a365d'];
-function barChart(id, data, label) {
-  new Chart(document.getElementById(id), {
-    type: 'bar',
-    data: { labels: data.labels, datasets: [{ label: label, data: data.data, backgroundColor: colors }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-  });
+function safeJson(id){const el=document.getElementById(id);return el?JSON.parse(el.textContent):[];}
+function makeChart(canvasId,labelKey,valueKey){
+const raw=safeJson(canvasId.replace("Chart",""));
+const ctx=document.getElementById(canvasId).getContext("2d");
+const labels=raw.map(d=>d[labelKey]||d.month||d.sector||d.country_of_destination||d.to_country||d.name||"Unknown").slice(0,10);
+const values=raw.map(d=>d[valueKey]||d.total||d.count||d.balance||0).slice(0,10);
+new Chart(ctx,{type:"bar",data:{labels:labels,datasets:[{label:"Value",data:values,backgroundColor:"rgba(37,99,235,0.6)",borderColor:"rgba(37,99,235,1)",borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
 }
-function pieChart(id, data) {
-  new Chart(document.getElementById(id), {
-    type: 'doughnut',
-    data: { labels: data.labels, datasets: [{ data: data.data, backgroundColor: colors }] },
-    options: { responsive: true, maintainAspectRatio: false }
-  });
-}
-function multiBarChart(id, data) {
-  new Chart(document.getElementById(id), {
-    type: 'bar',
-    data: { labels: data.labels, datasets: data.datasets },
-    options: { responsive: true, maintainAspectRatio: false }
-  });
-}
-barChart('c1', JSON.parse(document.getElementById('remLga').textContent), 'NGN');
-pieChart('c2', JSON.parse(document.getElementById('remChannel').textContent));
-multiBarChart('c3', JSON.parse(document.getElementById('tradeBal').textContent));
-barChart('c4', JSON.parse(document.getElementById('labourTrade').textContent), 'USD');
-barChart('c5', JSON.parse(document.getElementById('ecowasCorr').textContent), 'Migrants');
-barChart('c6', JSON.parse(document.getElementById('sportsDest').textContent), 'Transfers');
-barChart('c7', JSON.parse(document.getElementById('sportsLga').textContent), 'Athletes');
-barChart('c8', JSON.parse(document.getElementById('migrantsLga').textContent), 'Migrants');
+makeChart("remLgaChart","recipient_lga__name","total");
+makeChart("remChannelChart","channel","total");
+makeChart("tradeBalChart","sector","balance");
+makeChart("labourTradeChart","sector","total");
+makeChart("ecowasCorrChart","country_of_destination","total");
+makeChart("sportsDestChart","to_country","count");
+makeChart("sportsLgaChart","origin_lga__name","count");
+makeChart("migrantsLgaChart","current_lga__name","count");
 </script>
 </body>
 </html>
