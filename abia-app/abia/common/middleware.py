@@ -1,3 +1,5 @@
+from django.http import JsonResponse
+
 class APIVersionMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -7,7 +9,6 @@ class APIVersionMiddleware:
         response["X-API-Version"] = "1.0.0"
         return response
 
-
 class PrometheusMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -16,10 +17,17 @@ class PrometheusMiddleware:
         response = self.get_response(request)
         return response
 
-from django.http import JsonResponse
-
 def health_check(request):
-    return JsonResponse({"status": "ok", "service": "abia-migration-observatory"})
+    return JsonResponse({
+        "status": "ok",
+        "service": "abia-migration-observatory",
+        "version": "1.0.0",
+    })
 
 def metrics_endpoint(request):
-    return JsonResponse({"metrics": {"requests_total": 0, "errors_total": 0}})
+    return JsonResponse({
+        "metrics": {
+            "requests_total": 0,
+            "errors_total": 0,
+        }
+    })

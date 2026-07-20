@@ -1,73 +1,86 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Abia Migration Observatory | Unified Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 20px; }
-        h1 { text-align: center; color: #38bdf8; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; max-width: 1600px; margin: 0 auto; }
-        .card { background: #1e293b; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .card h2 { margin-top: 0; font-size: 16px; color: #94a3b8; text-transform: uppercase; }
-        .metric { font-size: 32px; font-weight: bold; color: #38bdf8; }
-        .metric-label { font-size: 12px; color: #64748b; }
-        .metrics-row { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px; }
-        .metric-box { background: #1e293b; padding: 20px 40px; border-radius: 12px; text-align: center; }
-        canvas { max-height: 300px; }
-    </style>
+<meta charset="UTF-8">
+<title>Abia Migration Observatory — Unified Command Center</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; margin: 0; padding: 24px; color: #1a202c; }
+h1 { font-size: 1.75rem; margin: 0 0 4px; color: #1e3a5f; }
+.subtitle { color: #64748b; margin-bottom: 24px; font-size: 0.95rem; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.kpi { background: linear-gradient(135deg, #1e3a5f, #2d5a87); color: #fff; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.07); }
+.kpi h2 { margin: 0; font-size: 1.8rem; font-weight: 700; }
+.kpi p { margin: 6px 0 0; font-size: 0.9rem; opacity: 0.9; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; }
+.card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.card h3 { margin: 0 0 16px; font-size: 1.05rem; color: #2d3748; }
+canvas { max-height: 280px; }
+</style>
 </head>
 <body>
-    <h1>🌍 Abia Migration Observatory — Unified Command Center</h1>
+<h1>🌍 Abia Migration Observatory</h1>
+<p class="subtitle">Unified Command Center — Real-time Migration Intelligence</p>
 
-    <div class="metrics-row">
-        <div class="metric-box"><div class="metric">{{ summary.total_migrants }}</div><div class="metric-label">Total Migrants</div></div>
-        <div class="metric-box"><div class="metric">{{ summary.total_cases }}</div><div class="metric-label">Cases</div></div>
-        <div class="metric-box"><div class="metric">{{ summary.total_remittances_ngn|floatformat:0 }}</div><div class="metric-label">Remittances (NGN)</div></div>
-        <div class="metric-box"><div class="metric">{{ summary.total_sports_transfer_value_usd|floatformat:0 }}</div><div class="metric-label">Sports Value (USD)</div></div>
-    </div>
+<div class="kpi-grid">
+  <div class="kpi"><h2>{{ summary.total_migrants }}</h2><p>Total Migrants</p></div>
+  <div class="kpi"><h2>{{ summary.total_cases }}</h2><p>Cases</p></div>
+  <div class="kpi"><h2>{{ summary.total_remittances_ngn|floatformat:0 }}</h2><p>Remittances (NGN)</p></div>
+  <div class="kpi"><h2>{{ summary.total_sports_transfer_value_usd|floatformat:0 }}</h2><p>Sports Value (USD)</p></div>
+</div>
 
-    <div class="grid">
-        <div class="card"><h2>Remittances by LGA</h2><canvas id="remitLGA"></canvas></div>
-        <div class="card"><h2>Remittances by Channel</h2><canvas id="remitChannel"></canvas></div>
-        <div class="card"><h2>Trade Balance by Sector</h2><canvas id="tradeBalance"></canvas></div>
-        <div class="card"><h2>Labour-Intensive Trade</h2><canvas id="labourTrade"></canvas></div>
-        <div class="card"><h2>ECOWAS Migration Corridors</h2><canvas id="ecowasCorr"></canvas></div>
-        <div class="card"><h2>Sports Transfers by Destination</h2><canvas id="sportsDest"></canvas></div>
-        <div class="card"><h2>Talent by LGA</h2><canvas id="sportsLGA"></canvas></div>
-        <div class="card"><h2>Migrants by LGA</h2><canvas id="migrantsLGA"></canvas></div>
-    </div>
+<div class="grid">
+  <div class="card"><h3>Remittances by LGA</h3><canvas id="c1"></canvas></div>
+  <div class="card"><h3>Remittances by Channel</h3><canvas id="c2"></canvas></div>
+  <div class="card"><h3>Trade Balance by Sector</h3><canvas id="c3"></canvas></div>
+  <div class="card"><h3>Labour-Intensive Trade</h3><canvas id="c4"></canvas></div>
+  <div class="card"><h3>ECOWAS Migration Corridors</h3><canvas id="c5"></canvas></div>
+  <div class="card"><h3>Sports Transfers by Destination</h3><canvas id="c6"></canvas></div>
+  <div class="card"><h3>Talent by LGA</h3><canvas id="c7"></canvas></div>
+  <div class="card"><h3>Migrants by LGA</h3><canvas id="c8"></canvas></div>
+</div>
 
-    <script>
-    function makeChart(id, type, labels, data, label, colors) {
-        new Chart(document.getElementById(id), {
-            type: type,
-            data: {
-                labels: labels,
-                datasets: [{ label: label, data: data, backgroundColor: colors || "#38bdf8" }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: "#e2e8f0" } } }, scales: { x: { ticks: { color: "#94a3b8" } }, y: { ticks: { color: "#94a3b8" } } } }
-        });
-    }
+{{ remittances_by_lga|json_script:"remLga" }}
+{{ remittances_by_channel|json_script:"remChannel" }}
+{{ trade_balance|json_script:"tradeBal" }}
+{{ labour_trade|json_script:"labourTrade" }}
+{{ ecowas_corridors|json_script:"ecowasCorr" }}
+{{ sports_destinations|json_script:"sportsDest" }}
+{{ sports_lga|json_script:"sportsLga" }}
+{{ migrants_by_lga|json_script:"migrantsLga" }}
 
-    makeChart("remitLGA", "bar", {{ remittances_by_lga.labels|safe }}, {{ remittances_by_lga.data|safe }}, "NGN", "#22c55e");
-    makeChart("remitChannel", "pie", {{ remittances_by_channel.labels|safe }}, {{ remittances_by_channel.data|safe }}, "Channel", ["#38bdf8", "#22c55e", "#f59e0b", "#ef4444"]);
-    makeChart("labourTrade", "bar", {{ labour_trade.labels|safe }}, {{ labour_trade.data|safe }}, "USD", "#f59e0b");
-    makeChart("ecowasCorr", "bar", {{ ecowas_corridors.labels|safe }}, {{ ecowas_corridors.data|safe }}, "Migrants", "#a855f7");
-    makeChart("sportsDest", "bar", {{ sports_destinations.labels|safe }}, {{ sports_destinations.data|safe }}, "Transfers", "#ec4899");
-    makeChart("sportsLGA", "bar", {{ sports_lga.labels|safe }}, {{ sports_lga.data|safe }}, "Athletes", "#14b8a6");
-    makeChart("migrantsLGA", "bar", {{ migrants_by_lga.labels|safe }}, {{ migrants_by_lga.data|safe }}, "Migrants", "#3b82f6");
-
-    new Chart(document.getElementById("tradeBalance"), {
-        type: "bar",
-        data: {
-            labels: {{ trade_balance.labels|safe }},
-            datasets: [
-                { label: "Exports", data: {{ trade_balance.datasets.0.data|safe }}, backgroundColor: "#22c55e" },
-                { label: "Imports", data: {{ trade_balance.datasets.1.data|safe }}, backgroundColor: "#ef4444" }
-            ]
-        },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: "#e2e8f0" } } }, scales: { x: { ticks: { color: "#94a3b8" } }, y: { ticks: { color: "#94a3b8" } } } }
-    });
-    </script>
+<script>
+const colors = ['#1e3a5f','#2d5a87','#4a90c6','#87ceeb','#b0e0e6','#e6f3ff','#f0f8ff','#1a365d'];
+function barChart(id, data, label) {
+  new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: { labels: data.labels, datasets: [{ label: label, data: data.data, backgroundColor: colors }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+  });
+}
+function pieChart(id, data) {
+  new Chart(document.getElementById(id), {
+    type: 'doughnut',
+    data: { labels: data.labels, datasets: [{ data: data.data, backgroundColor: colors }] },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+function multiBarChart(id, data) {
+  new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: { labels: data.labels, datasets: data.datasets },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+barChart('c1', JSON.parse(document.getElementById('remLga').textContent), 'NGN');
+pieChart('c2', JSON.parse(document.getElementById('remChannel').textContent));
+multiBarChart('c3', JSON.parse(document.getElementById('tradeBal').textContent));
+barChart('c4', JSON.parse(document.getElementById('labourTrade').textContent), 'USD');
+barChart('c5', JSON.parse(document.getElementById('ecowasCorr').textContent), 'Migrants');
+barChart('c6', JSON.parse(document.getElementById('sportsDest').textContent), 'Transfers');
+barChart('c7', JSON.parse(document.getElementById('sportsLga').textContent), 'Athletes');
+barChart('c8', JSON.parse(document.getElementById('migrantsLga').textContent), 'Migrants');
+</script>
 </body>
 </html>

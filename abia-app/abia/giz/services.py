@@ -1,72 +1,62 @@
 from django.db.models import Count, Sum
-from .models import GIZDataExchange, GIZIndicator
+from .repositories import GIZDataExchangeRepository, GIZIndicatorRepository
+from abia.migrants.repositories import MigrantRepository
+from abia.cases.repositories import CaseRepository
+from abia.referrals.repositories import ReferralRepository
 
 class GIZService:
     @staticmethod
     def build_migration_governance_report():
-        from abia.migrants.models import Migrant
-        from abia.cases.models import Case
-        from abia.referrals.models import Referral
         return {
             "programme_area": "migration_governance",
             "reporting_period": "Q3-2026",
             "indicators": {
-                "migrants_registered": Migrant.objects.count(),
-                "cases_managed": Case.objects.count(),
-                "referrals_completed": Referral.objects.filter(status="completed").count(),
-                "lgas_covered": Migrant.objects.values("current_lga").distinct().count(),
+                "migrants_registered": MigrantRepository.count(),
+                "cases_managed": CaseRepository.count(),
+                "referrals_completed": ReferralRepository.filter_count(status="completed"),
+                "lgas_covered": MigrantRepository.get_distinct_lga_count(),
                 "data_quality_score": 95.0,
             },
-            "breakdown_by_lga": list(Migrant.objects.values("current_lga__name").annotate(
-                count=Count("id")).values("current_lga__name", "count")[:20]),
+            "breakdown_by_lga": MigrantRepository.get_lga_breakdown(20),
         }
 
     @staticmethod
     def build_reintegration_report():
-        from abia.migrants.models import Migrant
         return {
             "programme_area": "reintegration",
             "reporting_period": "Q3-2026",
             "indicators": {
-                "returnees_registered": Migrant.objects.filter(status="returnee").count(),
-                "reintegration_plans_developed": Migrant.objects.filter(status="reintegration").count(),
-                "skills_assessed": Migrant.objects.filter(status="skills_assessed").count(),
+                "returnees_registered": MigrantRepository.filter_count(status="returnee"),
+                "reintegration_plans_developed": MigrantRepository.filter_count(status="reintegration"),
+                "skills_assessed": MigrantRepository.filter_count(status="skills_assessed"),
             },
         }
 
     @staticmethod
     def build_protection_report():
-        from abia.cases.models import Case
         return {
             "programme_area": "protection_assistance",
             "reporting_period": "Q3-2026",
             "indicators": {
-                "protection_cases": Case.objects.filter(case_type__in=["trafficking", "gbv", "child_protection"]).count(),
-                "cases_resolved": Case.objects.filter(case_type__in=["trafficking", "gbv", "child_protection"], status="resolved").count(),
+                "protection_cases": CaseRepository.filter_count(case_type__in=["trafficking", "gbv", "child_protection"]),
+                "cases_resolved": CaseRepository.filter_count(case_type__in=["trafficking", "gbv", "child_protection"], status="resolved"),
                 "referrals_to_shelter": 0,
             },
         }
 
     @staticmethod
     def update_indicators_from_data():
-        from abia.migrants.models import Migrant
-        from abia.cases.models import Case
-        from abia.referrals.models import Referral
         indicators = {
-            "migrants_registered": Migrant.objects.count(),
-            "cases_managed": Case.objects.count(),
-            "referrals_completed": Referral.objects.filter(status="completed").count(),
-            "returnees_registered": Migrant.objects.filter(status="returnee").count(),
+            "migrants_registered": MigrantRepository.count(),
+            "cases_managed": CaseRepository.count(),
+            "referrals_completed": ReferralRepository.filter_count(status="completed"),
+            "returnees_registered": MigrantRepository.filter_count(status="returnee"),
         }
         for name, value in indicators.items():
-            GIZIndicator.objects.filter(name=name).update(current_value=value)
+            GIZIndicatorRepository.update_current_value(name, value)
         return indicators
 
     @staticmethod
     def submit_to_giz(exchange_id):
         from django.utils import timezone
-        exchange = GIZDataExchange.objects.get(id=exchange_id)
-        exchange.status = "submitted"
-        exchange.submitted_at = timezone.now()
-        exchange.save()
-        return exchange
+        return GIZDataExchangeRepository.update_status(exchange_id, "submitted", timezone.now())

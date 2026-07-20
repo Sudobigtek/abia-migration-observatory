@@ -1,22 +1,15 @@
-from django.db.models import Avg
-from .models import WBDataPoint, WBIndicator
+from .repositories import WBIndicatorRepository
 
 class WorldBankService:
     @staticmethod
     def get_indicator_trend(indicator_code, country_code="NGA"):
-        points = WBDataPoint.objects.filter(
-            indicator__indicator_code=indicator_code, country_code=country_code
-        ).values("year", "value").order_by("year")
-        return list(points)
+        return WBIndicatorRepository.get_indicator_trend(indicator_code, country_code)
 
     @staticmethod
     def get_latest_values(category=None):
-        qs = WBIndicator.objects.filter(is_active=True)
-        if category:
-            qs = qs.filter(category=category)
         results = []
-        for ind in qs:
-            latest = ind.data_points.order_by("-year").first()
+        for ind in WBIndicatorRepository.get_by_category(category):
+            latest = WBIndicatorRepository.get_latest_for_indicator(ind)
             if latest:
                 results.append({
                     "indicator_code": ind.indicator_code,

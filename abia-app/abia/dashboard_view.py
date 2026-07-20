@@ -1,6 +1,9 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from abia.charts.services import ChartService
 
+
+@login_required
 def unified_dashboard(request):
     context = {
         "summary": ChartService.get_unified_summary(),
