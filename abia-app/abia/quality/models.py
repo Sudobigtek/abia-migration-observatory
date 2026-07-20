@@ -6,59 +6,53 @@ User = get_user_model()
 
 class DataQualityRule(models.Model):
     RULE_TYPES = [
-        ('required_field', 'Required Field Check'),
-        ('format', 'Format Validation'),
-        ('duplicate', 'Duplicate Detection'),
-        ('consistency', 'Cross-Record Consistency'),
-        ('range', 'Value Range Check'),
+        ("completeness", "Completeness"),
+        ("uniqueness", "Uniqueness"),
+        ("validity", "Validity"),
+        ("consistency", "Consistency"),
+        ("timeliness", "Timeliness"),
     ]
-
-    SEVERITY_CHOICES = [
-        ('error', 'Error'),
-        ('warning', 'Warning'),
-        ('info', 'Info'),
-    ]
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     rule_type = models.CharField(max_length=20, choices=RULE_TYPES)
-    model_name = models.CharField(max_length=50, help_text="e.g., 'migrants.Migrant'")
-    field_name = models.CharField(max_length=100, blank=True)
-    condition = models.JSONField(default=dict, help_text="Rule condition as JSON")
-    severity = models.CharField(max_length=10, choices=SEVERITY_CHOICES, default='error')
+    entity_type = models.CharField(max_length=50, help_text="e.g. migrants.Migrant")
+    field_name = models.CharField(max_length=100)
+    condition = models.CharField(max_length=255, help_text="e.g. not_null, unique, regex")
+    parameters = models.JSONField(default=dict, blank=True)
     is_active = models.BooleanField(default=True)
-    auto_fix = models.BooleanField(default=False, help_text="Attempt automatic fix")
+    severity = models.CharField(max_length=20, default="warning", choices=[("info", "Info"), ("warning", "Warning"), ("error", "Error")])
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.name} ({self.model_name})"
+        return f"{self.name} ({self.rule_type})"
 
 class DataQualityIssue(models.Model):
     STATUS_CHOICES = [
-        ('open', 'Open'),
-        ('resolved', 'Resolved'),
-        ('ignored', 'Ignored'),
+        ("open", "Open"),
+        ("resolved", "Resolved"),
+        ("ignored", "Ignored"),
     ]
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    rule = models.ForeignKey(DataQualityRule, on_delete=models.CASCADE, related_name='issues')
-    model_name = models.CharField(max_length=50)
-    record_id = models.UUIDField()
-    field_name = models.CharField(max_length=100, blank=True)
+    rule = models.ForeignKey(DataQualityRule, on_delete=models.CASCADE, related_name="issues")
+    entity_type = models.CharField(max_length=50)
+    entity_id = models.CharField(max_length=100)
+    field_name = models.CharField(max_length=100)
     issue_description = models.TextField()
-    current_value = models.TextField(blank=True)
-    suggested_value = models.TextField(blank=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
+    severity = models.CharField(max_length=20)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="open")
     resolved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     resolved_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=['status', 'model_name']),
-            models.Index(fields=['record_id']),
+            models.Index(fields=["status", "severity"]),
+            models.Index(fields=["entity_type", "entity_id"]),
         ]
+
+    def __str__(self):
+        return f"{self.entity_type}:{self.field_name} - {self.issue_description[:50]}"

@@ -30,6 +30,9 @@ INSTALLED_APPS = [
     'abia.cases',
     'abia.ipfs',
     'abia.notifications',
+ 'abia.charts',
+ 'abia.importers',
+ 'abia.maps',
     'abia.migrants',
     'abia.referrals',
     'dynamic_fields',
@@ -37,6 +40,7 @@ INSTALLED_APPS = [
     'abia.push',
     'abia.geo',
     'abia.reports',
+    'abia.throttle',
     'abia.quality',
     'abia.search',
     'abia.audit',
@@ -46,6 +50,15 @@ INSTALLED_APPS = [
     'abia.hotspot',
     'abia.workflows',
     'abia.documents',
+    'abia.backup',
+ 'abia.iom',
+ 'abia.cbn',
+ 'abia.worldbank',
+ 'abia.wto',
+ 'abia.ecowas',
+ 'abia.sports',
+ 'abia.giz',
+ 'abia.ncfrmi_reporting',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'

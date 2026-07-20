@@ -1,13 +1,13 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import DataQualityRuleViewSet, DataQualityIssueViewSet, quality_overview, run_quality_check
+from .views import DataQualityRuleViewSet, DataQualityIssueViewSet, run_checks, quality_dashboard
 
 router = DefaultRouter()
-router.register(r'rules', DataQualityRuleViewSet, basename='dataqualityrule')
-router.register(r'issues', DataQualityIssueViewSet, basename='dataqualityissue')
+router.register(r"rules", DataQualityRuleViewSet, basename="qualityrule")
+router.register(r"issues", DataQualityIssueViewSet, basename="qualityissue")
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('overview/', quality_overview, name='quality-overview'),
-    path('scan/', run_quality_check, name='quality-scan'),
+    path("", include(router.urls)),
+    path("run-checks/", run_checks, name="quality-run-checks"),
+    path("dashboard/", quality_dashboard, name="quality-dashboard"),
 ]

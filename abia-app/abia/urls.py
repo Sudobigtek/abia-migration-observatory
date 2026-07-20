@@ -1,6 +1,20 @@
 from abia import views
 from django.contrib import admin
 from django.urls import include, path
+from abia.ncfrmi_reporting import urls as ncfrmi_urls
+from abia.giz import urls as giz_urls
+from abia.sports import urls as sports_urls
+from abia.ecowas import urls as ecowas_urls
+from abia.wto import urls as wto_urls
+from abia.worldbank import urls as wb_urls
+from abia.cbn import urls as cbn_urls
+from abia.iom import urls as iom_urls
+from abia.backup import urls as backup_urls
+from abia.maps import urls as maps_urls
+from abia.importers import urls as importers_urls
+from abia.charts import urls as charts_urls
+from abia.webhooks import urls as webhooks_urls
+from abia.throttle import urls as throttle_urls
 from abia.hotspot import urls as hotspot_urls
 from abia.ncfrmi import urls as ncfrmi_urls
 from abia.tenant import urls as tenant_urls
@@ -33,6 +47,11 @@ urlpatterns = [
     path("api/cache-stats/", cache_stats_view, name="cache-stats"),
     path("api/v1/dynamic-fields/", include("dynamic_fields.urls")),
     path("api/v1/notifications/", include(notif_urls)),
+    path("api/v1/charts/", include(charts_urls)),
+    path("api/v1/importers/", include(importers_urls)),
+    path("api/v1/maps/", include(maps_urls)),
+    path("api/v1/backup/", include(backup_urls)),
+    path("api/v1/iom/", include(iom_urls)),
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
     path("health/", health_check, name="health-check"),
@@ -46,6 +65,7 @@ urlpatterns = [
     path("api/v1/push/", include(push_urls)),
     path("api/v1/geo/", include(geo_urls)),
     path("api/v1/reports/", include(reports_urls)),
+    path("api/v1/throttle/", include(throttle_urls)),
     path("api/v1/quality/", include(quality_urls)),
     path("api/v1/search/", include(search_urls)),
     path("api/v1/workflows/", include(workflow_urls)),
@@ -67,4 +87,11 @@ urlpatterns = [
     path("migrants/", views.migrant_list_view, name="migrant-list"),
     path("cases/detail/", views.case_detail_view, name="case-detail"),
     path("referrals/new/", views.referral_form_view, name="referral-form"),
+ path("api/v1/cbn/", include(cbn_urls)),
+ path("api/v1/worldbank/", include(wb_urls)),
+ path("api/v1/wto/", include(wto_urls)),
+ path("api/v1/ecowas/", include(ecowas_urls)),
+ path("api/v1/sports/", include(sports_urls)),
+ path("api/v1/ncfrmi-reporting/", include(ncfrmi_urls)),
+ path("api/v1/giz/", include(giz_urls)),
 ]

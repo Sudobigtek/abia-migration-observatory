@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import global_search, search_reindex
+from .views import search, rebuild_index, search_facets
 
 urlpatterns = [
-    path('', global_search, name='global-search'),
-    path('reindex/', search_reindex, name='search-reindex'),
+    path("search/", search, name="search"),
+    path("rebuild/", rebuild_index, name="search-rebuild"),
+    path("facets/", search_facets, name="search-facets"),
 ]
