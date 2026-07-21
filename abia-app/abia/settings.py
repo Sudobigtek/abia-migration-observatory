@@ -276,3 +276,11 @@ CACHES = {
 }
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_CACHE_ALIAS = "default"
+
+# CSRF trusted origins for Nginx proxy
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+    "https://abia-migration.gov.ng",
+]
+USE_X_FORWARDED_HOST = True
