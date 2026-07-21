@@ -38,9 +38,24 @@ from abia.pwa import urls as pwa_urls
 from abia.analytics import urls as analytics_urls
 from abia.search import urls as search_urls
 from abia.common.gateway import gateway_status, gateway_routes, gateway_key_rotate
+from abia.ncfrmi_reporting.views import (
+    report_list, ncfrmi_report_detail, ncfrmi_generate, ncfrmi_submit
+)
+from abia.giz.views import (
+    giz_migration_governance, giz_reintegration, giz_protection
+)
+
 
 urlpatterns = [
  path("dashboard/", unified_dashboard, name="dashboard"),
+    path("reports/", report_list, name="report_list"),
+    path("reports/ncfrmi/<int:pk>/", ncfrmi_report_detail, name="ncfrmi_report_detail"),
+    path("reports/ncfrmi/generate/", ncfrmi_generate, name="ncfrmi_generate"),
+    path("reports/ncfrmi/<int:pk>/submit/", ncfrmi_submit, name="ncfrmi_submit"),
+    path("reports/giz/migration-governance/", giz_migration_governance, name="giz_migration_governance"),
+    path("reports/giz/reintegration/", giz_reintegration, name="giz_reintegration"),
+    path("reports/giz/protection/", giz_protection, name="giz_protection"),
+
     path('', TemplateView.as_view(template_name='landing.html'), name='home'),
     path("api/version/", api_version_info, name="api-version"),
     path("api/gateway/key-rotate/", gateway_key_rotate, name="gateway-key-rotate"),
