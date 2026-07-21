@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}IOM Migration Management Report — {{ report.reporting_period|default:"Current Period" }} | Abia Migration Observatory{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-6xl">
+  <div class="bg-gradient-to-r from-blue-900 to-blue-700 text-white rounded-t-lg p-6">
+    <div class="flex justify-between items-start">
+      <div>
+        <p class="text-blue-200 text-sm font-medium tracking-wider uppercase">International Organization for Migration</p>
+        <h1 class="text-3xl font-bold mt-1">Migration Management Report</h1>
+        <p class="text-blue-100 mt-2">Abia State Migration Observatory &middot; Reporting Period: {{ report.reporting_period|default:"—" }}</p>
+      </div>
+      <div class="text-right">
+        <div class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold
+          {% if report.status == "submitted" %}bg-green-500 text-white
+          {% elif report.status == "draft" %}bg-yellow-500 text-white
+          {% else %}bg-gray-500 text-white{% endif %}">
+          {{ report.status|upper|default:"DRAFT" }}
+        </div>
+        <p class="text-blue-200 text-xs mt-2">Generated: {{ report.created_at|date:"Y-m-d H:i"|default:"—" }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white border-x border-b border-gray-200 p-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold">
+        {{ report.prepared_by.get_full_name|default:report.prepared_by.username|first|upper }}
+      </div>
+      <div>
+        <p class="font-semibold text-gray-800">{{ report.prepared_by.get_full_name|default:report.prepared_by.username }}</p>
+        <p class="text-sm text-gray-500">{{ report.prepared_by.role|default:"State Coordinator" }}</p>
+      </div>
+    </div>
+    <div class="text-right">
+      <p class="text-sm text-gray-500">IOM Project Code</p>
+      <p class="font-mono text-gray-800">{{ report.iom_project_code|default:"NGA-ABIA-2026" }}</p>
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-xl font-bold text-gray-800 border-b-2 border-blue-600 pb-2 mb-4">
+      <span class="mr-2">🛫</span>Assisted Voluntary Return (AVR)
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-white rounded-lg shadow p-5 border-l-4 border-blue-500">
+        <p class="text-sm text-gray-500 uppercase tracking-wide">Total AVR Cases</p>
+        <p class="text-3xl font-bold text-blue-700 mt-1">{{ report.avr_total_cases|default:0 }}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5 border-l-4 border-green-500">
+        <p class="text-sm text-gray-500 uppercase tracking-wide">Completed Returns</p>
+        <p class="text-3xl font-bold text-green-700 mt-1">{{ report.avr_completed|default:0 }}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5 border-l-4 border-yellow-500">
+        <p class="text-sm text-gray-500 uppercase tracking-wide">In Progress</p>
+        <p class="text-3xl font-bold text-yellow-700 mt-1">{{ report.avr_in_progress|default:0 }}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5 border-l-4 border-red-500">
+        <p class="text-sm text-gray-500 uppercase tracking-wide">Pending Screening</p>
+        <p class="text-3xl font-bold text-red-700 mt-1">{{ report.avr_pending|default:0 }}</p>
+      </div>
+    </div>
+    <div class="mt-4 bg-blue-50 rounded-lg p-4">
+      <p class="text-sm text-blue-800"><strong>Reintegration Packages Distributed:</strong> {{ report.avr_reintegration_packages|default:0 }}</p>
+      <p class="text-sm text-blue-800 mt-1"><strong>Total Value (NGN):</strong> ₦{{ report.avr_package_value|default:"0.00"|floatformat:2 }}</p>
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-xl font-bold text-gray-800 border-b-2 border-red-600 pb-2 mb-4">
+      <span class="mr-2">🚨</span>Counter-Trafficking & Protection
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-white rounded-lg shadow p-5 border-l-4 border-red-600">
+        <p class="text-sm text-gray-500 uppercase tracking-wide">Trafficking Cases</p>
+        <p class="text-3xl font-bold text-red-700 mt-1">{{ report.trafficking_cases|default:0 }}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5 border-l-4 border-orange-500">
+        <p class="text-sm text-gray-500 uppercase tracking-wide">Referred to NAPTIP</p>
+        <p class="text-3xl font-bold text-orange-700 mt-1">{{ report.naptip_referrals|default:0 }}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5 border-l-4 border-purple-500">
+        <p class="text-sm text-gray-500 uppercase tracking-wide">Victims Supported</p>
+        <p class="text-3xl font-bold text-purple-700 mt-1">{{ report.victims_supported|default:0 }}</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5 border-l-4 border-indigo-500">
+        <p class="text-sm text-gray-500 uppercase tracking-wide">Prosecutions Assisted</p>
+        <p class="text-3xl font-bold text-indigo-700 mt-1">{{ report.prosecutions|default:0 }}</p>
+      </div>
+    </div>
+    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-red-50 rounded-lg p-4">
+        <p class="text-sm font-semibold text-red-800">Protection Incidents</p>
+        <p class="text-2xl font-bold text-red-700">{{ report.protection_incidents|default:0 }}</p>
+        <p class="text-xs text-red-600 mt-1">Physical abuse, detention, extortion, document seizure</p>
+      </div>
+      <div class="bg-purple-50 rounded-lg p-4">
+        <p class="text-sm font-semibold text-purple-800">Shelter Admissions</p>
+        <p class="text-2xl font-bold text-purple-700">{{ report.shelter_admissions|default:0 }}</p>
+        <p class="text-xs text-purple-600 mt-1">Temporary safe housing for vulnerable migrants</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-xl font-bold text-gray-800 border-b-2 border-green-600 pb-2 mb-4">
+      <span class="mr-2">📚</span>Capacity Building & Technical Assistance
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500 uppercase tracking-wide">Trainings Conducted</p>
+        <p class="text-3xl font-bold text-green-700 mt-1">{{ report.trainings_conducted|default:0 }}</p>
+        <p class="text-xs text-gray-400 mt-1">Workshops, seminars, field simulations</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500 uppercase tracking-wide">Officers Trained</p>
+        <p class="text-3xl font-bold text-green-700 mt-1">{{ report.officers_trained|default:0 }}</p>
+        <p class="text-xs text-gray-400 mt-1">State + LGA + federal partner personnel</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500 uppercase tracking-wide">Equipment Deployed</p>
+        <p class="text-3xl font-bold text-green-700 mt-1">{{ report.equipment_deployed|default:0 }}</p>
+        <p class="text-xs text-gray-400 mt-1">Biometric kits, laptops, vehicles, radios</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-xl font-bold text-gray-800 border-b-2 border-gray-400 pb-2 mb-4">
+      <span class="mr-2">📍</span>LGA Breakdown
+    </h2>
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+      <table class="min-w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">LGA</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">AVR Cases</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Trafficking Cases</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Trainings</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Officers</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          {% for item in report.lga_breakdown %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ item.lga|default:item.current_lga__name }}</td>
+            <td class="px-6 py-4 text-sm text-center text-gray-600">{{ item.avr|default:0 }}</td>
+            <td class="px-6 py-4 text-sm text-center text-gray-600">{{ item.trafficking|default:0 }}</td>
+            <td class="px-6 py-4 text-sm text-center text-gray-600">{{ item.trainings|default:0 }}</td>
+            <td class="px-6 py-4 text-sm text-center text-gray-600">{{ item.officers|default:0 }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+              No LGA data available for this reporting period.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-8 bg-gray-50 rounded-lg p-6">
+    <h3 class="text-lg font-bold text-gray-800 mb-2">Executive Summary</h3>
+    <p class="text-gray-700 leading-relaxed">{{ report.summary|default:"No summary provided for this reporting period." }}</p>
+  </div>
+
+  <div class="mt-8 flex gap-4">
+    <button onclick="window.print()" class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition">
+      🖨️ Print / Save PDF
+    </button>
+    {% if report.status == "draft" %}
+    <a href="{% url "iom_submit_report" report.pk %}" class="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition">
+      📤 Submit to IOM
+    </a>
+    {% endif %}
+    <a href="{% url "report_list" %}" class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition">
+      ← Back to Dashboard
+    </a>
+  </div>
+
+  <div class="mt-12 pt-6 border-t border-gray-200 text-center text-sm text-gray-500">
+    <p>Abia State Migration Observatory — Federal Republic of Nigeria</p>
+    <p class="mt-1">IOM Nigeria Mission &middot; Global Programme Centres for Migration & Development</p>
+    <p class="mt-1 text-xs">Contract v1.1.0 compliant &middot; Automated reporting pipeline &middot; {{ report.reporting_period|default:"—" }}</p>
+  </div>
+</div>
+{% endblock %}

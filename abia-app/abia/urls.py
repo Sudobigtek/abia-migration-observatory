@@ -42,6 +42,11 @@ from abia.ncfrmi_reporting.views import (
     report_list, ncfrmi_report_detail, ncfrmi_generate, ncfrmi_submit
 )
 from abia.giz.views import (
+from abia.iom.views import (
+    iom_migration_management, iom_avr_report, iom_counter_trafficking_report,
+    iom_capacity_building_report, iom_submit_report
+)
+
     giz_migration_governance, giz_reintegration, giz_protection
 )
 
@@ -55,6 +60,12 @@ urlpatterns = [
     path("reports/giz/migration-governance/", giz_migration_governance, name="giz_migration_governance"),
     path("reports/giz/reintegration/", giz_reintegration, name="giz_reintegration"),
     path("reports/giz/protection/", giz_protection, name="giz_protection"),
+    path("reports/iom/migration-management/", iom_migration_management, name="iom_migration_management"),
+    path("reports/iom/avr/", iom_avr_report, name="iom_avr_report"),
+    path("reports/iom/counter-trafficking/", iom_counter_trafficking_report, name="iom_counter_trafficking"),
+    path("reports/iom/capacity-building/", iom_capacity_building_report, name="iom_capacity_building"),
+    path("reports/iom/<int:pk>/submit/", iom_submit_report, name="iom_submit_report"),
+
 
     path('', TemplateView.as_view(template_name='landing.html'), name='home'),
     path("api/version/", api_version_info, name="api-version"),
