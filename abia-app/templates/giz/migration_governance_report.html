@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GIZ Migration Governance Report | Abia Migration Observatory</title>
+<style>
+:root{--giz:#005c3c;--bg:#f5f5f5;--card:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#333;line-height:1.6}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.header{background:linear-gradient(135deg,var(--giz),#007a4d);color:#fff;padding:30px;border-radius:12px;margin-bottom:24px}
+.header h1{font-size:1.8rem;margin-bottom:8px}
+.programme-tag{display:inline-block;background:rgba(255,255,255,.2);padding:4px 12px;border-radius:4px;font-size:.8rem;margin-top:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-bottom:24px}
+.card{background:var(--card);border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-top:4px solid var(--giz)}
+.card h3{color:var(--giz);font-size:1.05rem;margin-bottom:16px}
+.indicator{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0f0f0}
+.indicator-label{font-size:.9rem;color:#555}
+.indicator-value{font-size:1.4rem;font-weight:700;color:var(--giz)}
+.progress-bar{height:8px;background:#e9ecef;border-radius:4px;margin-top:6px;overflow:hidden}
+.progress-fill{height:100%;background:var(--giz);border-radius:4px}
+.section-title{color:var(--giz);font-size:1.2rem;margin:24px 0 16px;padding-bottom:8px;border-bottom:2px solid #ddd}
+.lga-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.lga-chip{background:#e8f5e9;padding:10px 16px;border-radius:8px;display:flex;justify-content:space-between}
+.lga-chip .name{font-weight:600;color:var(--giz);font-size:.9rem}
+.lga-chip .count{font-size:1.1rem;font-weight:700;color:#2e7d32}
+.actions{display:flex;gap:12px;margin-top:24px}
+.btn{padding:12px 24px;border:none;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;color:#fff}
+.btn-giz{background:var(--giz)}.btn-outline{background:#fff;color:var(--giz);border:2px solid var(--giz)}
+.footer{text-align:center;padding:20px;color:#888;font-size:.85rem;margin-top:40px}
+@media print{.actions{display:none}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>GIZ Programme Report &mdash; Migration Governance</h1>
+    <p style="opacity:.9;font-size:.95rem">Abia State Migration Observatory | Reporting Period: {{ report.reporting_period }}</p>
+    <span class="programme-tag">Global Programme Centres for Migration & Development</span>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h3>Core Indicators</h3>
+      {% for key, value in report.indicators.items %}
+      <div class="indicator"><span class="indicator-label">{{ key|title }}</span><span class="indicator-value">{{ value|default:0 }}</span></div>
+      {% endfor %}
+    </div>
+    <div class="card">
+      <h3>Data Quality</h3>
+      <div class="indicator"><span class="indicator-label">Quality Score</span><span class="indicator-value">{{ report.indicators.data_quality_score|default:"N/A" }}%</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:{{ report.indicators.data_quality_score|default:0 }}%"></div></div>
+      <div class="indicator" style="margin-top:16px"><span class="indicator-label">LGAs Covered</span><span class="indicator-value">{{ report.indicators.lgas_covered|default:0 }}/17</span></div>
+    </div>
+  </div>
+  <h2 class="section-title">Breakdown by LGA</h2>
+  <div class="lga-grid">
+    {% for item in report.breakdown_by_lga %}
+    <div class="lga-chip"><span class="name">{{ item.current_lga__name|default:item.lga }}</span><span class="count">{{ item.count }}</span></div>
+    {% empty %}<p style="color:#888;grid-column:1/-1;text-align:center">No LGA data available</p>{% endfor %}
+  </div>
+  <div class="actions">
+    <button class="btn btn-giz" onclick="window.print()">Export PDF</button>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline">Dashboard</a>
+  </div>
+  <div class="footer">
+    <p>Abia State Migration Observatory | GIZ Global Programme</p>
+    <p>Contract v1.1.0 compliant | Automated reporting pipeline</p>
+  </div>
+</div>
+</body>
+</html>
