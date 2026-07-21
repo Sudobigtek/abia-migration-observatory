@@ -2,7 +2,7 @@ import pytest
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 from abia.accounts.models import User
-from abia.migrants.models import Migrant, LGA
+from abia.migrants.models import Migrant
 from abia.cases.models import Case
 from abia.referrals.models import Referral
 

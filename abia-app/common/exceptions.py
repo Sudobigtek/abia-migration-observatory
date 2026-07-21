@@ -1,109 +1,77 @@
-"""Custom domain exceptions for the Abia Migration Observatory."""
-
 
 class AbiaBaseException(Exception):
-    """Base for all platform-specific exceptions."""
-
-    pass
-
-
-class LGAAccessDenied(AbiaBaseException):
-    """Raised when a user attempts to access data outside their LGA scope."""
-
-    pass
-
-
-class UserNotFoundError(AbiaBaseException):
-    """Raised when a requested user does not exist."""
-
-    pass
+    def __init__(self, message, code="abia_error", status_code=500):
+        super().__init__(message)
+        self.message = message
+        self.code = code
+        self.status_code = status_code
 
 
 class LGANotFoundError(AbiaBaseException):
-    """Raised when a requested LGA does not exist."""
-
-    pass
-
-
-class ReferralNotFoundError(AbiaBaseException):
-    """Raised when a requested referral does not exist."""
-
-    pass
+    def __init__(self, identifier):
+        super().__init__(f"LGA not found: {identifier}", "lga_not_found", 404)
 
 
-class SelfReferralError(AbiaBaseException):
-    """Raised when a referral origin and destination are the same LGA."""
-
-    pass
-
-
-class InvalidReferralStatusError(AbiaBaseException):
-    """Raised when a referral status transition is invalid."""
-
-    def __init__(self, current: str, new: str) -> None:
-        self.current = current
-        self.new = new
-        super().__init__(f"Invalid transition from '{current}' to '{new}'")
+class LGAAccessDenied(AbiaBaseException):
+    def __init__(self, message="Access denied"):
+        super().__init__(message, "lga_access_denied", 403)
 
 
-class CaseNotFoundError(AbiaBaseException):
-    """Raised when a requested case does not exist."""
-
-    pass
-
-
-class InvalidCaseStatusError(AbiaBaseException):
-    """Raised when a case status transition is invalid."""
-
-    def __init__(self, current: str, new: str) -> None:
-        self.current = current
-        self.new = new
-        super().__init__(f"Invalid transition from '{current}' to '{new}'")
-
-
-class InvalidStatusTransitionError(AbiaBaseException):
-    """Alias for InvalidCaseStatusError (expected by tests)."""
-
-    pass
-
-
-class InvalidPriorityError(AbiaBaseException):
-    """Raised when a case priority is not valid."""
-
-    pass
+class UserNotFoundError(AbiaBaseException):
+    def __init__(self, uid):
+        super().__init__(f"User not found: {uid}", "user_not_found", 404)
 
 
 class InvalidRoleError(AbiaBaseException):
-    """Raised when a user role is not valid."""
-
-    pass
-
-
-class DuplicateSubmissionError(AbiaBaseException):
-    """Raised when an ODK submission with the same ID has already been processed."""
-
-    pass
-
-
-class InvalidGPSDataError(AbiaBaseException):
-    """Raised when GPS coordinates from an ODK submission are malformed or out of bounds."""
-
-    pass
+    def __init__(self, role):
+        super().__init__(f"Invalid role: {role}", "invalid_role", 422)
 
 
 class MigrantNotFoundError(AbiaBaseException):
-    """Raised when a requested migrant does not exist."""
-
-    pass
+    def __init__(self, mid):
+        super().__init__(f"Migrant not found: {mid}", "migrant_not_found", 404)
 
 
 class DuplicateMigrantError(AbiaBaseException):
-    """Raised when a migrant with the same phone already exists."""
-
-    pass
+    def __init__(self, phone):
+        super().__init__(f"Migrant with phone {phone} already exists", "duplicate_migrant", 409)
 
 
 class InvalidPhoneError(AbiaBaseException):
-    """Raised when a phone number format is invalid."""
+    def __init__(self, phone):
+        super().__init__(f"Invalid phone number: {phone}", "invalid_phone", 422)
 
-    pass
+
+class CaseNotFoundError(AbiaBaseException):
+    def __init__(self, cid):
+        super().__init__(f"Case not found: {cid}", "case_not_found", 404)
+
+
+class InvalidStatusTransitionError(AbiaBaseException):
+    def __init__(self, fr, to):
+        super().__init__(f"Invalid transition: {fr} -> {to}", "invalid_status_transition", 422)
+
+
+class InvalidPriorityError(AbiaBaseException):
+    def __init__(self, p):
+        super().__init__(f"Invalid priority: {p}", "invalid_priority", 422)
+
+
+class ReferralNotFoundError(AbiaBaseException):
+    def __init__(self, rid):
+        super().__init__(f"Referral not found: {rid}", "referral_not_found", 404)
+
+
+class InvalidReferralStatusError(AbiaBaseException):
+    def __init__(self, fr, to):
+        super().__init__(f"Invalid referral transition: {fr} -> {to}", "invalid_referral_status", 422)
+
+
+class SelfReferralError(AbiaBaseException):
+    def __init__(self, lga_id):
+        super().__init__(f"Cannot create referral within same LGA: {lga_id}", "self_referral", 422)
+
+
+class ValidationError(AbiaBaseException):
+    def __init__(self, message, field=None):
+        super().__init__(f"Validation error: {message}", "validation_error", 400)

@@ -34,3 +34,6 @@ class BusinessRuleViolation(AbiaBaseException):
 class SyncError(AbiaBaseException):
     """Raised when external sync operation fails."""
     pass
+
+class InvalidGPSDataError(Exception):
+    pass
