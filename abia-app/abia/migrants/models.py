@@ -43,6 +43,22 @@ class Migrant(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
+    registration_id = models.CharField(max_length=20, unique=True, blank=True, null=True, db_index=True)
+    marital_status = models.CharField(max_length=20, blank=True, choices=[("single", "Single"), ("married", "Married"), ("widowed", "Widowed"), ("divorced", "Divorced"), ("separated", "Separated")])
+    has_children = models.BooleanField(default=False)
+    number_of_children = models.PositiveIntegerField(default=0)
+    education_level = models.CharField(max_length=30, blank=True, choices=[("none", "No Formal Education"), ("informal", "Informal Education"), ("primary", "Primary"), ("secondary", "Secondary"), ("tertiary", "Tertiary")])
+    current_state = models.CharField(max_length=100, blank=True)
+    current_city = models.CharField(max_length=100, blank=True)
+    current_lga_text = models.CharField(max_length=100, blank=True)
+    health_condition = models.CharField(max_length=200, blank=True)
+    emergency_contact_name = models.CharField(max_length=200, blank=True)
+    emergency_contact_relationship = models.CharField(max_length=100, blank=True)
+    emergency_contact_phone = models.CharField(max_length=20, blank=True)
+    purpose_of_migration = models.CharField(max_length=50, blank=True, choices=[("work", "Work / Employment"), ("business", "Business / Trade"), ("education", "Education"), ("family", "Family Reunion"), ("refugee", "Refugee / Asylum"), ("other", "Other")])
+    source = models.CharField(max_length=50, default="admin", choices=[("admin", "Admin"), ("self_service", "Self-Service Portal"), ("import", "Bulk Import")])
+
     def clean(self):
         from django.core.exceptions import ValidationError
 

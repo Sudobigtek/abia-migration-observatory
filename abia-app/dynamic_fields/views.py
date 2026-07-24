@@ -34,11 +34,11 @@ class DynamicFieldDefinitionViewSet(viewsets.ModelViewSet):
 
 
 class EntityDynamicDataViewSet(viewsets.ModelViewSet):
-    queryset = EntityDynamicData.objects.select_related('field_definition')
+    queryset = EntityDynamicData.objects.select_related()
     serializer_class = EntityDynamicDataSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['entity_type', 'entity_id', 'field_definition']
+    filterset_fields = ['entity_type', 'entity_id']
     search_fields = ['value_text']
     ordering_fields = ['created_at', 'updated_at']
 
@@ -69,7 +69,7 @@ class EntityDynamicDataViewSet(viewsets.ModelViewSet):
         created, updated, errors = [], [], []
 
         for field_data in fields:
-            field_def_id = field_data.get('field_definition')
+            field_def_id = field_data.get()
             if not field_def_id:
                 errors.append({'error': 'field_definition ID missing', 'data': field_data})
                 continue

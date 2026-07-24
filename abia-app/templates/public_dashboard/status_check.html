@@ -1,0 +1,59 @@
+{% extends "public_dashboard/base_public.html" %}
+{% block title %}Status Check | Abia Migration Observatory{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;">
+                    <i class="bi bi-search fs-2"></i>
+                </div>
+                <h3 class="mb-1">Check Your Status</h3>
+                <p class="text-muted">Enter your tracking ID to view the current status of your case or registration.</p>
+            </div>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">{{ form.check_type.label }}</label>
+                    {{ form.check_type }}
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">{{ form.tracking_id.label }}</label>
+                    {{ form.tracking_id }}
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-search me-2"></i>Check Status
+                    </button>
+                </div>
+            </form>
+
+            {% if result %}
+            <hr class="my-4">
+            <div class="card bg-light border-0">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-clipboard-check me-2 text-success"></i>Result Found</h5>
+                    {% if result.type == "case" %}
+                        <div class="row g-2">
+                            <div class="col-6"><strong>Tracking ID:</strong></div><div class="col-6">{{ result.tracking_id }}</div>
+                            <div class="col-6"><strong>Status:</strong></div><div class="col-6"><span class="badge bg-{% if result.status == 'resolved' %}success{% elif result.status == 'open' %}warning{% else %}secondary{% endif %}">{{ result.status|title }}</span></div>
+                            <div class="col-6"><strong>Priority:</strong></div><div class="col-6"><span class="badge bg-{% if result.priority == 'critical' %}danger{% elif result.priority == 'high' %}warning text-dark{% else %}info{% endif %}">{{ result.priority|title }}</span></div>
+                            <div class="col-6"><strong>Case Type:</strong></div><div class="col-6">{{ result.case_type|title }}</div>
+                            <div class="col-6"><strong>Created:</strong></div><div class="col-6">{{ result.created_at|date:"M d, Y" }}</div>
+                        </div>
+                    {% else %}
+                        <div class="row g-2">
+                            <div class="col-6"><strong>Registration ID:</strong></div><div class="col-6">{{ result.tracking_id }}</div>
+                            <div class="col-6"><strong>Full Name:</strong></div><div class="col-6">{{ result.full_name }}</div>
+                            <div class="col-6"><strong>Status:</strong></div><div class="col-6"><span class="badge bg-success">{{ result.status|title }}</span></div>
+                            <div class="col-6"><strong>LGA:</strong></div><div class="col-6">{{ result.current_lga|default:"Not specified" }}</div>
+                            <div class="col-6"><strong>Registered:</strong></div><div class="col-6">{{ result.registered_at|date:"M d, Y" }}</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

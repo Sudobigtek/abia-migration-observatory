@@ -1,0 +1,16 @@
+{% load i18n %}
+<form method="get" class="form-inline">
+  {% if filter.form.non_field_errors %}
+    <div class="alert alert-danger">{{ filter.form.non_field_errors }}</div>
+  {% endif %}
+  {% for field in filter.form.visible_fields %}
+    <div class="form-group mb-2 mr-sm-2">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text }}</small>{% endif %}
+      {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit" class="btn btn-primary mb-2">{% trans "Filter" %}</button>
+  <a href="{{ request.path }}" class="btn btn-outline-secondary mb-2 ml-2">{% trans "Clear" %}</a>
+</form>

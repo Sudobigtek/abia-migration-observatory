@@ -137,6 +137,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
@@ -284,3 +285,16 @@ CSRF_TRUSTED_ORIGINS = [
     "https://abia-migration.gov.ng",
 ]
 USE_X_FORWARDED_HOST = True
+
+# HTTPSMS Configuration
+HTTPSMS_API_KEY = os.environ.get("HTTPSMS_API_KEY", "")
+HTTPSMS_SENDER_ID = os.environ.get("HTTPSMS_SENDER_ID", "AbiaObs")
+
+# Celery Beat Schedule
+from celery.schedules import crontab
+CELERY_BEAT_SCHEDULE = {
+    "daily-digest": {
+        "task": "abia.notifications.tasks.send_daily_digest",
+        "schedule": crontab(hour=8, minute=0),
+    },
+}

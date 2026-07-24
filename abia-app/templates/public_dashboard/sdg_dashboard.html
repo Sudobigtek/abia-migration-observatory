@@ -1,0 +1,159 @@
+{% extends "public_dashboard/base_public.html" %}
+{% block title %}SDG & GCM Alignment | Abia Migration Observatory{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="mb-1"><i class="bi bi-bullseye me-2"></i>SDG & GCM Alignment</h1>
+        <p class="mb-0 opacity-75">Tracking progress against UN Sustainable Development Goals and Global Compact for Migration objectives</p>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <span class="badge bg-light text-dark border">
+        <i class="bi bi-clock me-1"></i>Last updated: {{ sdg_data.last_updated|date:"M d, Y H:i" }}
+    </span>
+</div>
+
+<h4 class="mb-3 text-success"><i class="bi bi-globe me-2"></i>Sustainable Development Goals</h4>
+<div class="row g-4 mb-5">
+    <div class="col-md-6">
+        <div class="card p-4 h-100">
+            <div class="d-flex align-items-center mb-3">
+                <span class="badge badge-sdg fs-6 me-2">8</span>
+                <h6 class="mb-0 fw-bold">Decent Work and Economic Growth</h6>
+            </div>
+            <p class="small text-muted mb-2">{{ sdg_data.sdg_8.target }}</p>
+            <div class="d-flex justify-content-between align-items-end mb-2">
+                <span class="small text-muted">{{ sdg_data.sdg_8.metric }}</span>
+                <span class="h4 mb-0 text-success">{{ sdg_data.sdg_8.value }} <small class="fs-6 text-muted">/ {{ sdg_data.sdg_8.total }}</small></span>
+            </div>
+            <div class="progress mb-1"><div class="progress-bar" style="width: {{ sdg_data.sdg_8.percentage }}%"></div></div>
+            <small class="text-muted">{{ sdg_data.sdg_8.percentage }}% coverage</small>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-4 h-100">
+            <div class="d-flex align-items-center mb-3">
+                <span class="badge badge-sdg fs-6 me-2">10</span>
+                <h6 class="mb-0 fw-bold">Reduced Inequalities</h6>
+            </div>
+            <p class="small text-muted mb-2">{{ sdg_data.sdg_10.target }}</p>
+            <div class="d-flex justify-content-between align-items-end mb-2">
+                <span class="small text-muted">{{ sdg_data.sdg_10.metric }}</span>
+                <span class="h4 mb-0 text-success">{{ sdg_data.sdg_10.total_cases }}</span>
+            </div>
+            <div class="progress mb-1"><div class="progress-bar" style="width: 100%"></div></div>
+            <small class="text-muted">{{ sdg_data.sdg_10.breakdown|length }} case types tracked</small>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-4 h-100">
+            <div class="d-flex align-items-center mb-3">
+                <span class="badge badge-sdg fs-6 me-2">16</span>
+                <h6 class="mb-0 fw-bold">Peace, Justice and Strong Institutions</h6>
+            </div>
+            <p class="small text-muted mb-2">{{ sdg_data.sdg_16.target }}</p>
+            <div class="d-flex justify-content-between align-items-end mb-2">
+                <span class="small text-muted">{{ sdg_data.sdg_16.metric }}</span>
+                <span class="h4 mb-0 text-success">{{ sdg_data.sdg_16.resolved }} <small class="fs-6 text-muted">/ {{ sdg_data.sdg_16.total }}</small></span>
+            </div>
+            <div class="progress mb-1"><div class="progress-bar" style="width: {{ sdg_data.sdg_16.percentage }}%"></div></div>
+            <small class="text-muted">{{ sdg_data.sdg_16.percentage }}% resolution rate</small>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-4 h-100">
+            <div class="d-flex align-items-center mb-3">
+                <span class="badge badge-sdg fs-6 me-2">17</span>
+                <h6 class="mb-0 fw-bold">Partnerships for the Goals</h6>
+            </div>
+            <p class="small text-muted mb-2">{{ sdg_data.sdg_17.target }}</p>
+            <div class="d-flex justify-content-between align-items-end mb-2">
+                <span class="small text-muted">{{ sdg_data.sdg_17.metric }}</span>
+                <span class="h4 mb-0 text-success">{{ sdg_data.sdg_17.value }}</span>
+            </div>
+            <div class="progress mb-1"><div class="progress-bar" style="width: 100%"></div></div>
+            <small class="text-muted">{{ sdg_data.sdg_17.period }}</small>
+        </div>
+    </div>
+</div>
+
+<h4 class="mb-3 text-primary"><i class="bi bi-shield-check me-2"></i>Global Compact for Migration</h4>
+<div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+        <div class="card p-4 h-100">
+            <div class="d-flex align-items-center mb-3">
+                <span class="badge badge-gcm fs-6 me-2">1</span>
+                <h6 class="mb-0 fw-bold">Accurate & Disaggregated Data</h6>
+            </div>
+            <p class="small text-muted mb-2">{{ sdg_data.gcm_1.objective }}</p>
+            <div class="d-flex justify-content-between align-items-end mb-2">
+                <span class="small text-muted">{{ sdg_data.gcm_1.metric }}</span>
+                <span class="h4 mb-0 text-primary">{{ sdg_data.gcm_1.complete_profiles }} <small class="fs-6 text-muted">/ {{ sdg_data.gcm_1.total_registered }}</small></span>
+            </div>
+            <div class="progress mb-1"><div class="progress-bar bg-primary" style="width: {{ sdg_data.gcm_1.percentage }}%"></div></div>
+            <small class="text-muted">{{ sdg_data.gcm_1.percentage }}% complete profiles</small>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card p-4 h-100">
+            <div class="d-flex align-items-center mb-3">
+                <span class="badge badge-gcm fs-6 me-2">3</span>
+                <h6 class="mb-0 fw-bold">Accurate Information</h6>
+            </div>
+            <p class="small text-muted mb-2">{{ sdg_data.gcm_3.objective }}</p>
+            <div class="d-flex justify-content-between align-items-end mb-2">
+                <span class="small text-muted">{{ sdg_data.gcm_3.metric }}</span>
+                <span class="h4 mb-0 text-primary">{{ sdg_data.gcm_3.with_contact }} <small class="fs-6 text-muted">/ {{ sdg_data.gcm_3.total }}</small></span>
+            </div>
+            <div class="progress mb-1"><div class="progress-bar bg-primary" style="width: {{ sdg_data.gcm_3.percentage }}%"></div></div>
+            <small class="text-muted">{{ sdg_data.gcm_3.percentage }}% with contact info</small>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card p-4 h-100">
+            <div class="d-flex align-items-center mb-3">
+                <span class="badge badge-gcm fs-6 me-2">7</span>
+                <h6 class="mb-0 fw-bold">Reduce Vulnerabilities</h6>
+            </div>
+            <p class="small text-muted mb-2">{{ sdg_data.gcm_7.objective }}</p>
+            <div class="d-flex justify-content-between align-items-end mb-2">
+                <span class="small text-muted">{{ sdg_data.gcm_7.metric }}</span>
+                <span class="h4 mb-0 text-primary">{{ sdg_data.gcm_7.vulnerable_cases }} <small class="fs-6 text-muted">/ {{ sdg_data.gcm_7.total_cases }}</small></span>
+            </div>
+            <div class="progress mb-1"><div class="progress-bar bg-primary" style="width: {{ sdg_data.gcm_7.percentage }}%"></div></div>
+            <small class="text-muted">{{ sdg_data.gcm_7.percentage }}% high/critical priority</small>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card p-4 h-100">
+            <div class="d-flex align-items-center mb-3">
+                <span class="badge badge-gcm fs-6 me-2">15</span>
+                <h6 class="mb-0 fw-bold">Access to Basic Services</h6>
+            </div>
+            <p class="small text-muted mb-2">{{ sdg_data.gcm_15.objective }}</p>
+            <div class="d-flex justify-content-between align-items-end mb-2">
+                <span class="small text-muted">{{ sdg_data.gcm_15.metric }}</span>
+                <span class="h4 mb-0 text-primary">{{ sdg_data.gcm_15.resolved }} <small class="fs-6 text-muted">/ {{ sdg_data.gcm_15.total }}</small></span>
+            </div>
+            <div class="progress mb-1"><div class="progress-bar bg-primary" style="width: {{ sdg_data.gcm_15.percentage }}%"></div></div>
+            <small class="text-muted">{{ sdg_data.gcm_15.percentage }}% service delivery rate</small>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card p-4 h-100">
+            <div class="d-flex align-items-center mb-3">
+                <span class="badge badge-gcm fs-6 me-2">23</span>
+                <h6 class="mb-0 fw-bold">Return & Reintegration</h6>
+            </div>
+            <p class="small text-muted mb-2">{{ sdg_data.gcm_23.objective }}</p>
+            <div class="d-flex justify-content-between align-items-end mb-2">
+                <span class="small text-muted">{{ sdg_data.gcm_23.metric }}</span>
+                <span class="h4 mb-0 text-primary">{{ sdg_data.gcm_23.returnee_cases }} <small class="fs-6 text-muted">/ {{ sdg_data.gcm_23.total_cases }}</small></span>
+            </div>
+            <div class="progress mb-1"><div class="progress-bar bg-primary" style="width: {{ sdg_data.gcm_23.percentage }}%"></div></div>
+            <small class="text-muted">{{ sdg_data.gcm_23.percentage }}% returnee cases</small>
+        </div>
+    </div>
+</div>
+{% endblock %}

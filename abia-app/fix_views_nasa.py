@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+"""NASA-PRECISION FIX — views.py newline restoration.
+
+Run: python3 fix_views_nasa.py
+"""
+import os
+import time
+
+BASE = "/home/abia/abia-migration-observatory/abia-app"
+VIEWS_PATH = os.path.join(BASE, "abia/public_dashboard/views.py")
+
+# Content as list of lines — ZERO escaping issues
+# Lines use appropriate quote style to avoid conflicts
+LINES = [
+    '"""Controller layer for public dashboard."""',
+    'import time',
+    'from django.shortcuts import render, redirect',
+    'from django.contrib import messages',
+    'from django.http import JsonResponse',
+    'from .forms import PublicFeedbackForm, MigrantRegistrationForm, StatusCheckForm',
+    'from .services import DashboardService, MapService',
+    'from .exceptions import FeedbackSubmissionError',
+    '',
+    '',
+    'def public_dashboard(request):',
+    '    """Render public-facing migration dashboard. No auth required."""',
+    '    context = DashboardService.get_dashboard_context()',
+    "    return render(request, 'public_dashboard/dashboard.html', context)",
+    '',
+    '',
+    'def public_map_data(request):',
+    '    """Return GeoJSON data for public map."""',
+    '    geojson = MapService.get_geojson()',
+    '    return JsonResponse(geojson)',
+    '',
+    '',
+    'def public_feedback(request):',
+    '    """Handle public feedback form submission with security hardening."""',
+    '    from .security import HardenedFeedbackService',
+    '',
+    "    if request.method == 'GET':",
+    "        request.session['feedback_form_load_time'] = time.time()",
+    '',
+    "    if request.method == 'POST':",
+    '        form = PublicFeedbackForm(request.POST)',
+    '        if form.is_valid():',
+    '            try:',
+    '                session_data = {',
+    "                    'feedback_form_load_time': request.session.get(",
+    "                        'feedback_form_load_time'",
+    '                    )',
+    '                }',
+    '                result = HardenedFeedbackService.submit_feedback(',
+    '                    form.cleaned_data, request, session_data',
+    '                )',
+    "                if result['ambush_detected']:",
+    '                    messages.warning(',
+    '                        request,',
+    '                        f"Feedback received. Tracking ID: {result[\'tracking_id\']}. "',
+    '                        f"SECURITY ALERT: Ambush indicators detected. "',
+    '                        f"Case flagged for immediate security review."',
+    '                    )',
+    "                elif result['requires_review']:",
+    '                    messages.warning(',
+    '                        request,',
+    '                        f"Feedback received. Tracking ID: {result[\'tracking_id\']}. "',
+    '                        f"Your submission has been flagged for security review."',
+    '                    )',
+    '                else:',
+    '                    messages.success(',
+    '                        request,',
+    '                        f"Thank you! Tracking ID: {result[\'tracking_id\']}"',
+    '                    )',
+    "                return redirect('public_dashboard:feedback_success')",
+    '            except FeedbackSubmissionError as exc:',
+    '                messages.error(request, str(exc))',
+    '    else:',
+    '        form = PublicFeedbackForm()',
+    '',
+    "    return render(request, 'public_dashboard/feedback.html', {'form': form})",
+    '',
+    '',
+    'def feedback_success(request):',
+    '    """Render feedback submission success page."""',
+    "    return render(request, 'public_dashboard/feedback_success.html')",
+    '',
+    '',
+    'def sdg_dashboard(request):',
+    '    """Render SDG alignment dashboard."""',
+    '    from .sdg import SDGCalculator',
+    '    return render(',
+    "        request,",
+    "        'public_dashboard/sdg_dashboard.html',",
+    '        {\'sdg_data\': SDGCalculator.calculate_all()}',
+    '    )',
+    '',
+    '',
+    'def migrant_register(request):',
+    '    """Handle migrant self-registration."""',
+    '    from .self_service import MigrantSelfService',
+    '',
+    "    if request.method == 'POST':",
+    '        form = MigrantRegistrationForm(request.POST)',
+    '        if form.is_valid():',
+    '            reg_id = MigrantSelfService.register_migrant(form.cleaned_data)',
+    '            messages.success(',
+    '                request,',
+    '                f"Registration successful! Your ID: {reg_id}"',
+    '            )',
+    "            return redirect('public_dashboard:registration_success')",
+    '    else:',
+    '        form = MigrantRegistrationForm()',
+    '',
+    "    return render(",
+    "        request, 'public_dashboard/migrant_register.html', {'form': form}",
+    '    )',
+    '',
+    '',
+    'def registration_success(request):',
+    '    """Render registration success page."""',
+    "    return render(request, 'public_dashboard/registration_success.html')",
+    '',
+    '',
+    'def status_check(request):',
+    '    """Check case or registration status by tracking ID."""',
+    '    from .self_service import MigrantSelfService',
+    '',
+    '    result = None',
+    "    if request.method == 'POST':",
+    '        form = StatusCheckForm(request.POST)',
+    '        if form.is_valid():',
+    '            data = form.cleaned_data',
+    "            if data['check_type'] == 'case':",
+    '                result = MigrantSelfService.check_case_status(',
+    "                    data['tracking_id']",
+    '                )',
+    '            else:',
+    '                result = MigrantSelfService.check_registration_status(',
+    "                    data['tracking_id']",
+    '                )',
+    '            if not result:',
+    "                messages.error(request, 'No record found with that ID.')",
+    '    else:',
+    '        form = StatusCheckForm()',
+    '',
+    '    return render(',
+    '        request,',
+    "        'public_dashboard/status_check.html',",
+    '        {\'form\': form, \'result\': result}',
+    '    )',
+]
+
+# Backup existing file
+if os.path.exists(VIEWS_PATH):
+    backup_path = VIEWS_PATH + '.backup.' + str(int(time.time()))
+    with open(VIEWS_PATH, 'r') as f:
+        old = f.read()
+    with open(backup_path, 'w') as f:
+        f.write(old)
+    print(f"[OK] Backup created: {os.path.basename(backup_path)}")
+
+# Write clean file with actual newlines
+os.makedirs(os.path.dirname(VIEWS_PATH), exist_ok=True)
+with open(VIEWS_PATH, 'w') as f:
+    f.write(os.linesep.join(LINES))
+    f.write(os.linesep)
+
+# Verify
+with open(VIEWS_PATH, 'r') as f:
+    written = f.read()
+
+if '\\n' in written:
+    print("[FAIL] File still contains literal \\n")
+    exit(1)
+
+line_count = written.count('\n')
+print(f"[OK] views.py written: {len(written)} bytes, {line_count} lines")
+print("[OK] Zero literal \\n — all newlines are actual newlines")
+print("[OK] Ready: python3 manage.py runserver")
+

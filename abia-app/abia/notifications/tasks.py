@@ -1,119 +1,152 @@
+"""Notification Celery tasks."""
+
+import requests
 from celery import shared_task
-from django.core.mail import send_mail
 from django.conf import settings
-from .models import Notification, NotificationPreference
+from django.core.mail import send_mail
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+
+User = get_user_model()
 
 
 @shared_task
-def send_email_notification(notification_id):
-    """Send email notification asynchronously."""
-    try:
-        notif = Notification.objects.get(id=notification_id)
-        pref = NotificationPreference.objects.filter(user=notif.recipient).first()
-        
-        if pref and not pref.email_enabled:
-            return {'status': 'skipped', 'reason': 'email_disabled'}
-        
-        send_mail(
-            subject=notif.title,
-            message=notif.message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[notif.recipient.email],
-            fail_silently=False
-        )
-        
-        import django.utils.timezone
-        notif.status = 'sent'
-        notif.sent_at = django.utils.timezone.now()
-        notif.save()
-        return {'status': 'sent', 'notification_id': str(notification_id)}
-    except Exception as e:
-        notif.status = 'failed'
-        notif.save()
-        return {'status': 'failed', 'error': str(e)}
+def send_sms_alert(phone_number, message):
+    """Send SMS via HTTPSMS API."""
+    if not getattr(settings, "HTTPSMS_API_KEY", None):
+        return {
+            "status": "skipped",
+            "reason": "HTTPSMS_API_KEY not configured",
+        }
 
-
-@shared_task
-def notify_case_critical(case_id, case_title):
-    """Notify relevant users when a case is marked critical."""
-    from abia.cases.models import Case
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-    
-    case = Case.objects.get(id=case_id)
-    users = User.objects.filter(role__in=['state_admin', 'super_admin']) | User.objects.filter(id=case.assigned_to_id)
-    
-    for user in users.distinct():
-        notif = Notification.objects.create(
-            recipient=user,
-            notification_type='case_critical',
-            channel='email',
-            title=f'CRITICAL: Case #{case_id}',
-            message=f'Case "{case_title}" has been marked as CRITICAL priority. Immediate attention required.',
-            related_object_type='case',
-            related_object_id=case_id
-        )
-        send_email_notification.delay(str(notif.id))
-
-
-@shared_task
-def notify_referral_status_change(referral_id, old_status, new_status):
-    """Notify when referral status changes."""
-    from abia.referrals.models import Referral
-    ref = Referral.objects.select_related('migrant', 'referred_by').get(id=referral_id)
-    
-    notif = Notification.objects.create(
-        recipient=ref.referred_by,
-        notification_type=f'referral_{new_status}',
-        channel='in_app',
-        title=f'Referral {new_status.title()}',
-        message=f'Referral for {ref.migrant.full_name} has been {new_status}.',
-        related_object_type='referral',
-        related_object_id=referral_id
+    resp = requests.post(
+        "https://api.httpsms.com/v1/messages",
+        headers={
+            "Authorization": f"Bearer {settings.HTTPSMS_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "phone_number": phone_number,
+            "content": message,
+            "sender_id": getattr(settings, "HTTPSMS_SENDER_ID", "AbiaObs"),
+        },
+        timeout=30,
     )
-    if new_status in ['accepted', 'completed']:
-        send_email_notification.delay(str(notif.id))
+    return {
+        "status": "sent" if resp.status_code == 200 else "failed",
+        "response": resp.text,
+    }
 
 
 @shared_task
-def notify_high_risk(migrant_id, risk_score, risk_level):
-    """Alert when a migrant gets a high/critical risk score."""
-    from abia.migrants.models import Migrant
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-    
-    migrant = Migrant.objects.get(id=migrant_id)
-    users = User.objects.filter(role__in=['state_admin', 'super_admin', 'lga_coordinator'])
-    
-    for user in users.distinct():
-        notif = Notification.objects.create(
-            recipient=user,
-            notification_type=f'risk_{risk_level}',
-            channel='email',
-            title=f'{risk_level.upper()} RISK: {migrant.full_name}',
-            message=f'Migrant {migrant.full_name} has been assessed with {risk_level.upper()} risk (score: {risk_score}). Immediate review required.',
-            related_object_type='migrant',
-            related_object_id=migrant_id
+def send_case_overdue_alert(case_id):
+    """Notify case assignee when case is overdue."""
+    from abia.cases.models import Case
+
+    try:
+        case = Case.objects.select_related("assigned_to").get(id=case_id)
+    except Case.DoesNotExist:
+        return
+
+    if not case.assigned_to:
+        return
+
+    assignee = case.assigned_to
+    msg = (
+        f"[Abia Observatory] Case #{case.id} ({case.title}) "
+        f"is OVERDUE. Priority: {case.priority}. Please update status."
+    )
+
+    if assignee.phone_number:
+        send_sms_alert.delay(assignee.phone_number, msg)
+
+    if assignee.email:
+        send_mail(
+            subject=f"Overdue Case Alert — #{case.id}",
+            message=(
+                f"Case #{case.id}: {case.title} is overdue.\n"
+                f"Priority: {case.priority}\n"
+                f"Please update status in the dashboard."
+            ),
+            from_email=getattr(
+                settings,
+                "DEFAULT_FROM_EMAIL",
+                "alerts@abia-migration.gov.ng",
+            ),
+            recipient_list=[assignee.email],
+            fail_silently=True,
         )
-        send_email_notification.delay(str(notif.id))
+
+
+@shared_task
+def send_hotspot_alert(hotspot_id):
+    """Send critical hotspot alert to all field officers."""
+    from abia.hotspot.models import HotspotAlert
+
+    try:
+        hotspot = HotspotAlert.objects.select_related("lga").get(
+            id=hotspot_id
+        )
+    except HotspotAlert.DoesNotExist:
+        return
+
+    if hotspot.severity != "critical":
+        return
+
+    officers = User.objects.filter(
+        role="field_officer", is_active=True
+    )
+    lga_name = hotspot.lga.name if hotspot.lga else "Unknown LGA"
+    affected = hotspot.estimated_affected or "Unknown"
+
+    msg = (
+        f"[CRITICAL HOTSPOT] {hotspot.title} in {lga_name}. "
+        f"Severity: CRITICAL. Affected: {affected}. "
+        f"Check dashboard immediately."
+    )
+
+    for officer in officers:
+        if officer.phone_number:
+            send_sms_alert.delay(officer.phone_number, msg)
 
 
 @shared_task
 def send_daily_digest():
-    """Send daily summary of pending items to users."""
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-    
-    for pref in NotificationPreference.objects.filter(daily_digest=True, email_enabled=True):
-        pending_notifs = Notification.objects.filter(
-            recipient=pref.user, status__in=['pending', 'sent'], created_at__date=__import__('django.utils.timezone').utils.timezone.now().date()
-        )
-        if pending_notifs.exists():
-            summary = "\n".join([f"- {n.title}" for n in pending_notifs[:10]])
+    """Send daily summary email to coordinators."""
+    from abia.migrants.models import Migrant
+    from abia.cases.models import Case
+    from abia.referrals.models import Referral
+    from abia.hotspot.models import HotspotAlert
+
+    coordinators = User.objects.filter(
+        role__in=["state_coordinator", "admin"], is_active=True
+    )
+
+    total_migrants = Migrant.objects.count()
+    open_cases = Case.objects.filter(status="open").count()
+    pending_refs = Referral.objects.filter(status="pending").count()
+    active_hotspots = HotspotAlert.objects.filter(is_active=True).count()
+
+    body = f"""Abia Migration Observatory — Daily Digest
+Summary ({timezone.now().strftime("%Y-%m-%d")}):
+
+Total Migrants Registered: {total_migrants}
+Open Cases: {open_cases}
+Pending Referrals: {pending_refs}
+Active Hotspots: {active_hotspots}
+View full dashboard: https://abia-migration.gov.ng/dashboard/
+"""
+
+    for coord in coordinators:
+        if coord.email:
             send_mail(
-                subject='Daily Digest - Abia Migration Observatory',
-                message=f'Your pending notifications for today:\n\n{summary}',
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[pref.user.email],
-                fail_silently=True
+                subject="Abia Observatory — Daily Digest",
+                message=body,
+                from_email=getattr(
+                    settings,
+                    "DEFAULT_FROM_EMAIL",
+                    "alerts@abia-migration.gov.ng",
+                ),
+                recipient_list=[coord.email],
+                fail_silently=True,
             )

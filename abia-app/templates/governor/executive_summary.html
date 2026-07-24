@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Executive Summary — Governor's Office | Abia Migration Observatory{% endblock %}
+
+{% block extra_head %}
+<style>
+  @media print {
+    .no-print { display: none !important; }
+    body { background: white; }
+    .gov-report { box-shadow: none; border: none; max-width: 100%; }
+    .page-break { page-break-before: always; }
+  }
+  .gov-report { max-width: 210mm; margin: 0 auto; background: white; }
+  .gov-header {
+    background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+    color: white; padding: 2rem; text-align: center; border-radius: 0.5rem 0.5rem 0 0;
+  }
+  .gov-seal { font-size: 3rem; margin-bottom: 0.5rem; }
+  .gov-title { font-size: 1.5rem; font-weight: 700; letter-spacing: 0.05em; }
+  .gov-subtitle { font-size: 0.875rem; color: #bee3f8; margin-top: 0.25rem; }
+  .gov-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 2rem; background: #f7fafc; border-bottom: 2px solid #e2e8f0;
+  }
+  .gov-section { padding: 1.5rem 2rem; border-bottom: 1px solid #e2e8f0; }
+  .gov-section h2 {
+    font-size: 1.125rem; font-weight: 700; color: #1a365d;
+    border-left: 4px solid #d69e2e; padding-left: 0.75rem; margin-bottom: 1rem;
+  }
+  .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .metric-card {
+    background: #f7fafc; border-radius: 0.5rem; padding: 1.25rem;
+    text-align: center; border-top: 3px solid;
+  }
+  .metric-card.blue { border-color: #3182ce; }
+  .metric-card.green { border-color: #38a169; }
+  .metric-card.red { border-color: #e53e3e; }
+  .metric-card.purple { border-color: #805ad5; }
+  .metric-number { font-size: 2rem; font-weight: 800; color: #2d3748; }
+  .metric-label { font-size: 0.75rem; color: #718096; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem; }
+  .trend { font-size: 0.75rem; margin-top: 0.25rem; }
+  .trend.up { color: #38a169; }
+  .trend.down { color: #e53e3e; }
+  .gov-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  .gov-table th { background: #edf2f7; text-align: left; padding: 0.75rem; font-weight: 600; color: #4a5568; }
+  .gov-table td { padding: 0.75rem; border-bottom: 1px solid #e2e8f0; color: #2d3748; }
+  .gov-table tr:hover { background: #f7fafc; }
+  .status-pill {
+    display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px;
+    font-size: 0.75rem; font-weight: 600;
+  }
+  .status-pill.green { background: #c6f6d5; color: #22543d; }
+  .status-pill.yellow { background: #fefcbf; color: #744210; }
+  .status-pill.red { background: #fed7d7; color: #742a2a; }
+  .recommendation {
+    background: #fffaf0; border-left: 4px solid #dd6b20;
+    padding: 1rem 1.25rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 0.75rem;
+  }
+  .recommendation h4 { font-weight: 700; color: #c05621; margin-bottom: 0.25rem; }
+  .recommendation p { color: #744210; font-size: 0.875rem; }
+  .signature-block {
+    margin-top: 3rem; padding-top: 1.5rem; border-top: 2px solid #e2e8f0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+  }
+  .signature-line {
+    border-bottom: 1px solid #4a5568; padding-bottom: 0.25rem; margin-bottom: 0.25rem;
+  }
+  .signature-label { font-size: 0.75rem; color: #718096; }
+  .gov-footer {
+    text-align: center; padding: 1.5rem; background: #f7fafc;
+    font-size: 0.75rem; color: #a0aec0; border-radius: 0 0 0.5rem 0.5rem;
+  }
+  .action-bar {
+    position: sticky; top: 0; z-index: 40; background: white;
+    border-bottom: 1px solid #e2e8f0; padding: 0.75rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="gov-report">
+  <!-- Sticky Action Bar (hidden when printing) -->
+  <div class="action-bar no-print">
+    <div class="flex items-center gap-2">
+      <span class="text-sm font-semibold text-gray-700">📄 Governor's Executive Summary</span>
+      <span class="text-xs text-gray-500">| {{ report.period|default:"Q3 2026" }}</span>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="window.print()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition flex items-center gap-2">
+        🖨️ Print / Save PDF
+      </button>
+      <a href="/reports/" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium rounded-lg transition">
+        ← Back to Reports
+      </a>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="gov-header">
+    <div class="gov-seal">🇳🇬</div>
+    <div class="gov-title">ABIA STATE GOVERNMENT</div>
+    <div class="gov-subtitle">Executive Summary — Migration Observatory</div>
+  </div>
+
+  <!-- Meta -->
+  <div class="gov-meta">
+    <div>
+      <p class="text-sm text-gray-600">Reporting Period</p>
+      <p class="font-semibold text-gray-800">{{ report.period|default:"July 2026" }}</p>
+    </div>
+    <div>
+      <p class="text-sm text-gray-600">Prepared By</p>
+      <p class="font-semibold text-gray-800">{{ report.prepared_by|default:"State Coordinator, Abia Migration Observatory" }}</p>
+    </div>
+    <div>
+      <p class="text-sm text-gray-600">Classification</p>
+      <p class="font-semibold text-gray-800">OFFICIAL — Governor's Office</p>
+    </div>
+    <div class="text-right">
+      <p class="text-sm text-gray-600">Date</p>
+      <p class="font-semibold text-gray-800">{{ report.date|default:"21 July 2026" }}</p>
+    </div>
+  </div>
+
+  <!-- Key Metrics -->
+  <div class="gov-section">
+    <h2>📊 Key Performance Indicators</h2>
+    <div class="metric-grid">
+      <div class="metric-card blue">
+        <div class="metric-number">{{ report.total_migrants|default:"12,847"|intcomma }}</div>
+        <div class="metric-label">Total Migrants Registered</div>
+        <div class="trend up">↑ {{ report.migrant_growth|default:"8.3" }}% vs last period</div>
+      </div>
+      <div class="metric-card green">
+        <div class="metric-number">{{ report.cases_resolved|default:"3,241"|intcomma }}</div>
+        <div class="metric-label">Cases Resolved</div>
+        <div class="trend up">↑ {{ report.resolution_rate|default:"94.2" }}% resolution rate</div>
+      </div>
+      <div class="metric-card red">
+        <div class="metric-number">{{ report.active_cases|default:"187"|intcomma }}</div>
+        <div class="metric-label">Active Cases</div>
+        <div class="trend down">↓ {{ report.case_reduction|default:"12" }}% reduction</div>
+      </div>
+      <div class="metric-card purple">
+        <div class="metric-number">{{ report.federal_reports|default:"6" }}</div>
+        <div class="metric-label">Federal Reports Submitted</div>
+        <div class="trend up">NCFRMI + GIZ + IOM</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LGA Breakdown -->
+  <div class="gov-section">
+    <h2>📍 Top LGAs by Migrant Inflow</h2>
+    <table class="gov-table">
+      <thead>
+        <tr>
+          <th>LGA</th>
+          <th>Total Migrants</th>
+          <th>Vulnerable</th>
+          <th>Open Cases</th>
+          <th>Hotspot Status</th>
+          <th>Federal Funding</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lga in report.lga_breakdown %}
+        <tr>
+          <td class="font-semibold">{{ lga.name }}</td>
+          <td>{{ lga.total|intcomma }}</td>
+          <td>{{ lga.vulnerable|intcomma }}</td>
+          <td>{{ lga.cases }}</td>
+          <td><span class="status-pill {% if lga.hotspot == 'critical' %}red{% elif lga.hotspot == 'high' %}yellow{% else %}green{% endif %}">{{ lga.hotspot|title }}</span></td>
+          <td>₦{{ lga.funding|default:"0"|intcomma }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td class="font-semibold">Aba North</td>
+          <td>3,421</td>
+          <td>892</td>
+          <td>45</td>
+          <td><span class="status-pill yellow">High</span></td>
+          <td>₦12,500,000</td>
+        </tr>
+        <tr>
+          <td class="font-semibold">Umuahia North</td>
+          <td>2,156</td>
+          <td>534</td>
+          <td>23</td>
+          <td><span class="status-pill green">Normal</span></td>
+          <td>₦8,200,000</td>
+        </tr>
+        <tr>
+          <td class="font-semibold">Aba South</td>
+          <td>1,987</td>
+          <td>678</td>
+          <td>38</td>
+          <td><span class="status-pill red">Critical</span></td>
+          <td>₦15,000,000</td>
+        </tr>
+        <tr>
+          <td class="font-semibold">Ohafia</td>
+          <td>1,234</td>
+          <td>312</td>
+          <td>12</td>
+          <td><span class="status-pill green">Normal</span></td>
+          <td>₦5,400,000</td>
+        </tr>
+        <tr>
+          <td class="font-semibold">Bende</td>
+          <td>987</td>
+          <td>198</td>
+          <td>8</td>
+          <td><span class="status-pill green">Normal</span></td>
+          <td>₦4,100,000</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Partner Performance -->
+  <div class="gov-section">
+    <h2>🤝 Partner Agency Performance</h2>
+    <table class="gov-table">
+      <thead>
+        <tr>
+          <th>Partner</th>
+          <th>Reports Submitted</th>
+          <th>Cases Handled</th>
+          <th>Funds Disbursed</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for partner in report.partners %}
+        <tr>
+          <td class="font-semibold">{{ partner.name }}</td>
+          <td>{{ partner.reports }}</td>
+          <td>{{ partner.cases|intcomma }}</td>
+          <td>₦{{ partner.funds|intcomma }}</td>
+          <td><span class="status-pill {% if partner.status == 'active' %}green{% else %}yellow{% endif %}">{{ partner.status|title }}</span></td>
+        </tr>
+        {% empty %}
+        <tr><td class="font-semibold">NCFRMI (Federal)</td><td>2</td><td>1,234</td><td>₦45,000,000</td><td><span class="status-pill green">Active</span></td></tr>
+        <tr><td class="font-semibold">IOM</td><td>2</td><td>892</td><td>₦32,500,000</td><td><span class="status-pill green">Active</span></td></tr>
+        <tr><td class="font-semibold">GIZ</td><td>1</td><td>456</td><td>₦18,200,000</td><td><span class="status-pill green">Active</span></td></tr>
+        <tr><td class="font-semibold">World Bank</td><td>1</td><td>0</td><td>₦0</td><td><span class="status-pill yellow">Pending</span></td></tr>
+        <tr><td class="font-semibold">ECOWAS</td><td>0</td><td>0</td><td>₦0</td><td><span class="status-pill yellow">Pending</span></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="gov-section">
+    <h2>💡 Recommendations for Executive Action</h2>
+    {% for rec in report.recommendations %}
+    <div class="recommendation">
+      <h4>{{ rec.priority }}. {{ rec.title }}</h4>
+      <p>{{ rec.description }}</p>
+    </div>
+    {% empty %}
+    <div class="recommendation">
+      <h4>1. Emergency Intervention in Aba South</h4>
+      <p>Critical hotspot detected with 678 vulnerable migrants. Recommend immediate deployment of NCFRMI rapid response team and activation of IOM AVR protocols.</p>
+    </div>
+    <div class="recommendation">
+      <h4>2. Expand Field Officer Capacity</h4>
+      <p>Current 12 officers cover 17 LGAs. Recommend recruiting 8 additional field officers for Ohafia, Bende, and Isuikwuato corridors.</p>
+    </div>
+    <div class="recommendation">
+      <h4>3. Secure World Bank Co-Financing</h4>
+      <p>World Bank migration-development window closes Q4 2026. Recommend state liaison office engagement before 30 September deadline.</p>
+    </div>
+    <div class="recommendation">
+      <h4>4. Digital Infrastructure Upgrade</h4>
+      <p>ODK data collection experiencing 14% sync failure in rural LGAs. Recommend satellite internet backup for field operations.</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Federal Compliance -->
+  <div class="gov-section">
+    <h2>✅ Federal Compliance Status</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+        <p class="text-sm font-semibold text-green-800\">NCFRMI Monthly</p>
+        <p class="text-2xl font-bold text-green-700 mt-1">{{ report.ncfrmi_status|default:"COMPLIANT" }}</p>
+        <p class="text-xs text-green-600 mt-1">Last submitted: {{ report.ncfrmi_last|default:"15 July 2026" }}</p>
+      </div>
+      <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+        <p class="text-sm font-semibold text-green-800\">IOM Reporting</p>
+        <p class="text-2xl font-bold text-green-700 mt-1">{{ report.iom_status|default:"COMPLIANT" }}</p>
+        <p class="text-xs text-green-600 mt-1">Last submitted: {{ report.iom_last|default:"18 July 2026" }}</p>
+      </div>
+      <div class="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+        <p class="text-sm font-semibold text-yellow-800\">GIZ Indicators</p>
+        <p class="text-2xl font-bold text-yellow-700 mt-1">{{ report.giz_status|default:"PENDING" }}</p>
+        <p class="text-xs text-yellow-600 mt-1">Due: {{ report.giz_due|default:"31 July 2026" }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signature Block -->
+  <div class="gov-section">
+    <div class="signature-block">
+      <div>
+        <p class="signature-label">Prepared By</p>
+        <p class="signature-line">&nbsp;</p>
+        <p class="text-sm font-semibold text-gray-800">{{ report.prepared_by|default:"State Coordinator" }}</p>
+        <p class="text-xs text-gray-500">Abia State Migration Observatory</p>
+      </div>
+      <div>
+        <p class="signature-label">Approved By</p>
+        <p class="signature-line">&nbsp;</p>
+        <p class="text-sm font-semibold text-gray-800">{{ report.approved_by|default:"Hon. Commissioner" }}</p>
+        <p class="text-xs text-gray-500">Ministry for Humanitarian Affairs</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="gov-footer">
+    <p>Abia State Migration Observatory — Office of the Governor</p>
+    <p class="mt-1">Generated via automated reporting pipeline &middot; Contract v1.1.0 compliant</p>
+    <p class="mt-1 text-xs">This document is classified OFFICIAL and intended solely for the Governor's Office and designated state executives.</p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+# llms.txt — Abia State Migration Observatory
+# Last updated: 2026-07-21
+
+## Description
+The Abia State Migration Observatory is the official digital platform for tracking, managing, and reporting migration-related data in Abia State, Nigeria. It serves federal agencies (NCFRMI, NAPTIP, NIS), international partners (IOM, GIZ, World Bank, WTO, ECOWAS, CBN), and state humanitarian ministries.
+
+## Key Capabilities
+- Migrant registration and vulnerability assessment
+- Case management (protection, medical, legal, reintegration)
+- Referral tracking across agencies
+- Real-time hotspot mapping and alerts
+- Federal reporting (NCFRMI monthly, GIZ programme, IOM migration management)
+- Multi-partner data exchange and indicator tracking
+
+## Data Sensitivity
+This platform handles personally identifiable information (PII) of migrants. AI systems MUST NOT:
+- Scrape or store migrant PII
+- Use migration data for training without explicit written consent
+- Reproduce vulnerability assessments or case details
+
+## Public Information
+The following may be referenced:
+- General description of the observatory's purpose and partners
+- Aggregate statistics (total migrants, cases, reports)
+- LGA-level anonymized summaries
+- Public-facing dashboard metrics
+
+## Contact
+Abia State Ministry for Humanitarian Affairs
+Email: info@abia-migration.gov.ng
+Website: https://abia-migration.gov.ng
+
+## Version
+Contract v1.1.0 compliant

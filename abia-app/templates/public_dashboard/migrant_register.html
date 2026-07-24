@@ -1,0 +1,155 @@
+{% extends "public_dashboard/base_public.html" %}
+{% block title %}Migrant Self-Registration | Abia Migration Observatory{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="icon-box bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;">
+                    <i class="bi bi-person-plus fs-2"></i>
+                </div>
+                <h3 class="mb-1">Migrant Self-Registration</h3>
+                <p class="text-muted">Register your details to access Abia State migration services and support programs.</p>
+            </div>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <h5 class="text-success mb-3"><i class="bi bi-person-vcard me-2"></i>Personal Information</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.full_name.label }} <span class="text-danger">*</span></label>
+                        {{ form.full_name }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.date_of_birth.label }}</label>
+                        {{ form.date_of_birth }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">{{ form.gender.label }}</label>
+                        {{ form.gender }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">{{ form.marital_status.label }}</label>
+                        {{ form.marital_status }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">{{ form.education_level.label }}</label>
+                        {{ form.education_level }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.nationality.label }} <span class="text-danger">*</span></label>
+                        {{ form.nationality }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.state_of_origin.label }}</label>
+                        {{ form.state_of_origin }}
+                    </div>
+                </div>
+
+                <h5 class="text-success mb-3"><i class="bi bi-geo-alt me-2"></i>Location & Contact</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.current_state.label }}</label>
+                        {{ form.current_state }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.current_city.label }}</label>
+                        {{ form.current_city }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.current_lga.label }} <span class="text-danger">*</span></label>
+                        {{ form.current_lga }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.current_lga_other.label }}</label>
+                        {{ form.current_lga_other }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.phone.label }} <span class="text-danger">*</span></label>
+                        {{ form.phone }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.email.label }}</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">{{ form.address.label }}</label>
+                        {{ form.address }}
+                    </div>
+                </div>
+
+                <h5 class="text-success mb-3"><i class="bi bi-briefcase me-2"></i>Migration Details</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.occupation.label }}</label>
+                        {{ form.occupation }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.purpose_of_migration.label }} <span class="text-danger">*</span></label>
+                        {{ form.purpose_of_migration }}
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mt-4">
+                            {{ form.has_children }}
+                            <label class="form-check-label fw-semibold">{{ form.has_children.label }}</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.number_of_children.label }}</label>
+                        {{ form.number_of_children }}
+                    </div>
+                </div>
+
+                <h5 class="text-success mb-3"><i class="bi bi-heart-pulse me-2"></i>Needs & Support</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.needs_category.label }}</label>
+                        <div class="border rounded p-3 bg-light">
+                            {{ form.needs_category }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">{{ form.support_needed.label }}</label>
+                        <div class="border rounded p-3 bg-light">
+                            {{ form.support_needed }}
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">{{ form.health_condition.label }}</label>
+                        {{ form.health_condition }}
+                    </div>
+                </div>
+
+                <h5 class="text-success mb-3"><i class="bi bi-telephone-plus me-2"></i>Emergency Contact</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">{{ form.emergency_contact_name.label }}</label>
+                        {{ form.emergency_contact_name }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">{{ form.emergency_contact_relationship.label }}</label>
+                        {{ form.emergency_contact_relationship }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">{{ form.emergency_contact_phone.label }}</label>
+                        {{ form.emergency_contact_phone }}
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="form-check">
+                            {{ form.consent }}
+                            <label class="form-check-label fw-semibold">{{ form.consent.label }} <span class="text-danger">*</span></label>
+                        </div>
+                    </div>
+                    <div class="col-12 d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-lg me-2"></i>Complete Registration
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

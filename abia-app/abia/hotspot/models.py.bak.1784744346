@@ -1,24 +1,20 @@
-"""Hotspot prediction and alert models."""
 import uuid
-from django.conf import settings
 from django.db import models
 from django.contrib.gis.db import models as gis_models
-from django.utils import timezone
 
 class HotspotPrediction(models.Model):
     RISK_LEVELS = [
-        ("low", "Low"), ("medium", "Medium"),
-        ("high", "High"), ("critical", "Critical"),
+        ("low", "Low"),
+        ("medium", "Medium"),
+        ("high", "High"),
+        ("critical", "Critical"),
     ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    lga = models.ForeignKey(
-        "accounts.LGA", on_delete=models.CASCADE,
-        related_name="hotspot_predictions")
+    lga = models.ForeignKey("accounts.LGA", on_delete=models.CASCADE, related_name="hotspot_predictions")
     risk_level = models.CharField(max_length=20, choices=RISK_LEVELS)
     risk_score = models.FloatField(help_text="0.0 to 1.0")
     predicted_migrant_count = models.PositiveIntegerField()
-    contributing_factors = models.JSONField(
-        default=dict, help_text="AI-identified risk factors")
+    contributing_factors = models.JSONField(default=dict, help_text="AI-identified risk factors")
     centroid = gis_models.PointField(null=True, blank=True, srid=4326)
     analysis_period_start = models.DateField()
     analysis_period_end = models.DateField()
@@ -35,7 +31,6 @@ class HotspotPrediction(models.Model):
     def __str__(self):
         return f"{self.lga} - {self.risk_level} ({self.risk_score:.2f})"
 
-
 class HotspotAlert(models.Model):
     SEVERITY_CHOICES = [
         ("low", "Low"), ("medium", "Medium"),
@@ -47,33 +42,38 @@ class HotspotAlert(models.Model):
     ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     lga = models.ForeignKey(
-        "accounts.LGA", on_delete=models.CASCADE,
-        related_name="hotspot_alerts")
+        "abia_migrants.LGA", on_delete=models.CASCADE,
+        related_name="hotspot_alerts"
+    )
     severity = models.CharField(
         max_length=20, choices=SEVERITY_CHOICES,
-        default="medium", db_index=True)
+        default="medium", db_index=True
+    )
     is_active = models.BooleanField(default=True, db_index=True)
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES,
-        default="open", db_index=True)
+        default="open", db_index=True
+    )
     title = models.CharField(max_length=255)
     description = models.TextField()
-    estimated_affected = models.PositiveIntegerField(
-        null=True, blank=True)
     location = gis_models.PointField(
-        geography=True, null=True, blank=True)
+        geography=True, null=True, blank=True
+    )
     triggered_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
-        null=True, blank=True, related_name="triggered_alerts")
+        null=True, blank=True, related_name="triggered_alerts"
+    )
     triggered_at = models.DateTimeField(auto_now_add=True, db_index=True)
     resolved_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
-        null=True, blank=True, related_name="resolved_alerts")
+        null=True, blank=True, related_name="resolved_alerts"
+    )
     resolved_at = models.DateTimeField(null=True, blank=True)
     resolution_notes = models.TextField(blank=True)
     source_prediction = models.ForeignKey(
-        HotspotPrediction, on_delete=models.SET_NULL,
-        null=True, blank=True, related_name="generated_alerts")
+        "HotspotPrediction", on_delete=models.SET_NULL,
+        null=True, blank=True, related_name="generated_alerts"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -96,7 +96,8 @@ class HotspotAlert(models.Model):
         self.resolution_notes = notes
         self.save(update_fields=[
             "status", "is_active", "resolved_by",
-            "resolved_at", "resolution_notes", "updated_at"])
+            "resolved_at", "resolution_notes", "updated_at"
+        ])
 
     def acknowledge(self, user):
         self.status = "acknowledged"

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Register Migrant | Field Officer{% endblock %}
+{% block extra_head %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+  body { background: #f3f4f6; }
+  .mobile-form { max-width: 100%; padding: 1rem; }
+  .form-group { margin-bottom: 1.25rem; }
+  .form-label { display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.375rem; }
+  .form-input, .form-select, .form-textarea { width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem; background: white; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #2563eb; }
+  .form-textarea { min-height: 80px; }
+  .btn-primary { width: 100%; padding: 1rem; background: #2563eb; color: white; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; }
+  .gps-btn { width: 100%; padding: 0.75rem; background: #10b981; color: white; border: none; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; }
+  .gps-btn:disabled { background: #9ca3af; }
+  .toast { position: fixed; bottom: 1rem; left: 1rem; right: 1rem; padding: 1rem; border-radius: 0.5rem; text-align: center; font-weight: 600; display: none; z-index: 50; }
+  .toast-success { background: #22c55e; color: white; }
+  .toast-error { background: #ef4444; color: white; }
+  .required::after { content: " *"; color: #ef4444; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="mobile-form">
+  <div class="bg-white rounded-xl shadow-sm p-4 mb-4">
+    <h1 class="text-lg font-bold text-gray-800">Register Migrant</h1>
+    <p class="text-xs text-gray-500">Field Officer: {{ request.user.get_full_name|default:request.user.username }}</p>
+  </div>
+  <form id="migrantForm" method="post" action="/mobile/migrant/register/" class="bg-white rounded-xl shadow-sm p-4">
+    {% csrf_token %}
+    <div class="form-group">
+      <label class="form-label required">First Name</label>
+      <input type="text" name="first_name" class="form-input" placeholder="Enter first name" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label required">Last Name</label>
+      <input type="text" name="last_name" class="form-input" placeholder="Enter last name" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label required">Phone Number</label>
+      <input type="tel" name="phone_number" class="form-input" placeholder="+234 80X XXX XXXX" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email (optional)</label>
+      <input type="email" name="email" class="form-input" placeholder="email@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date of Birth</label>
+      <input type="date" name="date_of_birth" class="form-input">
+    </div>
+    <div class="form-group">
+      <label class="form-label required">Gender</label>
+      <select name="gender" class="form-select" required>
+        <option value="">Select gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label required">Current LGA</label>
+      <select name="current_lga" class="form-select" required>
+        <option value="">Select LGA</option>
+        {% for lga in lgas %}<option value="{{ lga.id }}">{{ lga.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Origin LGA</label>
+      <select name="origin_lga" class="form-select">
+        <option value="">Select origin LGA</option>
+        {% for lga in lgas %}<option value="{{ lga.id }}">{{ lga.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label required">Migration Type</label>
+      <select name="migration_type" class="form-select" required>
+        <option value="">Select type</option>
+        <option value="internal">Internal Migration</option>
+        <option value="returnee">Returnee</option>
+        <option value="idp">Internally Displaced Person</option>
+        <option value="refugee">Refugee</option>
+        <option value="economic">Economic Migrant</option>
+        <option value="irregular">Irregular Migrant</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label flex items-center gap-2">
+        <input type="checkbox" name="is_vulnerable" class="w-5 h-5 text-blue-600 rounded">
+        <span>Mark as Vulnerable</span>
+      </label>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Vulnerability Notes</label>
+      <textarea name="vulnerability_notes" class="form-textarea" placeholder="Describe specific vulnerabilities..."></textarea>
+    </div>
+    <div class="form-group">
+      <button type="button" id="gpsBtn" class="gps-btn">Capture GPS Location</button>
+      <input type="hidden" name="gps_latitude" id="gpsLat">
+      <input type="hidden" name="gps_longitude" id="gpsLng">
+      <p id="gpsStatus" class="text-xs text-gray-500 mt-1">Tap to capture current location</p>
+    </div>
+    <button type="submit" class="btn-primary">Register Migrant</button>
+  </form>
+  <div class="mt-4 flex justify-between text-sm">
+    <a href="/mobile/" class="text-blue-600 font-medium">Dashboard</a>
+    <a href="/mobile/case/open/" class="text-blue-600 font-medium">Open Case</a>
+  </div>
+</div>
+<div id="successToast" class="toast toast-success">Migrant registered successfully!</div>
+<div id="errorToast" class="toast toast-error">Registration failed. Please try again.</div>
+<script>
+document.getElementById('gpsBtn').addEventListener('click', function() {
+  const btn = this; btn.disabled = true; btn.textContent = 'Getting location...';
+  if (!navigator.geolocation) { document.getElementById('gpsStatus').textContent = 'GPS not supported'; btn.disabled = false; btn.textContent = 'Capture GPS Location'; return; }
+  navigator.geolocation.getCurrentPosition(
+    pos => { document.getElementById('gpsLat').value = pos.coords.latitude; document.getElementById('gpsLng').value = pos.coords.longitude; document.getElementById('gpsStatus').textContent = 'Location: ' + pos.coords.latitude.toFixed(4) + ', ' + pos.coords.longitude.toFixed(4); btn.textContent = 'Location Captured'; btn.style.background = '#22c55e'; },
+    err => { document.getElementById('gpsStatus').textContent = 'GPS error: ' + err.message; btn.disabled = false; btn.textContent = 'Capture GPS Location'; },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+});
+document.getElementById('migrantForm').addEventListener('submit', async function(e) {
+  e.preventDefault(); const formData = new FormData(this);
+  try { const resp = await fetch(this.action, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } }); const data = await resp.json();
+    if (data.status === 'success') { document.getElementById('successToast').style.display = 'block'; this.reset(); setTimeout(() => document.getElementById('successToast').style.display = 'none', 3000); }
+    else { throw new Error(data.message); }
+  } catch (err) { document.getElementById('errorToast').textContent = (err.message || 'Registration failed'); document.getElementById('errorToast').style.display = 'block'; setTimeout(() => document.getElementById('errorToast').style.display = 'none', 5000); }
+});
+</script>
+{% endblock %}
