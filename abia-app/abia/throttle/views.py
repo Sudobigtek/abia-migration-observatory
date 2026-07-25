@@ -1,9 +1,15 @@
+from drf_spectacular.utils import extend_schema
+from abia.common.response_serializers import (
+    RateLimitResponse,
+    ThrottleStatsResponse,
+)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Count
 from .models import RateLimitLog
 
+@extend_schema(responses=ThrottleStatsResponse, tags=["System"], summary="Throttle statistics")
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def throttle_stats(request):
@@ -26,6 +32,7 @@ def throttle_stats(request):
     }
     return Response(stats)
 
+@extend_schema(responses=RateLimitResponse, tags=["System"], summary="Get my rate limit")
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def my_rate_limit(request):
@@ -41,3 +48,10 @@ def my_rate_limit(request):
             "sustained": "100/day",
         }
     })
+
+
+# Propagate _spectacular metadata for drf-spectacular
+if hasattr(throttle_stats, '_spectacular') and hasattr(throttle_stats, 'cls'):
+    throttle_stats.cls._spectacular = throttle_stats._spectacular
+if hasattr(my_rate_limit, '_spectacular') and hasattr(my_rate_limit, 'cls'):
+    my_rate_limit.cls._spectacular = my_rate_limit._spectacular

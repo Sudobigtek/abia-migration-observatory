@@ -1,3 +1,9 @@
+from drf_spectacular.utils import extend_schema
+from abia.common.response_serializers import (
+    RetryFailedResponse,
+    TriggerEventResponse,
+    WebhookStatsResponse,
+)
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -19,6 +25,7 @@ class WebhookDeliveryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = WebhookDeliverySerializer
     permission_classes = [IsAuthenticated]
 
+@extend_schema(responses=TriggerEventResponse, tags=["Webhooks"], summary="Trigger webhook event manually")
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def trigger_event(request):
@@ -29,6 +36,9 @@ def trigger_event(request):
     results = WebhookService.trigger_event(event_type, payload)
     return Response({"status": "triggered", "deliveries": results})
 
+
+trigger_event.cls.serializer_class = TriggerEventResponse
+@extend_schema(responses=RetryFailedResponse, tags=["Webhooks"], summary="Retry failed webhook deliveries")
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def retry_failed(request):
@@ -36,6 +46,9 @@ def retry_failed(request):
     retried = WebhookService.retry_failed(webhook_id)
     return Response({"status": "retry_completed", "retried_count": retried})
 
+
+retry_failed.cls.serializer_class = RetryFailedResponse
+@extend_schema(responses=WebhookStatsResponse, tags=["Webhooks"], summary="Webhook delivery statistics")
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def webhook_stats(request):
@@ -49,3 +62,12 @@ def webhook_stats(request):
         "by_event": list(WebhookDelivery.objects.values("event_type").annotate(count=Count("id")).order_by("-count")[:10]),
     }
     return Response(stats)
+
+
+# Propagate _spectacular metadata for drf-spectacular
+if hasattr(trigger_event, '_spectacular') and hasattr(trigger_event, 'cls'):
+    trigger_event.cls._spectacular = trigger_event._spectacular
+if hasattr(retry_failed, '_spectacular') and hasattr(retry_failed, 'cls'):
+    retry_failed.cls._spectacular = retry_failed._spectacular
+if hasattr(webhook_stats, '_spectacular') and hasattr(webhook_stats, 'cls'):
+    webhook_stats.cls._spectacular = webhook_stats._spectacular

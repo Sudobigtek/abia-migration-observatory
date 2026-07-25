@@ -1,3 +1,7 @@
+from drf_spectacular.utils import extend_schema
+from abia.common.response_serializers import (
+    PermissionsResponse,
+)
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -11,6 +15,7 @@ class TenantRoleViewSet(viewsets.ModelViewSet):
     serializer_class = TenantRoleSerializer
     permission_classes = [IsAuthenticated, LGAAccessPermission]
 
+@extend_schema(responses=PermissionsResponse, tags=["Tenant"], summary="Get my permissions")
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def my_permissions(request):
@@ -23,3 +28,8 @@ def my_permissions(request):
         "can_access_all_lgas": role.can_access_all_lgas,
         "permissions": ["read", "write"] if role.role in ["state_admin", "super_admin"] else ["read", "write"]
     })
+
+
+# Propagate _spectacular metadata for drf-spectacular
+if hasattr(my_permissions, '_spectacular') and hasattr(my_permissions, 'cls'):
+    my_permissions.cls._spectacular = my_permissions._spectacular

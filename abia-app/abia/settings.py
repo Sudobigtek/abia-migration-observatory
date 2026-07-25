@@ -185,6 +185,12 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
+    'POSTPROCESSING_HOOKS': ['drf_spectacular.hooks.postprocess_schema_enums'],
+    'ENUM_NAME_OVERRIDES': {
+        'StatusEnum': 'abia.cases.models.CaseStatus',
+        'MigrantStatusEnum': 'abia.migrants.models.MigrantStatus',
+        'UserRoleEnum': 'abia.accounts.models.UserRole',
+    },
     'SCHEMA_PATH_PREFIX': r'/api/v[0-9]',
     'TAGS': [
         {'name': 'Migrants', 'description': 'Migrant registry and management'},

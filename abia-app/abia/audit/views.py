@@ -1,3 +1,7 @@
+from drf_spectacular.utils import extend_schema
+from abia.common.response_serializers import (
+    GenerateReportResponse,
+)
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -22,6 +26,7 @@ class ComplianceReportViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(generated_by=self.request.user)
 
+@extend_schema(responses=GenerateReportResponse, tags=["Audit"], summary="Generate audit report")
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def generate_report(request):
@@ -40,3 +45,10 @@ def generate_report(request):
         generated_by=request.user
     )
     return Response({"status": "generated", "report_id": str(report.id), "data": data})
+
+
+
+generate_report.cls.serializer_class = GenerateReportResponse
+# Propagate _spectacular metadata for drf-spectacular
+if hasattr(generate_report, '_spectacular') and hasattr(generate_report, 'cls'):
+    generate_report.cls._spectacular = generate_report._spectacular

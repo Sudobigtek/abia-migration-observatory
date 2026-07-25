@@ -1,3 +1,10 @@
+from drf_spectacular.utils import extend_schema
+from abia.common.response_serializers import (
+    BackupFilesResponse,
+    BackupStatusResponse,
+    TriggerBackupResponse,
+    TriggerRestoreResponse,
+)
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -16,6 +23,7 @@ class RestoreJobViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminUser]
     queryset = RestoreJob.objects.all().select_related("backup", "created_by")
 
+@extend_schema(responses=TriggerBackupResponse, tags=["System"], summary="Trigger manual backup")
 @api_view(["POST"])
 @permission_classes([IsAuthenticated, IsAdminUser])
 def trigger_backup(request):
@@ -28,6 +36,9 @@ def trigger_backup(request):
     serializer = BackupJobSerializer(job)
     return Response(serializer.data)
 
+
+trigger_backup.cls.serializer_class = TriggerBackupResponse
+@extend_schema(responses=TriggerRestoreResponse, tags=["System"], summary="Trigger backup restore")
 @api_view(["POST"])
 @permission_classes([IsAuthenticated, IsAdminUser])
 def trigger_restore(request):
@@ -41,11 +52,15 @@ def trigger_restore(request):
     serializer = RestoreJobSerializer(restore)
     return Response(serializer.data)
 
+
+trigger_restore.cls.serializer_class = TriggerRestoreResponse
+@extend_schema(responses=BackupFilesResponse, tags=["System"], summary="List backup files")
 @api_view(["GET"])
 @permission_classes([IsAuthenticated, IsAdminUser])
 def backup_files(request):
     return Response({"backups": BackupService.list_backups()})
 
+@extend_schema(responses=BackupStatusResponse, tags=["System"], summary="Backup system status")
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def backup_status(request):
@@ -62,3 +77,14 @@ def backup_status(request):
         },
         "status": latest.status
     })
+
+
+# Propagate _spectacular metadata for drf-spectacular
+if hasattr(trigger_backup, '_spectacular') and hasattr(trigger_backup, 'cls'):
+    trigger_backup.cls._spectacular = trigger_backup._spectacular
+if hasattr(trigger_restore, '_spectacular') and hasattr(trigger_restore, 'cls'):
+    trigger_restore.cls._spectacular = trigger_restore._spectacular
+if hasattr(backup_files, '_spectacular') and hasattr(backup_files, 'cls'):
+    backup_files.cls._spectacular = backup_files._spectacular
+if hasattr(backup_status, '_spectacular') and hasattr(backup_status, 'cls'):
+    backup_status.cls._spectacular = backup_status._spectacular

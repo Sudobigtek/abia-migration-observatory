@@ -66,6 +66,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     ordering = ["first_name"]
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return User.objects.none()
         user = self.request.user
         if user.role in ["super_admin", "state_admin"]:
             return User.objects.select_related("lga")

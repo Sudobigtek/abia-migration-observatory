@@ -1,3 +1,8 @@
+from drf_spectacular.utils import extend_schema
+from abia.common.response_serializers import (
+    ImportTemplateResponse,
+    UploadCsvResponse,
+)
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -13,6 +18,7 @@ class ImportJobViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return ImportJob.objects.filter(created_by=self.request.user).select_related("created_by")
 
+@extend_schema(responses=UploadCsvResponse, tags=["Importers"], summary="Upload CSV")
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def upload_csv(request):
@@ -31,6 +37,9 @@ def upload_csv(request):
     result = ImportService.process_import(job, file_obj)
     return Response({"job_id": str(job.id), "status": job.status, "result": result})
 
+
+upload_csv.cls.serializer_class = UploadCsvResponse
+@extend_schema(responses=ImportTemplateResponse, tags=["Importers"], summary="Get import template")
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def import_template(request, entity_type):
@@ -44,3 +53,10 @@ def import_template(request, entity_type):
         return Response({"error": "Unknown entity type"}, status=400)
     writer.writeheader()
     return Response({"template": output.getvalue(), "entity_type": entity_type})
+
+
+# Propagate _spectacular metadata for drf-spectacular
+if hasattr(upload_csv, '_spectacular') and hasattr(upload_csv, 'cls'):
+    upload_csv.cls._spectacular = upload_csv._spectacular
+if hasattr(import_template, '_spectacular') and hasattr(import_template, 'cls'):
+    import_template.cls._spectacular = import_template._spectacular

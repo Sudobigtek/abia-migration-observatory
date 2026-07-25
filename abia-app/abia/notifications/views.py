@@ -1,3 +1,9 @@
+from drf_spectacular.utils import extend_schema
+from abia.common.response_serializers import (
+    BroadcastResponse,
+    MarkReadResponse,
+    UnreadCountResponse,
+)
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -24,18 +30,23 @@ class NotificationPreferenceViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
 
+@extend_schema(responses=MarkReadResponse, tags=["Notifications"], summary="Mark notifications as read")
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def mark_read(request, notification_id):
     notif = NotificationService.mark_read(notification_id, request.user)
     return Response({"status": "marked_read", "id": str(notif.id)})
 
+
+mark_read.cls.serializer_class = MarkReadResponse
+@extend_schema(responses=UnreadCountResponse, tags=["Notifications"], summary="Unread notification count")
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def unread_count(request):
     count = NotificationService.get_unread_count(request.user)
     return Response({"unread_count": count})
 
+@extend_schema(responses=BroadcastResponse, tags=["Notifications"], summary="Broadcast notification")
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def broadcast(request):
@@ -47,3 +58,14 @@ def broadcast(request):
         return Response({"error": "role, title, message required"}, status=400)
     sent = NotificationService.broadcast_to_role(role, title, message, priority)
     return Response({"status": "broadcasted", "sent": sent})
+
+
+
+broadcast.cls.serializer_class = BroadcastResponse
+# Propagate _spectacular metadata for drf-spectacular
+if hasattr(mark_read, '_spectacular') and hasattr(mark_read, 'cls'):
+    mark_read.cls._spectacular = mark_read._spectacular
+if hasattr(unread_count, '_spectacular') and hasattr(unread_count, 'cls'):
+    unread_count.cls._spectacular = unread_count._spectacular
+if hasattr(broadcast, '_spectacular') and hasattr(broadcast, 'cls'):
+    broadcast.cls._spectacular = broadcast._spectacular

@@ -1,3 +1,9 @@
+from drf_spectacular.utils import extend_schema
+from abia.common.response_serializers import (
+    AnalyticsSummaryResponse,
+    ChartDataResponse,
+    PresetChartsResponse,
+)
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -19,6 +25,7 @@ class ChartDashboardViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
+@extend_schema(responses=ChartDataResponse, tags=["Analytics"], summary="Raw chart data")
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def chart_data(request, dashboard_id):
@@ -27,6 +34,7 @@ def chart_data(request, dashboard_id):
     data = ChartService.build_chart_data(dashboard)
     return Response({"dashboard": dashboard.name, "chart_type": dashboard.chart_type, "data": data})
 
+@extend_schema(responses=PresetChartsResponse, tags=["Analytics"], summary="List preset chart configurations")
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def preset_charts(request):
@@ -56,6 +64,7 @@ def preset_charts(request):
         ]
     })
 
+@extend_schema(responses=AnalyticsSummaryResponse, tags=["Analytics"], summary="Summary for analytics charts")
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def analytics_summary(request):
@@ -78,3 +87,14 @@ def integration_status(request):
             "sports": {"configured": SportsConfiguration.objects.filter(is_active=True).exists()},
         }
     })
+
+
+# Propagate _spectacular metadata for drf-spectacular
+if hasattr(chart_data, '_spectacular') and hasattr(chart_data, 'cls'):
+    chart_data.cls._spectacular = chart_data._spectacular
+if hasattr(preset_charts, '_spectacular') and hasattr(preset_charts, 'cls'):
+    preset_charts.cls._spectacular = preset_charts._spectacular
+if hasattr(analytics_summary, '_spectacular') and hasattr(analytics_summary, 'cls'):
+    analytics_summary.cls._spectacular = analytics_summary._spectacular
+if hasattr(integration_status, '_spectacular') and hasattr(integration_status, 'cls'):
+    integration_status.cls._spectacular = integration_status._spectacular

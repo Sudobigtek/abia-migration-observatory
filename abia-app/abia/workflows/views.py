@@ -34,6 +34,8 @@ class WorkflowInstanceViewSet(viewsets.ModelViewSet):
     filterset_fields = ['status', 'workflow', 'assigned_to']
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return WorkflowInstance.objects.none()
         user = self.request.user
         if user.role in ['super_admin', 'state_admin']:
             return WorkflowInstance.objects.all()

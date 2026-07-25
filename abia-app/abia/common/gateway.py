@@ -1,9 +1,16 @@
+from drf_spectacular.utils import extend_schema
+from abia.common.response_serializers import (
+    GatewayKeyRotateResponse,
+    GatewayRoutesResponse,
+    GatewayStatusResponse,
+)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from django.conf import settings
 import json
 
+@extend_schema(responses=GatewayStatusResponse, tags=["System"], summary="Gateway health status")
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def gateway_status(request):
@@ -27,6 +34,7 @@ def gateway_status(request):
         'environment': settings.DEBUG and 'development' or 'production',
     })
 
+@extend_schema(responses=GatewayRoutesResponse, tags=["System"], summary="List gateway routes")
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def gateway_routes(request):
@@ -50,6 +58,7 @@ def gateway_routes(request):
         'routes': routes[:50]  # Limit output
     })
 
+@extend_schema(responses=GatewayKeyRotateResponse, tags=["System"], summary="Rotate gateway API key")
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def gateway_key_rotate(request):
@@ -61,3 +70,14 @@ def gateway_key_rotate(request):
         'message': 'Integrate with Kong Admin API for production use',
         'documentation': 'https://docs.konghq.com/gateway/latest/admin-api/#key-auth'
     })
+
+
+
+gateway_key_rotate.cls.serializer_class = GatewayKeyRotateResponse
+# Propagate _spectacular metadata for drf-spectacular
+if hasattr(gateway_status, '_spectacular') and hasattr(gateway_status, 'cls'):
+    gateway_status.cls._spectacular = gateway_status._spectacular
+if hasattr(gateway_routes, '_spectacular') and hasattr(gateway_routes, 'cls'):
+    gateway_routes.cls._spectacular = gateway_routes._spectacular
+if hasattr(gateway_key_rotate, '_spectacular') and hasattr(gateway_key_rotate, 'cls'):
+    gateway_key_rotate.cls._spectacular = gateway_key_rotate._spectacular

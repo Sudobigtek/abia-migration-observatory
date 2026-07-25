@@ -1,3 +1,12 @@
+from drf_spectacular.utils import extend_schema
+from abia.common.response_serializers import (
+    GeoHotspotsListResponse,
+    GeoHotspotsResponse,
+    HeatmapDataResponse,
+    LgaBoundariesResponse,
+    LgaDetailResponse,
+    NearbyResponse,
+)
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -6,6 +15,7 @@ from django.contrib.gis.geos import Point
 from .models import LGABoundary, Hotspot
 from .serializers import LGABoundarySerializer, HotspotSerializer, HotspotListSerializer
 
+@extend_schema(responses=LgaBoundariesResponse, tags=["Geo"], summary="LGA boundaries")
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def geo_lga_boundaries(request):
@@ -17,6 +27,7 @@ def geo_lga_boundaries(request):
         'features': serializer.data
     })
 
+@extend_schema(responses=LgaDetailResponse, tags=["Geo"], summary="LGA detail")
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def geo_lga_detail(request, lga_id):
@@ -28,6 +39,7 @@ def geo_lga_detail(request, lga_id):
     except LGABoundary.DoesNotExist:
         return Response({'error': 'LGA boundary not found'}, status=status.HTTP_404_NOT_FOUND)
 
+@extend_schema(responses=GeoHotspotsResponse, tags=["Geo"], summary="Geo hotspots")
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def geo_hotspots(request):
@@ -39,6 +51,7 @@ def geo_hotspots(request):
         'features': serializer.data
     })
 
+@extend_schema(responses=GeoHotspotsListResponse, tags=["Geo"], summary="List geo hotspots")
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def geo_hotspots_list(request):
@@ -47,6 +60,7 @@ def geo_hotspots_list(request):
     serializer = HotspotListSerializer(hotspots, many=True)
     return Response(serializer.data)
 
+@extend_schema(responses=HeatmapDataResponse, tags=["Geo"], summary="Heatmap data")
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def geo_heatmap_data(request):
@@ -75,6 +89,7 @@ def geo_heatmap_data(request):
         'points': lga_data
     })
 
+@extend_schema(responses=NearbyResponse, tags=["Geo"], summary="Nearby locations")
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def geo_nearby(request):
@@ -94,3 +109,18 @@ def geo_nearby(request):
         'radius_km': radius_km,
         'hotspots': serializer.data
     })
+
+
+# Propagate _spectacular metadata for drf-spectacular
+if hasattr(geo_lga_boundaries, '_spectacular') and hasattr(geo_lga_boundaries, 'cls'):
+    geo_lga_boundaries.cls._spectacular = geo_lga_boundaries._spectacular
+if hasattr(geo_lga_detail, '_spectacular') and hasattr(geo_lga_detail, 'cls'):
+    geo_lga_detail.cls._spectacular = geo_lga_detail._spectacular
+if hasattr(geo_hotspots, '_spectacular') and hasattr(geo_hotspots, 'cls'):
+    geo_hotspots.cls._spectacular = geo_hotspots._spectacular
+if hasattr(geo_hotspots_list, '_spectacular') and hasattr(geo_hotspots_list, 'cls'):
+    geo_hotspots_list.cls._spectacular = geo_hotspots_list._spectacular
+if hasattr(geo_heatmap_data, '_spectacular') and hasattr(geo_heatmap_data, 'cls'):
+    geo_heatmap_data.cls._spectacular = geo_heatmap_data._spectacular
+if hasattr(geo_nearby, '_spectacular') and hasattr(geo_nearby, 'cls'):
+    geo_nearby.cls._spectacular = geo_nearby._spectacular

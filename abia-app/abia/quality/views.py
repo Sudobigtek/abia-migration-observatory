@@ -1,3 +1,8 @@
+from drf_spectacular.utils import extend_schema
+from abia.common.response_serializers import (
+    QualityDashboardResponse,
+    RunChecksResponse,
+)
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -16,6 +21,7 @@ class DataQualityIssueViewSet(viewsets.ModelViewSet):
     serializer_class = DataQualityIssueSerializer
     permission_classes = [IsAuthenticated]
 
+@extend_schema(responses=RunChecksResponse, tags=["Quality"], summary="Run quality checks")
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def run_checks(request):
@@ -37,6 +43,9 @@ def run_checks(request):
     total = QualityService.run_all_checks()
     return Response({"status": "completed", "total_issues_found": total})
 
+
+run_checks.cls.serializer_class = RunChecksResponse
+@extend_schema(responses=QualityDashboardResponse, tags=["Quality"], summary="Quality dashboard")
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def quality_dashboard(request):
@@ -52,3 +61,10 @@ def quality_dashboard(request):
         "case_score": QualityService.get_quality_score("cases.Case"),
     }
     return Response(stats)
+
+
+# Propagate _spectacular metadata for drf-spectacular
+if hasattr(run_checks, '_spectacular') and hasattr(run_checks, 'cls'):
+    run_checks.cls._spectacular = run_checks._spectacular
+if hasattr(quality_dashboard, '_spectacular') and hasattr(quality_dashboard, 'cls'):
+    quality_dashboard.cls._spectacular = quality_dashboard._spectacular

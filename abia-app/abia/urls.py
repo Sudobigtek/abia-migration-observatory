@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path
+from abia.common.metadata import api_metadata, health_check
 from django.views.generic import TemplateView
 
 from abia.dashboard_view import unified_dashboard
@@ -48,7 +49,9 @@ from abia.mobile.views import (
 from abia.api.views import dashboard_stats_api, hotspot_geojson_api
 
 
-urlpatterns = [
+urlpatterns = [    
+    path("api/v1/metadata/", api_metadata, name="api-metadata"),
+    path("api/v1/health/", health_check, name="api-health"),
     path('', include('abia.public_dashboard.urls')),
     # Dashboard
     path("dashboard/", TemplateView.as_view(template_name="dashboard/index.html"), name="dashboard"),

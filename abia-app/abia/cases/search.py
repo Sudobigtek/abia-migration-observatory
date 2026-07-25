@@ -1,3 +1,7 @@
+from drf_spectacular.utils import extend_schema
+from abia.common.response_serializers import (
+    SearchCasesResponse,
+)
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.db.models import Q
 from rest_framework.decorators import api_view, permission_classes
@@ -6,6 +10,7 @@ from rest_framework.response import Response
 from .models import Case
 
 
+@extend_schema(responses=SearchCasesResponse, tags=["Cases"], summary="Search cases")
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def search_cases(request):
@@ -33,3 +38,8 @@ def search_cases(request):
             'rank': round(c.rank, 3) if c.rank else 0,
         } for c in results]
     })
+
+
+# Propagate _spectacular metadata for drf-spectacular
+if hasattr(search_cases, '_spectacular') and hasattr(search_cases, 'cls'):
+    search_cases.cls._spectacular = search_cases._spectacular
