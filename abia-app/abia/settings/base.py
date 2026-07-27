@@ -116,6 +116,7 @@ DATABASES = {
     }
 }
 }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -178,9 +179,9 @@ CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'memory://')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # OpenAPI / Swagger Configuration
-SPECTACULAR_SETTINGS = {
+SPECTACULAR_SETTINGS = SPECTACULAR_SETTINGS = {
     'TITLE': 'Abia Migration Observatory API',
-    'DESCRIPTION': 'REST API for managing migrants, cases, referrals, risk assessments, and IPFS documents in Abia State, Nigeria.',
+    'DESCRIPTION': 'API for subnational migration governance in Abia State, Nigeria',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
