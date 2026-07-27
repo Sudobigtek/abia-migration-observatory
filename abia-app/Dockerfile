@@ -1,11 +1,11 @@
-FROM python:3.11-slim
+FROM python:3.14-slim
 
 WORKDIR /app
 
 # Install system dependencies including GDAL/GEOS/PROJ for GeoDjango
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y git \
     gcc \
-    libpq-dev \
+    libpq-dev git \
     gdal-bin \
     libgdal-dev \
     libgeos-dev \

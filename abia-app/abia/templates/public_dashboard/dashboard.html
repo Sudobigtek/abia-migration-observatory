@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abia Migration Observatory | Public Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container { text-align: center; padding: 2rem; max-width: 800px; }
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; color: #64d2ff; }
+        p { font-size: 1.125rem; color: #a0c4e8; line-height: 1.6; margin-bottom: 2rem; }
+        .badge {
+            display: inline-block;
+            background: rgba(100, 210, 255, 0.15);
+            border: 1px solid rgba(100, 210, 255, 0.3);
+            padding: 0.5rem 1.5rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            color: #64d2ff;
+            margin-bottom: 2rem;
+        }
+        .links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .links a {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .links a:hover { background: rgba(255,255,255,0.2); }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-top: 2rem; }
+        .stat { background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px; }
+        .stat-value { font-size: 1.75rem; font-weight: 700; color: #64d2ff; }
+        .stat-label { font-size: 0.75rem; color: #8aa8c8; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem; }
+        footer { position: absolute; bottom: 2rem; color: #5a7a9a; font-size: 0.875rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="badge">Abia State, Nigeria</div>
+        <h1>Migration Observatory</h1>
+        <p>Public dashboard for tracking migrant registry, case management, risk assessments, and service referrals across Abia State.</p>
+        <div class="links">
+            <a href="/api/docs/">API Documentation</a>
+            <a href="/api/v1/metadata/">System Metadata</a>
+            <a href="/admin/">Admin Portal</a>
+        </div>
+        <div class="stats">
+            <div class="stat"><div class="stat-value">{{ total_migrants }}</div><div class="stat-label">Total Migrants</div></div>
+            <div class="stat"><div class="stat-value">{{ total_cases }}</div><div class="stat-label">Total Cases</div></div>
+            <div class="stat"><div class="stat-value">{{ active_cases }}</div><div class="stat-label">Active Cases</div></div>
+            <div class="stat"><div class="stat-value">{{ resolved_cases }}</div><div class="stat-label">Resolved</div></div>
+            <div class="stat"><div class="stat-value">{{ pending_referrals }}</div><div class="stat-label">Pending Referrals</div></div>
+        </div>
+    </div>
+    <footer>Powered by Abia State Government &middot; {{ last_updated|date:"Y" }}</footer>
+</body>
+</html>
