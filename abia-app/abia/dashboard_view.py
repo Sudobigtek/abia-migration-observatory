@@ -13,4 +13,10 @@ def unified_dashboard(request):
         "sports_lga": ChartService.get_sports_lga_map(),
         "migrants_by_lga": ChartService.get_migrants_by_lga(),
     }
-    return render(request, "dashboard.html", context)
+    return render(request, "dashboard/command_center.html", context)
+
+
+
+def onboarding_landing(request):
+    """Role-based onboarding entry point."""
+    return render(request, "onboarding/landing.html")

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Center | Abia Migration Observatory</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d2137;
+            color: #fff;
+            min-height: 100vh;
+        }
+        .topbar {
+            background: rgba(255,255,255,0.05);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .logo { font-size: 1.25rem; font-weight: 700; color: #64d2ff; }
+        .nav a {
+            color: #a0c4e8;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-size: 0.875rem;
+        }
+        .nav a:hover { color: #fff; }
+        .container { padding: 2rem; max-width: 1400px; margin: 0 auto; }
+        h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+        .subtitle { color: #5a7a9a; margin-bottom: 2rem; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .kpi {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .kpi-value { font-size: 2rem; font-weight: 700; color: #64d2ff; }
+        .kpi-label { font-size: 0.75rem; color: #8aa8c8; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem; }
+        .kpi-delta { font-size: 0.75rem; color: #4ade80; margin-top: 0.5rem; }
+        .section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .section h2 { font-size: 1rem; color: #a0c4e8; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .btn {
+            background: rgba(100, 210, 255, 0.15);
+            border: 1px solid rgba(100, 210, 255, 0.3);
+            color: #64d2ff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: rgba(100, 210, 255, 0.25); }
+        .btn-urgent {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+        .btn-urgent:hover { background: rgba(239, 68, 68, 0.25); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        th { text-align: left; color: #5a7a9a; font-weight: 500; padding: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        td { padding: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.05); color: #a0c4e8; }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .badge-open { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+        .badge-pending { background: rgba(234, 179, 8, 0.15); color: #facc15; }
+        .badge-resolved { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+        .badge-ipfs { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="logo">🛡️ Abia Migration Observatory</div>
+        <div class="nav">
+            <a href="/">Public Portal</a>
+            <a href="/admin/">Admin</a>
+            <a href="/api/docs/">API Docs</a>
+            <a href="/onboarding/">Onboarding</a>
+        </div>
+    </div>
+    <div class="container">
+        <h1>Command Center</h1>
+        <p class="subtitle">Real-time situational awareness for migration governance</p>
+
+        <div class="grid">
+            <div class="kpi">
+                <div class="kpi-value">{{ total_migrants }}</div>
+                <div class="kpi-label">Total Migrants Registered</div>
+                <div class="kpi-delta">+{{ new_migrants_this_week }} this week</div>
+            </div>
+            <div class="kpi">
+                <div class="kpi-value">{{ open_cases }}</div>
+                <div class="kpi-label">Open Cases</div>
+                <div class="kpi-delta">{{ xenophobia_cases }} xenophobia-related</div>
+            </div>
+            <div class="kpi">
+                <div class="kpi-value">{{ pending_referrals }}</div>
+                <div class="kpi-label">Pending Referrals</div>
+                <div class="kpi-delta">to IOM, NCFRMI, shelters</div>
+            </div>
+            <div class="kpi">
+                <div class="kpi-value">{{ ipfs_documents }}</div>
+                <div class="kpi-label">IPFS Documents</div>
+                <div class="kpi-delta">Evidence on decentralized storage</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Quick Actions</h2>
+            <div class="actions">
+                <a href="/admin/migrants/migrant/add/" class="btn">+ Register Migrant</a>
+                <a href="/admin/cases/case/add/" class="btn">+ Open Case</a>
+                <a href="/admin/referrals/referral/add/" class="btn">+ Create Referral</a>
+                <a href="/admin/documents/document/add/" class="btn">+ Upload to IPFS</a>
+                <a href="/reports/ncfrmi/generate/" class="btn btn-urgent">Generate NCFRMI Report</a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Recent Xenophobia Incidents</h2>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Evidence</th>
+                </tr>
+                {% for case in recent_xenophobia_cases %}
+                <tr>
+                    <td>#{{ case.id }}</td>
+                    <td>{{ case.title }}</td>
+                    <td>{{ case.location }}</td>
+                    <td>{{ case.created_at|date:"M d, Y" }}</td>
+                    <td><span class="badge badge-{{ case.status }}">{{ case.status }}</span></td>
+                    <td>{% if case.has_ipfs %}<span class="badge badge-ipfs">IPFS ✓</span>{% else %}—{% endif %}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" style="text-align:center; color:#5a7a9a;">No incidents recorded. Data will appear as cases are logged.</td></tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>Partner Submissions</h2>
+            <table>
+                <tr>
+                    <th>Partner</th>
+                    <th>Report Type</th>
+                    <th>Last Submitted</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>IOM</td>
+                    <td>Counter-Trafficking</td>
+                    <td>{{ iom_last_report|default:"—" }}</td>
+                    <td><span class="badge badge-pending">Pending</span></td>
+                </tr>
+                <tr>
+                    <td>NCFRMI</td>
+                    <td>Monthly Migration Report</td>
+                    <td>{{ ncfrmi_last_report|default:"—" }}</td>
+                    <td><span class="badge badge-pending">Pending</span></td>
+                </tr>
+                <tr>
+                    <td>GIZ</td>
+                    <td>Reintegration Assessment</td>
+                    <td>{{ giz_last_report|default:"—" }}</td>
+                    <td><span class="badge badge-pending">Pending</span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

@@ -3,7 +3,7 @@ from django.urls import include, path
 from abia.common.metadata import api_metadata, health_check
 from django.views.generic import TemplateView
 
-from abia.dashboard_view import unified_dashboard
+from abia.dashboard_view import unified_dashboard, onboarding_landing
 from abia.ncfrmi_reporting import urls as ncfrmi_urls
 from abia.giz import urls as giz_urls
 from abia.sports import urls as sports_urls
@@ -47,6 +47,7 @@ from abia.mobile.views import (
     mobile_dashboard, mobile_migrant_register, mobile_case_open
 )
 from abia.api.views import dashboard_stats_api, hotspot_geojson_api
+from abia.nbs.views import prepare_nbs_export
 
 
 urlpatterns = [    
@@ -54,7 +55,8 @@ urlpatterns = [
     path("api/v1/health/", health_check, name="api-health"),
     path('', include('abia.public_dashboard.urls')),
     # Dashboard
-    path("dashboard/", TemplateView.as_view(template_name="dashboard/index.html"), name="dashboard"),
+    path("dashboard/", unified_dashboard, name="dashboard"),
+    path("onboarding/", onboarding_landing, name="onboarding"),
 
     # Reports
     path("reports/", report_list, name="report_list"),
@@ -138,4 +140,5 @@ urlpatterns = [
     # Schema + Docs
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    path("api/v1/nbs/export/", prepare_nbs_export, name="nbs-export"),
 ]

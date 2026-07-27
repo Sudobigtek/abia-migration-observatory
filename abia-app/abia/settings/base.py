@@ -14,6 +14,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'abia.nbs',
     'django.contrib.gis',
     'django.contrib.postgres',
     'rest_framework',
@@ -107,12 +108,13 @@ parsed = urllib.parse.urlparse(db_url)
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': parsed.path.lstrip('/') or 'abia_migration_db',
-        'USER': parsed.username or 'postgres',
-        'PASSWORD': parsed.password or 'postgres',
-        'HOST': parsed.hostname or 'localhost',
-        'PORT': parsed.port or '5432',
+        'NAME': os.getenv('DB_NAME', 'abia'),
+        'USER': os.getenv('DB_USER', 'abia'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'abia'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
+}
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -172,11 +174,8 @@ LOGIN_URL = '/admin/login/'
 
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'memory://')
 
-
-
 # Whitenoise static files storage
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 
 # OpenAPI / Swagger Configuration
 SPECTACULAR_SETTINGS = {
@@ -186,11 +185,6 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
     'POSTPROCESSING_HOOKS': ['drf_spectacular.hooks.postprocess_schema_enums'],
-    'ENUM_NAME_OVERRIDES': {
-        'StatusEnum': 'abia.cases.models.CaseStatus',
-        'MigrantStatusEnum': 'abia.migrants.models.MigrantStatus',
-        'UserRoleEnum': 'abia.accounts.models.UserRole',
-    },
     'SCHEMA_PATH_PREFIX': r'/api/v[0-9]',
     'TAGS': [
         {'name': 'Migrants', 'description': 'Migrant registry and management'},
@@ -203,7 +197,6 @@ SPECTACULAR_SETTINGS = {
     ],
 }
 
-
 # Email Configuration (update for production)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'noreply@abia-migration.gov.ng'
@@ -215,7 +208,6 @@ DEFAULT_FROM_EMAIL = 'noreply@abia-migration.gov.ng'
 # EMAIL_HOST_USER = 'your-email@gmail.com'
 # EMAIL_HOST_PASSWORD = 'your-app-password'
 
-
 # Caching Configuration
 CACHES = {
     'default': {
@@ -225,7 +217,6 @@ CACHES = {
 }
 
 CACHE_TTL = 300
-
 
 # Celery Beat Schedule
 CELERY_BEAT_SCHEDULE = {
@@ -269,7 +260,6 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
-
 
 # Redis Cache Configuration
 CACHES = {

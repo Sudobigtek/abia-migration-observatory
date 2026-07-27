@@ -81,6 +81,10 @@ class CaseViewSet(viewsets.ModelViewSet):
     bbox_filter_include_overlapping = True
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Case.objects.none()
+        if not self.request.user.is_authenticated:
+            return Case.objects.none()
         user = self.request.user
         base_qs = Case.objects.select_related(
             "migrant", "assigned_to", "lga", "created_by"
