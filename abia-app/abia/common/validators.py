@@ -15,5 +15,5 @@ def validate_role(value):
     valid = {"field_officer", "state_admin", "super_admin", "lga_coordinator"}
     if value not in valid:
         raise ValidationError(
-            f"Role must be one of: {', '.join(sorted(valid))}."
+            f'Role must be one of: {', '.join(sorted(valid))}.'
         )

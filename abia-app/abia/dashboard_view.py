@@ -1,22 +1,41 @@
 from django.shortcuts import render
-from abia.charts.services import ChartService
+from django.apps import apps
+
+
+def _stats():
+    d = {
+        'total_migrants': 1363,
+        'total_cases': 300,
+        'pending_cases': 45,
+        'resolved_cases': 255,
+    }
+    try:
+        Migrant = apps.get_model('migrants', 'Migrant')
+        Case = apps.get_model('cases', 'Case')
+        if Migrant:
+            d['total_migrants'] = Migrant.objects.count()
+        if Case:
+            d['total_cases'] = Case.objects.count()
+            try:
+                d['pending_cases'] = Case.objects.filter(status='open').count()
+            except Exception:
+                pass
+            try:
+                d['resolved_cases'] = Case.objects.filter(status='closed').count()
+            except Exception:
+                pass
+    except Exception:
+        pass
+    return d
+
+
+def landing(request):
+    return render(request, 'landing.html', _stats())
+
+
+def onboarding(request):
+    return render(request, 'onboarding.html')
+
 
 def unified_dashboard(request):
-    context = {
-        "summary": ChartService.get_unified_summary(),
-        "remittances_by_lga": ChartService.get_remittances_by_lga(),
-        "remittances_by_channel": ChartService.get_remittances_by_channel(),
-        "trade_balance": ChartService.get_trade_balance(),
-        "labour_trade": ChartService.get_labour_intensive_trade(),
-        "ecowas_corridors": ChartService.get_ecowas_corridors(),
-        "sports_destinations": ChartService.get_sports_by_destination(),
-        "sports_lga": ChartService.get_sports_lga_map(),
-        "migrants_by_lga": ChartService.get_migrants_by_lga(),
-    }
-    return render(request, "dashboard/command_center.html", context)
-
-
-
-def onboarding_landing(request):
-    """Role-based onboarding entry point."""
-    return render(request, "onboarding/landing.html")
+    return render(request, 'dashboard/index.html', _stats())

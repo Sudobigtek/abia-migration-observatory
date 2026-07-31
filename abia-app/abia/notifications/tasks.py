@@ -53,8 +53,8 @@ def send_case_overdue_alert(case_id):
 
     assignee = case.assigned_to
     msg = (
-        f"[Abia Observatory] Case #{case.id} ({case.title}) "
-        f"is OVERDUE. Priority: {case.priority}. Please update status."
+        f'[Abia Observatory] Case #{case.id} ({case.title}) '
+        f'is OVERDUE. Priority: {case.priority}. Please update status.'
     )
 
     if assignee.phone_number:
@@ -64,9 +64,9 @@ def send_case_overdue_alert(case_id):
         send_mail(
             subject=f"Overdue Case Alert — #{case.id}",
             message=(
-                f"Case #{case.id}: {case.title} is overdue.\n"
-                f"Priority: {case.priority}\n"
-                f"Please update status in the dashboard."
+                f'Case #{case.id}: {case.title} is overdue.\n'
+                f'Priority: {case.priority}\n'
+                f'Please update status in the dashboard.'
             ),
             from_email=getattr(
                 settings,
@@ -100,9 +100,9 @@ def send_hotspot_alert(hotspot_id):
     affected = hotspot.estimated_affected or "Unknown"
 
     msg = (
-        f"[CRITICAL HOTSPOT] {hotspot.title} in {lga_name}. "
-        f"Severity: CRITICAL. Affected: {affected}. "
-        f"Check dashboard immediately."
+        f'[CRITICAL HOTSPOT] {hotspot.title} in {lga_name}. '
+        f'Severity: CRITICAL. Affected: {affected}. '
+        f'Check dashboard immediately.'
     )
 
     for officer in officers:

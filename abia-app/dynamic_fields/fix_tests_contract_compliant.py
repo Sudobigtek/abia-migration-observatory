@@ -120,8 +120,8 @@ class EnvironmentService:
 
         if not app_dir.exists():
             raise PathNotFoundError(
-                f"Application directory not found: {app_dir}. "
-                f"Ensure you are in the project root."
+                f'Application directory not found: {app_dir}. '
+                f'Ensure you are in the project root.'
             )
 
         abia_dir.mkdir(parents=True, exist_ok=True)
@@ -231,7 +231,7 @@ class DatabaseRepository:
             "-U",
             user,
             "-c",
-            f"CREATE DATABASE {db_name};",
+            f'CREATE DATABASE {db_name};",
         ]
         result = subprocess.run(cmd, capture_output=True, text=True, check=False)
         return result.returncode == 0 or "already exists" in result.stderr

@@ -189,7 +189,7 @@ class DynamicFieldService:
             entity_type=entity_type, field_name=field_name
         ).exists():
             raise DuplicateFieldError(
-                f"Field {field_name} already exists for {entity_type}"
+                f'Field {field_name} already exists for {entity_type}'
             )
         definition = DynamicFieldDefinition.objects.create(created_by=user, **data)
         return definition

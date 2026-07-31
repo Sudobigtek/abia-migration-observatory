@@ -58,9 +58,9 @@ class IPFSClient:
         """
         boundary = "----IPFSBoundary7MA4YWxkTrZu0gW"
         body = (
-            f"--{boundary}\r\n"
+            f'--{boundary}\r\n'
             f'Content-Disposition: form-data; name="file"; filename="{filename or "data"}"\r\n'
-            f"Content-Type: application/octet-stream\r\n\r\n"
+            f'Content-Type: application/octet-stream\r\n\r\n'
         ).encode() + content + f"\r\n--{boundary}--\r\n".encode()
 
         headers = {"Content-Type": f"multipart/form-data; boundary={boundary}"}
@@ -90,7 +90,7 @@ class IPFSClient:
         """Retrieve content by CID from local node."""
         try:
             req = urllib.request.Request(
-                f"{IPFS_BASE_URL}/api/v0/cat?arg={cid}", method="POST"
+                f'{IPFS_BASE_URL}/api/v0/cat?arg={cid}", method="POST'
             )
             with urllib.request.urlopen(req, timeout=30) as resp:
                 return resp.read()

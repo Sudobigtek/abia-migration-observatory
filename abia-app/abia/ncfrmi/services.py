@@ -36,7 +36,7 @@ class NCFRMIService:
         )
         try:
             response = requests.post(
-                f"{cls.BASE_URL}/migrants/",
+                f'{cls.BASE_URL}/migrants/",
                 json=payload,
                 headers=cls._headers(),
                 timeout=30

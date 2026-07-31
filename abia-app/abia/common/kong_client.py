@@ -60,7 +60,7 @@ class KongClient:
     def create_route(service_name: str, path: str) -> str:
         """Create a route for a service."""
         result = KongClient._request(
-            f"/services/{service_name}/routes",
+            f'/services/{service_name}/routes",
             {"paths": [path]},
             "POST",
         )
@@ -72,7 +72,7 @@ class KongClient:
     def add_rate_limiting(service_name: str, minute: int = 100) -> str:
         """Enable rate limiting on a service."""
         result = KongClient._request(
-            f"/services/{service_name}/plugins",
+            f'/services/{service_name}/plugins",
             {
                 "name": "rate-limiting",
                 "config": {
@@ -90,7 +90,7 @@ class KongClient:
     def add_key_auth(service_name: str) -> str:
         """Enable API key authentication on a service."""
         result = KongClient._request(
-            f"/services/{service_name}/plugins",
+            f'/services/{service_name}/plugins",
             {"name": "key-auth"},
             "POST",
         )

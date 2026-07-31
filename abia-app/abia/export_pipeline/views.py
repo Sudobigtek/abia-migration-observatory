@@ -55,7 +55,7 @@ class DataExportViewSet(viewsets.ModelViewSet):
             "ipfs_hash": export.ipfs_hash,
             "ipfs_url": export.ipfs_url,
             "gateway_urls": [
-                f"https://ipfs.io/ipfs/{export.ipfs_hash}",
-                f"https://gateway.pinata.cloud/ipfs/{export.ipfs_hash}",
+                f'https://ipfs.io/ipfs/{export.ipfs_hash}",
+                f'https://gateway.pinata.cloud/ipfs/{export.ipfs_hash}",
             ]
         })

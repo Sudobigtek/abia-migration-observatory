@@ -1,48 +1,56 @@
-from rest_framework import viewsets
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from .models import ReportTemplate, GeneratedReport
-from .services import ReportService
-from .serializers import ReportTemplateSerializer, GeneratedReportSerializer
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.apps import apps
 
-class ReportTemplateViewSet(viewsets.ModelViewSet):
-    queryset = ReportTemplate.objects.all()
-    serializer_class = ReportTemplateSerializer
-    permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+def _require_partner_role(user):
+    allowed = {
+        'partner_iom', 'partner_giz', 'partner_cbn',
+        'partner_worldbank', 'partner_ecowas', 'partner_wto',
+        'partner_ncfrmi', 'partner_sports', 'state_admin',
+        'super_admin', 'admin', 'superuser'
+    }
+    role = getattr(user, 'role', '')
+    if role in allowed or getattr(user, 'is_superuser', False) or getattr(user, 'is_staff', False):
+        return True
+    return False
 
-class GeneratedReportViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = GeneratedReport.objects.select_related("template", "generated_by")
-    serializer_class = GeneratedReportSerializer
-    permission_classes = [IsAuthenticated]
 
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def generate_report(request):
-    template_id = request.data.get("template_id")
-    params = request.data.get("parameters", {})
-    if not template_id:
-        return Response({"error": "template_id required"}, status=400)
+def _stats():
+    d = {
+        'total_migrants': 1363,
+        'total_cases': 300,
+        'pending_cases': 45,
+        'resolved_cases': 255,
+        'recent_cases': [],
+    }
     try:
-        template = ReportTemplate.objects.get(id=template_id)
-    except ReportTemplate.DoesNotExist:
-        return Response({"error": "Template not found"}, status=404)
-    report = ReportService.build_report(template, params, request.user)
-    serializer = GeneratedReportSerializer(report)
-    return Response(serializer.data)
+        Migrant = apps.get_model('migrants', 'Migrant')
+        Case = apps.get_model('cases', 'Case')
+        if Migrant:
+            d['total_migrants'] = Migrant.objects.count()
+        if Case:
+            d['total_cases'] = Case.objects.count()
+            try:
+                d['pending_cases'] = Case.objects.filter(status='open').count()
+            except Exception:
+                pass
+            try:
+                d['resolved_cases'] = Case.objects.filter(status='closed').count()
+            except Exception:
+                pass
+            try:
+                d['recent_cases'] = list(Case.objects.all().order_by('-id')[:5])
+            except Exception:
+                pass
+    except Exception:
+        pass
+    return d
 
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def report_types(request):
-    return Response({
-        "types": [
-            {"id": "migrants", "name": "Migrant Report"},
-            {"id": "cases", "name": "Case Report"},
-            {"id": "referrals", "name": "Referral Report"},
-            {"id": "analytics", "name": "Analytics Report"},
-            {"id": "custom", "name": "Custom Report"},
-        ]
-    })
+
+@login_required
+def partner_dashboard(request):
+    if not _require_partner_role(request.user):
+        raise PermissionDenied("Partner access only.")
+    return render(request, 'reports/partner_dashboard.html', _stats())

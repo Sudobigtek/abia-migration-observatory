@@ -42,7 +42,7 @@ class FieldValidationService:
         validator = validators.get(definition.field_type)
         if not validator:
             raise FieldTypeError(
-                f"Unknown field type: {definition.field_type}")
+                f'Unknown field type: {definition.field_type}")
         return validator(definition, value)
 
     @staticmethod
@@ -190,7 +190,7 @@ class DynamicFieldService:
             entity_type=entity_type, field_name=field_name
         ).exists():
             raise DuplicateFieldError(
-                f"Field {field_name} already exists for {entity_type}"
+                f'Field {field_name} already exists for {entity_type}'
             )
         definition = DynamicFieldDefinition.objects.create(
             created_by=user, **data)

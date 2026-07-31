@@ -20,7 +20,7 @@ def query_ollama(prompt, model="llama3", system=None, timeout=30):
         payload["system"] = system
     try:
         resp = requests.post(
-            f"{OLLAMA_BASE_URL}/api/generate",
+            f'{OLLAMA_BASE_URL}/api/generate',
             json=payload,
             timeout=timeout
         )
@@ -33,11 +33,11 @@ def query_ollama(prompt, model="llama3", system=None, timeout=30):
         cache.set(cache_key, result, timeout=3600)
         return result
     except requests.exceptions.ConnectionError:
-        return {"error": "Ollama not available", "status": "offline"}
+        return {"error": "Ollama not available", 'status': "offline"}
     except requests.exceptions.Timeout:
-        return {"error": "Request timeout", "status": "timeout"}
+        return {"error": "Request timeout", 'status': "timeout"}
     except Exception as e:
-        return {"error": str(e), "status": "error"}
+        return {"error": str(e), 'status': "error"}
 
 def assess_migrant_risk(migrant_data):
     system_prompt = (
@@ -48,16 +48,16 @@ def assess_migrant_risk(migrant_data):
         "trafficking, exploitation, or health emergencies."
     )
     prompt = (
-        f"Assess the risk for this migrant:\n"
-        f"Name: {migrant_data.get(\"full_name\", \"Unknown\")}\n"
-        f"Gender: {migrant_data.get(\"gender\", \"unknown\")}\n"
-        f"Age: {migrant_data.get(\"age\", \"unknown\")}\n"
-        f"Nationality: {migrant_data.get(\"nationality\", \"unknown\")}\n"
-        f"Status: {migrant_data.get(\"status\", \"unknown\")}\n"
-        f"Current LGA: {migrant_data.get(\"current_lga\", \"unknown\")}\n"
-        f"Cases: {migrant_data.get(\"case_count\", 0)} open cases\n"
-        f"Last updated: {migrant_data.get(\"updated_at\", \"unknown\")}\n\n"
-        f"Return JSON only."
+        f'Assess the risk for this migrant:\n'
+        f'Name: {migrant_data.get("full_name", "Unknown")}\n'
+        f'Gender: {migrant_data.get("gender", "unknown")}\n'
+        f'Age: {migrant_data.get("age", "unknown")}\n'
+        f'Nationality: {migrant_data.get("nationality", "unknown")}\n'
+        f'Status: {migrant_data.get("status", "unknown")}\n'
+        f'Current LGA: {migrant_data.get("current_lga", "unknown")}\n'
+        f'Cases: {migrant_data.get("case_count", 0)} open cases\n'
+        f'Last updated: {migrant_data.get("updated_at", "unknown")}\n\n'
+        f'Return JSON only.'
     )
     return query_ollama(prompt, system=system_prompt)
 
@@ -68,10 +68,10 @@ def predict_case_priority(case_data):
         "reasoning (brief explanation), sla_hours (recommended response time)."
     )
     prompt = (
-        f"Case: {case_data.get(\"case_type\", \"unknown\")}\n"
-        f"Description: {case_data.get(\"description\", "")[:500]}\n"
-        f"Migrant status: {case_data.get(\"migrant_status\", \"unknown\")}\n"
-        f"Days open: {case_data.get(\"days_open\", 0)}\n\n"
-        f"Return JSON only."
+        f'Case: {case_data.get("case_type", "unknown")}\n'
+        f'Description: {case_data.get("description", "")[:500]}\n'
+        f'Migrant status: {case_data.get("migrant_status", "unknown")}\n'
+        f'Days open: {case_data.get("days_open", 0)}\n\n'
+        f'Return JSON only.'
     )
     return query_ollama(prompt, system=system_prompt)

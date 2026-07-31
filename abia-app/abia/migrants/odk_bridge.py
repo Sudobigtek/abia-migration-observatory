@@ -47,7 +47,7 @@ class ODKBridge:
         instance_id = ODKBridge._extract_submission_id(submission_data)
         if MigrantRepository.exists_by_odk_submission_id(instance_id):
             raise DuplicateSubmissionError(
-                f"ODK submission {instance_id} already processed."
+                f'ODK submission {instance_id} already processed.'
             )
 
         data = submission_data.get("data", submission_data)

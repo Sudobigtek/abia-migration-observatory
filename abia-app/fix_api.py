@@ -118,11 +118,11 @@ for path, views in APIVIEW_FIXES.items():
 
         decorator_lines = [
             "@extend_schema(",
-            f"    responses=inline_serializer('{serializer_name}', fields={{",
+            f'    responses=inline_serializer('{serializer_name}', fields={{",
             fields_str,
             "        }}),",
-            f"    tags=['{tag}'],",
-            f"    summary='{summary}',",
+            f'    tags=['{tag}'],",
+            f'    summary='{summary}',",
             "    description='Auto-documented endpoint. Replace with actual response shape if needed.',",
             ")",
         ]

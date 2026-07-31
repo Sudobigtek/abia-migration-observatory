@@ -2,14 +2,14 @@ from .base import *
 
 DEBUG = True
 ENVIRONMENT = 'development'
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
+ALLOWED_HOSTS = ['*']
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'abia',
-        'USER': 'abia',
-        'PASSWORD': 'abia',
+        'NAME': 'abia_migration',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
         'HOST': 'localhost',
         'PORT': '5432',
     }
