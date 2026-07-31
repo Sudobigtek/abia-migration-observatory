@@ -67,3 +67,4 @@ Thumbs.db
 .coverage
 htmlcov/
 .tox/
+.nuclear_backup_v2/
