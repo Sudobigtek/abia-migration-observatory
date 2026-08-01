@@ -31,4 +31,5 @@ urlpatterns = [
     path("data-collection/", views.data_collection_hub, name="data_collection_hub"),
     path("collect/<str:form_type>/", views.collect_form, name="collect_form"),
     path("submissions/", views.submission_list, name="submission_list"),
+    path("analytics/", views.analytics_dashboard, name="analytics"),
 ]

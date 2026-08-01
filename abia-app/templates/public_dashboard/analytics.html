@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% block title %}Analytics Dashboard | Abia Observatory{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            <!-- Header -->
+            <div class="d-flex align-items-center mb-4 animate-card">
+                <div class="display-4 text-success me-3"><i class="bi bi-bar-chart-line-fill"></i></div>
+                <div>
+                    <h2 class="fw-bold mb-0">Migration Analytics Dashboard</h2>
+                    <p class="text-muted mb-0">Real-time insights from the Abia State Observatory data collection network.</p>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3 animate-card">
+                    <div class="card border-0 shadow-sm bg-primary text-white h-100">
+                        <div class="card-body text-center">
+                            <h3 class="display-5 fw-bold mb-0">{{ total_submissions }}</h3>
+                            <small>Total Submissions</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 animate-card">
+                    <div class="card border-0 shadow-sm bg-success text-white h-100">
+                        <div class="card-body text-center">
+                            <h3 class="display-5 fw-bold mb-0">{{ synced_ncfrmi }}</h3>
+                            <small>Synced to NCFRMI</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 animate-card">
+                    <div class="card border-0 shadow-sm bg-info text-white h-100">
+                        <div class="card-body text-center">
+                            <h3 class="display-5 fw-bold mb-0">{{ synced_iom }}</h3>
+                            <small>Synced to IOM</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 animate-card">
+                    <div class="card border-0 shadow-sm bg-warning text-dark h-100">
+                        <div class="card-body text-center">
+                            <h3 class="display-5 fw-bold mb-0">{{ pending }}</h3>
+                            <small>Pending Sync</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 1 -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6 animate-card">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white fw-bold"><i class="bi bi-pie-chart me-2"></i>Submissions by Type</div>
+                        <div class="card-body">
+                            <canvas id="typeChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 animate-card">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white fw-bold"><i class="bi bi-graph-up me-2"></i>Activity (Last 7 Days)</div>
+                        <div class="card-body">
+                            <canvas id="trendChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 2 -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6 animate-card">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white fw-bold"><i class="bi bi-geo-alt me-2"></i>Top LGAs (Migration)</div>
+                        <div class="card-body">
+                            <canvas id="lgaChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 animate-card">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white fw-bold"><i class="bi bi-cloud-check me-2"></i>Partner Sync Status</div>
+                        <div class="card-body">
+                            <canvas id="syncChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+// Type Distribution
+new Chart(document.getElementById('typeChart'), {
+    type: 'doughnut',
+    data: {
+        labels: {{ type_labels|safe|default:'[]' }},
+        datasets: [{
+            data: {{ type_data|safe|default:'[]' }},
+            backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#0dcaf0', '#6c757d']
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+
+// Trend Line
+new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: {
+        labels: {{ dates|safe|default:'[]' }},
+        datasets: [{
+            label: 'Daily Submissions',
+            data: {{ daily_counts|safe|default:'[]' }},
+            borderColor: '#008751',
+            backgroundColor: 'rgba(0,135,81,0.1)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+});
+
+// LGA Bar
+new Chart(document.getElementById('lgaChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ lga_labels|safe|default:'[]' }},
+        datasets: [{
+            label: 'Migrants',
+            data: {{ lga_data|safe|default:'[]' }},
+            backgroundColor: '#0d6efd'
+        }]
+    },
+    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+});
+
+// Sync Status
+new Chart(document.getElementById('syncChart'), {
+    type: 'pie',
+    data: {
+        labels: ['NCFRMI Synced', 'IOM Synced', 'Pending'],
+        datasets: [{
+            data: [{{ synced_ncfrmi }}, {{ synced_iom }}, {{ pending }}],
+            backgroundColor: ['#198754', '#0dcaf0', '#ffc107']
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+</script>
+{% endblock %}

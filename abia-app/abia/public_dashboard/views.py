@@ -294,3 +294,56 @@ def submission_list(request):
     return render(request, 'public_dashboard/submission_list.html', {
         'submissions': submissions,
     })
+
+# ============================================
+# NASA: Analytics Dashboard with Charts
+# ============================================
+from django.db.models import Count
+from collections import Counter
+
+def analytics_dashboard(request):
+    """Public analytics page with Chart.js visualizations."""
+    submissions = FormSubmission.objects.all()
+    
+    # Form type distribution
+    type_counts = dict(submissions.values('form_type').annotate(count=Count('form_type')).values_list('form_type', 'count'))
+    type_labels = [dict(FormSubmission.FORM_TYPES).get(k, k) for k in type_counts.keys()]
+    type_data = list(type_counts.values())
+    
+    # Submissions over time (last 7 days)
+    from django.utils import timezone
+    from datetime import timedelta
+    dates = []
+    daily_counts = []
+    for i in range(6, -1, -1):
+        date = timezone.now().date() - timedelta(days=i)
+        count = submissions.filter(created_at__date=date).count()
+        dates.append(date.strftime('%a %d'))
+        daily_counts.append(count)
+    
+    # LGA distribution from migration data
+    lga_counts = Counter()
+    for sub in submissions.filter(form_type='migration'):
+        lga = sub.data.get('lga', 'Unknown')
+        lga_counts[lga] += 1
+    
+    top_lgas = dict(lga_counts.most_common(8))
+    
+    # Sync status
+    synced_ncfrmi = submissions.filter(synced_to_ncfrmi=True).count()
+    synced_iom = submissions.filter(synced_to_iom=True).count()
+    pending = submissions.count() - max(synced_ncfrmi, synced_iom)
+    
+    context = {
+        'total_submissions': submissions.count(),
+        'type_labels': type_labels,
+        'type_data': type_data,
+        'dates': dates,
+        'daily_counts': daily_counts,
+        'lga_labels': list(top_lgas.keys()),
+        'lga_data': list(top_lgas.values()),
+        'synced_ncfrmi': synced_ncfrmi,
+        'synced_iom': synced_iom,
+        'pending': pending,
+    }
+    return render(request, 'public_dashboard/analytics.html', context)

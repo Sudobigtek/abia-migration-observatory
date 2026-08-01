@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}All Submissions | Abia Observatory{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            <div class="d-flex align-items-center mb-4 animate-card">
+                <div class="display-4 text-dark me-3"><i class="bi bi-database-fill"></i></div>
+                <div>
+                    <h2 class="fw-bold mb-0">All Data Submissions</h2>
+                    <p class="text-muted mb-0">Live view of every form submitted through the Data Collection Center.</p>
+                </div>
+                <div class="ms-auto">
+                    <a href="{% url 'public_dashboard:data_collection_hub' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-lg me-1"></i> New Submission
+                    </a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 animate-card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped mb-0 align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Type</th>
+                                    <th>Title</th>
+                                    <th>Key Data</th>
+                                    <th>Submitted</th>
+                                    <th>NCFRMI</th>
+                                    <th>IOM</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sub in submissions %}
+                                <tr>
+                                    <td class="fw-bold">#{{ sub.id }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if sub.form_type == 'migration' %}primary{% elif sub.form_type == 'trade' %}success{% elif sub.form_type == 'hotspot' %}danger{% elif sub.form_type == 'returnee' %}info{% elif sub.form_type == 'sports' %}warning{% else %}secondary{% endif %}">
+                                            {{ sub.get_form_type_display }}
+                                        </span>
+                                    </td>
+                                    <td class="fw-semibold">{{ sub.title }}</td>
+                                    <td class="small text-muted">
+                                        {% with first_key=sub.data.keys|first %}
+                                            {{ sub.data|dictsort:0|first|last|truncatechars:25 }}
+                                        {% endwith %}
+                                    </td>
+                                    <td class="small">{{ sub.created_at|date:"M d, H:i" }}</td>
+                                    <td>
+                                        {% if sub.synced_to_ncfrmi %}
+                                            <span class="badge bg-success badge-status"><i class="bi bi-check-circle"></i></span>
+                                        {% else %}
+                                            <span class="badge bg-secondary badge-status"><i class="bi bi-clock"></i></span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if sub.synced_to_iom %}
+                                            <span class="badge bg-success badge-status"><i class="bi bi-check-circle"></i></span>
+                                        {% else %}
+                                            <span class="badge bg-secondary badge-status"><i class="bi bi-clock"></i></span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-5 text-muted">
+                                        <div class="display-1 mb-3"><i class="bi bi-inbox"></i></div>
+                                        <h5>No submissions yet</h5>
+                                        <p>Data will appear here once agents start collecting.</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-muted small">
+                    Showing {{ submissions|length }} most recent submissions. 
+                    <a href="{% url 'public_dashboard:data_collection_hub' %}">Submit new data →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
