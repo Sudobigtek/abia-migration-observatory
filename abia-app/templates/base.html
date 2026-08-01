@@ -45,12 +45,13 @@
         .badge-status { font-size: 0.75rem; padding: 0.35em 0.65em; border-radius: 20px; }
     </style>
     {% block extra_css %}{% endblock %}
+    <link rel="manifest" href="/static/manifest.json">
 </head>
 <body>
     <button class="btn btn-dark d-md-none m-2" onclick="document.querySelector('.sidebar').classList.toggle('show')"><i class="bi bi-list"></i> Menu</button>
     <nav class="sidebar">
         <div class="sidebar-brand">
-            <img src="{% static 'images/abia_logo.jpg' %}" alt="Abia State Coat of Arms">
+            <img src="{% static 'images/abia_logo.jpg' %}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Abia State Coat of Arms">
             <h5>Abia Observatory</h5>
             <small>Migration Management System</small>
         </div>
@@ -67,7 +68,7 @@
     <div class="main-content">
         <div class="topbar">
             <div class="d-flex align-items-center">
-                <img src="{% static 'images/abia_logo.jpg' %}" alt="Abia State Coat of Arms">
+                <img src="{% static 'images/abia_logo.jpg' %}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="Abia State Coat of Arms">
                 <h5 class="mb-0 fw-bold text-dark">Abia State Government — Migration Observatory</h5>
             </div>
             <div>

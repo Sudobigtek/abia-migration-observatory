@@ -1,0 +1,21 @@
+{
+  "name": "Abia Migration Observatory",
+  "short_name": "Abia Observatory",
+  "start_url": "/public-dashboard/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#008751",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/images/abia_logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/static/images/abia_logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

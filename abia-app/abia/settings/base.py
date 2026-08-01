@@ -60,6 +60,7 @@ INSTALLED_APPS = [
  'abia.sports',
  'abia.giz',
  'abia.ncfrmi_reporting',
+    'abia.data_collection',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'

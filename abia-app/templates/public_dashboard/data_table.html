@@ -4,7 +4,6 @@
 <div class="container-fluid py-4">
     <div class="row justify-content-center">
         <div class="col-lg-11">
-            <!-- Header -->
             <div class="d-flex align-items-center mb-4 animate-card">
                 <div class="display-4 text-{{ color }} me-3"><i class="bi {{ icon }}"></i></div>
                 <div>
@@ -34,23 +33,17 @@
                         <table class="table table-hover table-striped mb-0 align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    {% for field in fields|slice:":8" %}
+                                    {% for field in fields %}
                                     <th class="text-uppercase small fw-semibold">{{ field|title }}</th>
                                     {% endfor %}
                                     <th class="text-uppercase small fw-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for row in data %}
+                                {% for row in rows %}
                                 <tr>
-                                    {% for field in fields|slice:":8" %}
-                                    <td>
-                                        {% if row|get_item:field %}
-                                            {{ row|get_item:field|truncatechars:30 }}
-                                        {% else %}
-                                            <span class="text-muted">—</span>
-                                        {% endif %}
-                                    </td>
+                                    {% for cell in row %}
+                                    <td>{{ cell }}</td>
                                     {% endfor %}
                                     <td>
                                         <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
@@ -62,7 +55,7 @@
                     </div>
                 </div>
                 <div class="card-footer bg-white text-muted small">
-                    Showing {{ data|length }} of {{ count }} records. Data refreshes in real-time.
+                    Showing {{ rows|length }} of {{ count }} records. Data refreshes in real-time.
                 </div>
             </div>
             {% endif %}
