@@ -12,4 +12,5 @@ urlpatterns = [
     path('command-center/', include('abia.charts.urls')),
     path('reports/', include('abia.reports.urls')),
     path('public-dashboard/', include('abia.public_dashboard.urls')),
+    path('api/v1/', include('abia.api.urls')),
 ]
