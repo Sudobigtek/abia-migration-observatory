@@ -1,0 +1,4 @@
+FormID,hotspot_monitoring
+FormName,Hotspot Monitoring Form
+Version,2026.1
+Fields,Location|Date|Incident_Type|Severity|Action_Taken

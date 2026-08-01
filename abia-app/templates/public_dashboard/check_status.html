@@ -1,20 +1,37 @@
 {% extends "base.html" %}
 {% block title %}Check Status | Abia Observatory{% endblock %}
 {% block content %}
-<div class="container py-5">
-    <h2 class="mb-4"><i class="bi bi-search text-info"></i> Check Your Status</h2>
-    <p class="lead">Enter your phone number or registration ID to verify your status.</p>
-    <form method="get" class="row g-3">
-        <div class="col-md-6">
-            <input type="text" class="form-control form-control-lg" placeholder="Phone number or Registration ID" name="q">
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 animate-card text-center">
+                <div class="card-body p-5">
+                    <div class="display-1 text-info mb-3"><i class="bi bi-search"></i></div>
+                    <h2 class="fw-bold mb-2">Check Your Status</h2>
+                    <p class="text-muted mb-4">Enter your phone number or registration ID to verify your status in the Observatory database.</p>
+                    <form method="get" action="">
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text bg-white"><i class="bi bi-telephone-fill text-muted"></i></span>
+                            <input type="text" name="q" class="form-control" placeholder="Phone number or Registration ID" required>
+                            <button class="btn btn-info text-white" type="submit">
+                                <i class="bi bi-search me-1"></i> Search
+                            </button>
+                        </div>
+                    </form>
+                    <div class="alert alert-light border mt-3 text-start">
+                        <small class="text-muted">
+                            <i class="bi bi-shield-check me-1"></i>
+                            <strong>Privacy notice:</strong> Your search is encrypted. Only authorized personnel can view full records.
+                        </small>
+                    </div>
+                    <hr class="my-4">
+                    <p class="mb-0">Haven't registered yet?</p>
+                    <a href="{% url 'public_dashboard:migrant_register' %}" class="btn btn-outline-success mt-2">
+                        <i class="bi bi-person-plus me-1"></i> Register Now
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-info btn-lg w-100 text-white">Search</button>
-        </div>
-    </form>
-    <div class="mt-4 alert alert-light border">
-        <p class="text-muted mb-0">Status lookup requires a valid registration. If you have not registered, <a href="{% url 'public_dashboard:migrant_register' %}">click here</a>.</p>
     </div>
-    <a href="{% url 'public_dashboard:public_landing' %}" class="btn btn-outline-primary">&larr; Back to Portal</a>
 </div>
 {% endblock %}

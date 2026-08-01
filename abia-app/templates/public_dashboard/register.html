@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Self Registration | Abia Observatory{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 animate-card">
+                <div class="card-header bg-success text-white py-3">
+                    <h3 class="mb-0 fw-bold"><i class="bi bi-person-plus-fill me-2"></i>Migrant Self-Registration</h3>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <div class="alert alert-info d-flex align-items-start">
+                        <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+                        <div>
+                            <strong>Welcome to the Abia Migration Observatory.</strong><br>
+                            Register yourself to access reintegration support, legal aid, and tracking services. Fields marked with * are required.
+                        </div>
+                    </div>
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">First Name *</label>
+                                <input type="text" name="first_name" class="form-control form-control-lg" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Last Name *</label>
+                                <input type="text" name="last_name" class="form-control form-control-lg" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Date of Birth</label>
+                                <input type="date" name="dob" class="form-control form-control-lg">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Gender *</label>
+                                <select name="gender" class="form-select form-select-lg" required>
+                                    <option value="">Select...</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Phone Number *</label>
+                                <input type="tel" name="phone" class="form-control form-control-lg" placeholder="+234 800 000 0000" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Email Address</label>
+                                <input type="email" name="email" class="form-control form-control-lg" placeholder="you@example.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">State of Origin</label>
+                                <input type="text" name="state_origin" class="form-control form-control-lg" value="Abia" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">LGA (Local Govt Area) *</label>
+                                <select name="lga" class="form-select form-select-lg" required>
+                                    <option value="">Select LGA...</option>
+                                    <option>Aba North</option>
+                                    <option>Aba South</option>
+                                    <option>Arochukwu</option>
+                                    <option>Bende</option>
+                                    <option>Ikwuano</option>
+                                    <option>Isiala Ngwa North</option>
+                                    <option>Isiala Ngwa South</option>
+                                    <option>Isuikwuato</option>
+                                    <option>Obi Ngwa</option>
+                                    <option>Ohafia</option>
+                                    <option>Osisioma</option>
+                                    <option>Ugwunagbo</option>
+                                    <option>Ukwa East</option>
+                                    <option>Ukwa West</option>
+                                    <option>Umuahia North</option>
+                                    <option>Umuahia South</option>
+                                    <option>Umu Nneochi</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Travel Destination</label>
+                                <input type="text" name="destination" class="form-control form-control-lg" placeholder="Country or city">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Status *</label>
+                                <select name="migrant_status" class="form-select form-select-lg" required>
+                                    <option value="">Select status...</option>
+                                    <option value="prospective">Prospective Migrant</option>
+                                    <option value="in_transit">In Transit</option>
+                                    <option value="returnee">Returnee</option>
+                                    <option value="idp">Internally Displaced</option>
+                                    <option value="resident">Resident</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Additional Information</label>
+                                <textarea name="notes" class="form-control" rows="3" placeholder="Any additional details..."></textarea>
+                            </div>
+                            <div class="col-12 d-flex gap-3 mt-4">
+                                <button type="submit" class="btn btn-success btn-lg px-5">
+                                    <i class="bi bi-check-circle-fill me-2"></i>Register
+                                </button>
+                                <a href="{% url 'public_dashboard:public_landing' %}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi bi-x-lg me-2"></i>Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
