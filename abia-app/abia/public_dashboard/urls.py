@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.views.decorators.http import require_http_methods
 
 app_name = "public_dashboard"
 
@@ -27,4 +28,7 @@ urlpatterns = [
     
     # ODK
     path('odk-forms/', views.odk_forms, name='odk_forms'),
+    path("data-collection/", views.data_collection_hub, name="data_collection_hub"),
+    path("collect/<str:form_type>/", views.collect_form, name="collect_form"),
+    path("submissions/", views.submission_list, name="submission_list"),
 ]

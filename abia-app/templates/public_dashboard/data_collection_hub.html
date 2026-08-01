@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Data Collection Center | Abia Observatory{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-10 text-center animate-card">
+            <div class="display-3 text-primary mb-3"><i class="bi bi-clipboard-data-fill"></i></div>
+            <h1 class="display-5 fw-bold text-primary mb-2">Data Collection Center</h1>
+            <p class="lead text-muted">
+                <strong>All data is collected directly on this platform.</strong> No downloads. No external apps. 
+                Submissions are stored in the Abia State database, processed into reports, and synced with partner agencies.
+            </p>
+            <div class="alert alert-success d-inline-block text-start mx-auto" style="max-width: 600px;">
+                <i class="bi bi-shield-check me-2"></i>
+                <strong>Data Security:</strong> All submissions are encrypted at rest, backed up to IPFS for permanence, 
+                and synchronized with NCFRMI & IOM per federal mandate.
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="row g-3 mb-5 justify-content-center">
+        <div class="col-6 col-md-3 animate-card">
+            <div class="card text-center border-0 shadow-sm bg-primary text-white h-100 stat-card">
+                <div class="card-body d-flex flex-column justify-content-center py-4">
+                    <h2 class="display-4 fw-bold mb-0">{{ total_submissions }}</h2>
+                    <small class="text-uppercase">Total Submissions</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 animate-card">
+            <div class="card text-center border-0 shadow-sm bg-success text-white h-100 stat-card">
+                <div class="card-body d-flex flex-column justify-content-center py-4">
+                    <h2 class="display-4 fw-bold mb-0">{{ recent_submissions|length }}</h2>
+                    <small class="text-uppercase">Recent Activity</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Cards -->
+    <h3 class="text-center mb-4 text-secondary animate-card"><i class="bi bi-ui-checks-grid"></i> Available Forms</h3>
+    <div class="row g-4 justify-content-center mb-5">
+        {% for ft in form_types %}
+        <div class="col-12 col-sm-6 col-lg-4 animate-card">
+            <div class="card h-100 card-hover">
+                <div class="card-body p-4 text-center">
+                    <div class="display-2 text-{{ ft.color }} mb-3"><i class="bi {{ ft.icon }}"></i></div>
+                    <h4 class="card-title fw-bold">{{ ft.name }}</h4>
+                    <p class="card-text text-muted small">{{ ft.desc }}</p>
+                    <span class="badge bg-light text-dark mb-3">{{ ft.fields }} fields</span>
+                    <a href="{% url 'public_dashboard:collect_form' ft.key %}" class="btn btn-{{ ft.color }} btn-lg w-100 stretched-link">
+                        <i class="bi bi-pencil-square me-2"></i>Fill Form
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Recent Submissions -->
+    {% if recent_submissions %}
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white fw-bold"><i class="bi bi-clock-history me-2"></i>Recent Submissions</div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th><th>Type</th><th>Title</th><th>Date</th><th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sub in recent_submissions %}
+                                <tr>
+                                    <td>#{{ sub.id }}</td>
+                                    <td><span class="badge bg-primary">{{ sub.get_form_type_display }}</span></td>
+                                    <td>{{ sub.title|truncatechars:40 }}</td>
+                                    <td>{{ sub.created_at|date:"M d, Y H:i" }}</td>
+                                    <td>
+                                        {% if sub.synced_to_ncfrmi and sub.synced_to_iom %}
+                                            <span class="badge bg-success badge-status">Synced</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark badge-status">Pending Sync</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Data Flow Diagram -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10 text-center">
+            <h4 class="mb-3 text-secondary"><i class="bi bi-diagram-3"></i> How Your Data Flows</h4>
+            <div class="d-flex flex-wrap justify-content-center align-items-center gap-2 mb-4">
+                <div class="badge bg-primary p-3"><i class="bi bi-pencil-square"></i> Web Form</div>
+                <i class="bi bi-arrow-right text-muted"></i>
+                <div class="badge bg-success p-3"><i class="bi bi-database"></i> Postgres DB</div>
+                <i class="bi bi-arrow-right text-muted"></i>
+                <div class="badge bg-info p-3"><i class="bi bi-cpu"></i> AI Processing</div>
+                <i class="bi bi-arrow-right text-muted"></i>
+                <div class="badge bg-warning text-dark p-3"><i class="bi bi-file-earmark-bar-graph"></i> Reports</div>
+                <i class="bi bi-arrow-right text-muted"></i>
+                <div class="badge bg-secondary p-3"><i class="bi bi-globe"></i> NCFRMI / IOM</div>
+            </div>
+            <p class="text-muted small">
+                <i class="bi bi-lock-fill me-1"></i>
+                IPFS backup ensures data permanence even beyond server lifecycle. 
+                Partner sync happens automatically via Celery every 6 hours.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

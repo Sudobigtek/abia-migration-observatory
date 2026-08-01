@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Sports Data Collection | Data Collection{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 animate-card">
+                <div class="card-header bg-success text-white py-3">
+                    <h3 class="mb-0 fw-bold"><i class="bi bi-person-vcard-fill me-2"></i>Sports Data Collection Form</h3>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <div class="alert alert-info d-flex align-items-start mb-4">
+                        <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+                        <div>
+                            <strong>Field Agent Data Entry</strong><br>
+                            Fill all required fields. Data is saved directly to the Abia State Observatory database.
+                            <br><small class="text-muted">Form Reference: MIG-2026-A | Data stays on platform</small>
+                        </div>
+                    </div>
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <input type="hidden" name="title" value="Sports Data Collection">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Full Name *</label>
+                                <input type="text" name="full_name" class="form-control form-control-lg" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Phone Number *</label>
+                                <input type="tel" name="phone" class="form-control form-control-lg" placeholder="+234..." required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Age</label>
+                                <input type="number" name="age" class="form-control form-control-lg" min="1" max="120">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Gender *</label>
+                                <select name="gender" class="form-select form-select-lg" required>
+                                    <option value="">Select...</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">State of Origin</label>
+                                <input type="text" name="state_origin" class="form-control form-control-lg" value="Abia">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">LGA *</label>
+                                <select name="lga" class="form-select form-select-lg" required>
+                                    <option value="">Select LGA...</option>
+                                    <option>Aba North</option><option>Aba South</option><option>Arochukwu</option>
+                                    <option>Bende</option><option>Ikwuano</option><option>Isiala Ngwa North</option>
+                                    <option>Isiala Ngwa South</option><option>Isuikwuato</option><option>Obi Ngwa</option>
+                                    <option>Ohafia</option><option>Osisioma</option><option>Ugwunagbo</option>
+                                    <option>Ukwa East</option><option>Ukwa West</option><option>Umuahia North</option>
+                                    <option>Umuahia South</option><option>Umu Nneochi</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Travel Destination</label>
+                                <input type="text" name="destination" class="form-control form-control-lg" placeholder="Country or city">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Migrant Status *</label>
+                                <select name="migrant_status" class="form-select form-select-lg" required>
+                                    <option value="">Select status...</option>
+                                    <option value="prospective">Prospective Migrant</option>
+                                    <option value="in_transit">In Transit</option>
+                                    <option value="returnee">Returnee</option>
+                                    <option value="idp">Internally Displaced</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Travel History / Notes</label>
+                                <textarea name="notes" class="form-control" rows="3" placeholder="Route taken, duration abroad, reason for travel..."></textarea>
+                            </div>
+                            <div class="col-12 d-flex gap-3 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg px-5">
+                                    <i class="bi bi-save-fill me-2"></i>Submit to Database
+                                </button>
+                                <a href="{% url 'public_dashboard:data_collection_hub' %}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi bi-x-lg me-2"></i>Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

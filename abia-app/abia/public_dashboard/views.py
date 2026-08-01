@@ -191,3 +191,104 @@ def odk_forms(request):
     return render(request, "public_dashboard/odk_forms.html")
 
     return render(request, "public_dashboard/odk_forms.html")
+
+# ============================================
+# NASA: Data Collection Hub — Web Forms (NOT downloads)
+# ============================================
+from django.contrib import messages
+from abia.data_collection.models import FormSubmission
+
+def data_collection_hub(request):
+    """Landing page showing all available web forms."""
+    form_types = [
+        {
+            'key': 'migration',
+            'name': 'Migration Registration',
+            'icon': 'bi-person-vcard',
+            'color': 'primary',
+            'desc': 'Register migrants, returnees, and IDPs entering Abia State.',
+            'fields': 12,
+        },
+        {
+            'key': 'trade',
+            'name': 'Trade & Commerce',
+            'icon': 'bi-shop',
+            'color': 'success',
+            'desc': 'Collect trade data, cross-border commerce, and SME activity.',
+            'fields': 10,
+        },
+        {
+            'key': 'sports',
+            'name': 'Sports & Youth',
+            'icon': 'bi-trophy',
+            'color': 'warning',
+            'desc': 'Track youth sports programs, talent identification, and events.',
+            'fields': 8,
+        },
+        {
+            'key': 'hotspot',
+            'name': 'Hotspot Monitoring',
+            'icon': 'bi-geo-alt',
+            'color': 'danger',
+            'desc': 'Report migration hotspots, incidents, and security alerts.',
+            'fields': 9,
+        },
+        {
+            'key': 'returnee',
+            'name': 'Returnee Assessment',
+            'icon': 'bi-house-check',
+            'color': 'info',
+            'desc': 'Assess returning migrants for reintegration support.',
+            'fields': 15,
+        },
+        {
+            'key': 'general',
+            'name': 'General Data',
+            'icon': 'bi-clipboard-data',
+            'color': 'secondary',
+            'desc': 'Flexible form for any other data collection needs.',
+            'fields': 6,
+        },
+    ]
+    recent_submissions = FormSubmission.objects.all()[:5]
+    return render(request, 'public_dashboard/data_collection_hub.html', {
+        'form_types': form_types,
+        'recent_submissions': recent_submissions,
+        'total_submissions': FormSubmission.objects.count(),
+    })
+
+def collect_form(request, form_type):
+    """Generic web form handler for all data types."""
+    valid_types = dict(FormSubmission.FORM_TYPES)
+    if form_type not in valid_types:
+        raise Http404("Form type not found")
+    
+    if request.method == 'POST':
+        data = dict(request.POST)
+        # Remove CSRF token from stored data
+        data.pop('csrfmiddlewaretoken', None)
+        # Convert single-item lists to strings
+        for key in data:
+            if len(data[key]) == 1:
+                data[key] = data[key][0]
+        
+        submission = FormSubmission.objects.create(
+            form_type=form_type,
+            title=data.get('title', f'{valid_types[form_type]} — {timezone.now().strftime("%Y-%m-%d %H:%M")}'),
+            data=data,
+            source_ip=request.META.get('REMOTE_ADDR'),
+        )
+        messages.success(request, f"{valid_types[form_type]} submitted successfully. Reference: #{submission.id}")
+        return redirect('public_dashboard:data_collection_hub')
+    
+    return render(request, f'public_dashboard/collect_{form_type}.html', {
+        'form_type': form_type,
+        'form_name': valid_types[form_type],
+    })
+
+def submission_list(request):
+    """View all submissions — admin-facing table."""
+    submissions = FormSubmission.objects.all()[:100]
+    return render(request, 'public_dashboard/submission_list.html', {
+        'submissions': submissions,
+    })

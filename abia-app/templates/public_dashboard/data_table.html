@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | Abia Observatory{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            <!-- Header -->
+            <div class="d-flex align-items-center mb-4 animate-card">
+                <div class="display-4 text-{{ color }} me-3"><i class="bi {{ icon }}"></i></div>
+                <div>
+                    <h2 class="fw-bold mb-0">{{ title }}</h2>
+                    <p class="text-muted mb-0">
+                        Live database view. <a href="?format=json" class="text-decoration-none">View as JSON</a> for API integration.
+                    </p>
+                </div>
+                <div class="ms-auto">
+                    <span class="badge bg-{{ color }} fs-6 p-2">{{ count }} Records</span>
+                </div>
+            </div>
+
+            {% if count == 0 %}
+            <div class="alert alert-light border text-center py-5 animate-card">
+                <div class="display-1 text-muted mb-3"><i class="bi bi-inbox"></i></div>
+                <h4 class="text-muted">No records found</h4>
+                <p class="text-muted">Data will appear here once agents submit via the <a href="{% url 'public_dashboard:data_collection_hub' %}">Data Collection Center</a>.</p>
+                <a href="{% url 'public_dashboard:data_collection_hub' %}" class="btn btn-{{ color }}">
+                    <i class="bi bi-plus-lg me-1"></i> Add First Record
+                </a>
+            </div>
+            {% else %}
+            <div class="card shadow-sm border-0 animate-card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped mb-0 align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    {% for field in fields|slice:":8" %}
+                                    <th class="text-uppercase small fw-semibold">{{ field|title }}</th>
+                                    {% endfor %}
+                                    <th class="text-uppercase small fw-semibold">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in data %}
+                                <tr>
+                                    {% for field in fields|slice:":8" %}
+                                    <td>
+                                        {% if row|get_item:field %}
+                                            {{ row|get_item:field|truncatechars:30 }}
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+                                    {% endfor %}
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-muted small">
+                    Showing {{ data|length }} of {{ count }} records. Data refreshes in real-time.
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
