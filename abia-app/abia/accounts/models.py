@@ -63,3 +63,21 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.get_full_name()} ({self.lga})"
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='userprofile')
+    assigned_lga = models.CharField(max_length=100, blank=True, help_text="LGA this staff user is restricted to")
+    
+    class Meta:
+        app_label = 'accounts'
+    
+    def __str__(self):
+        return f"{self.user.username} — {self.assigned_lga or 'No LGA'}"
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    from abia.accounts.models import UserProfile
+    UserProfile.objects.get_or_create(user=instance)
