@@ -151,3 +151,43 @@ class DashboardView(TemplateView):
         context['page_title'] = 'Command Center Dashboard'
         context['user'] = self.request.user
         return context
+
+# ============================================
+# NASA: Public Portal Landing (NO login required)
+# ============================================
+from django.views.generic import TemplateView
+
+class PublicLandingView(TemplateView):
+    template_name = 'public_dashboard/public_landing.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Abia Migration Observatory'
+        return context
+
+# ============================================
+# NASA: Portal Views (public, no login)
+# ============================================
+from django.shortcuts import render
+
+def check_status_view(request):
+    return render(request, 'public_dashboard/check_status.html')
+
+def odk_forms_view(request):
+    return render(request, 'public_dashboard/odk_forms.html')
+
+def feedback_success(request):
+    return render(request, 'public_dashboard/feedback_success.html')
+
+def registration_success(request):
+    return render(request, 'public_dashboard/registration_success.html')
+
+
+# NASA: Public portal landing
+def portal(request):
+    return render(request, "public_dashboard/public_landing.html")
+
+def odk_forms(request):
+    return render(request, "public_dashboard/odk_forms.html")
+
+    return render(request, "public_dashboard/odk_forms.html")

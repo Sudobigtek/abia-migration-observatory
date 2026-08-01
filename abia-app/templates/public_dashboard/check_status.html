@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Check Status | Abia Observatory{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4"><i class="bi bi-search text-info"></i> Check Your Status</h2>
+    <p class="lead">Enter your phone number or registration ID to verify your status.</p>
+    <form method="get" class="row g-3">
+        <div class="col-md-6">
+            <input type="text" class="form-control form-control-lg" placeholder="Phone number or Registration ID" name="q">
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-info btn-lg w-100 text-white">Search</button>
+        </div>
+    </form>
+    <div class="mt-4 alert alert-light border">
+        <p class="text-muted mb-0">Status lookup requires a valid registration. If you have not registered, <a href="{% url 'public_dashboard:migrant_register' %}">click here</a>.</p>
+    </div>
+    <a href="{% url 'public_dashboard:public_landing' %}" class="btn btn-outline-primary">&larr; Back to Portal</a>
+</div>
+{% endblock %}

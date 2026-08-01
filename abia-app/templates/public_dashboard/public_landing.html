@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Abia Migration Observatory — Public Portal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-10 text-center">
+            <h1 class="display-4 fw-bold text-primary mb-2">
+                <i class="bi bi-globe-americas"></i> Abia Migration Observatory
+            </h1>
+            <p class="lead text-muted">
+                Official public portal of the <strong>Abia State Government</strong> for migration data, 
+                self-registration, field data collection, and citizen feedback.
+            </p>
+            <hr class="my-4">
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-3 mb-5 justify-content-center">
+        <div class="col-6 col-md-3">
+            <div class="card text-center border-0 shadow-sm bg-primary text-white h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <h2 class="display-5 fw-bold mb-0">0</h2>
+                    <small>Total Migrants</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center border-0 shadow-sm bg-success text-white h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <h2 class="display-5 fw-bold mb-0">0</h2>
+                    <small>Total Cases</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center border-0 shadow-sm bg-warning text-dark h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <h2 class="display-6 fw-bold mb-0">Pending</h2>
+                    <small>Sync Status</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center border-0 shadow-sm bg-info text-white h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <h2 class="display-5 fw-bold mb-0">0</h2>
+                    <small>Resolved</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <h3 class="text-center mb-4 text-secondary">
+        <i class="bi bi-lightning-charge"></i> Quick Access
+    </h3>
+    <div class="row g-4 justify-content-center mb-5">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow text-center">
+                <div class="card-body p-4">
+                    <div class="display-3 text-success mb-3"><i class="bi bi-person-plus-fill"></i></div>
+                    <h4 class="card-title">Self Registration</h4>
+                    <p class="card-text text-muted">Register as a migrant, returnee, or IDP to access government services and support programs.</p>
+                    <a href="{% url 'public_dashboard:migrant_register' %}" class="btn btn-success btn-lg w-100">Register Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow text-center">
+                <div class="card-body p-4">
+                    <div class="display-3 text-primary mb-3"><i class="bi bi-chat-left-text-fill"></i></div>
+                    <h4 class="card-title">Submit Feedback</h4>
+                    <p class="card-text text-muted">Report issues, share your migration experience, or request assistance from the observatory team.</p>
+                    <a href="{% url 'public_dashboard:feedback' %}" class="btn btn-primary btn-lg w-100">Give Feedback</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow text-center">
+                <div class="card-body p-4">
+                    <div class="display-3 text-warning mb-3"><i class="bi bi-phone-fill"></i></div>
+                    <h4 class="card-title">ODK Mobile Forms</h4>
+                    <p class="card-text text-muted">Field officers: download and access Open Data Kit forms for offline data collection.</p>
+                    <a href="{% url 'public_dashboard:odk_forms' %}" class="btn btn-warning btn-lg w-100 text-white">Open ODK Forms</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow text-center">
+                <div class="card-body p-4">
+                    <div class="display-3 text-info mb-3"><i class="bi bi-search"></i></div>
+                    <h4 class="card-title">Check Status</h4>
+                    <p class="card-text text-muted">Verify your registration status, case progress, or reintegration support eligibility.</p>
+                    <a href="{% url 'public_dashboard:status_check' %}" class="btn btn-info btn-lg w-100 text-white">Check Status</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow text-center">
+                <div class="card-body p-4">
+                    <div class="display-3 text-dark mb-3"><i class="bi bi-file-earmark-bar-graph-fill"></i></div>
+                    <h4 class="card-title">Public Reports</h4>
+                    <p class="card-text text-muted">View anonymized migration trends, hotspot maps, and quarterly statistics.</p>
+                    <a href="/reports/" class="btn btn-outline-dark btn-lg w-100">View Reports</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow text-center">
+                <div class="card-body p-4">
+                    <div class="display-3 text-secondary mb-3"><i class="bi bi-shield-lock-fill"></i></div>
+                    <h4 class="card-title">Staff Login</h4>
+                    <p class="card-text text-muted">Command center for administrators, field officers, and partner agencies.</p>
+                    <a href="/admin/" class="btn btn-secondary btn-lg w-100">Admin Panel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="row mt-4">
+        <div class="col-12 text-center text-muted border-top pt-4">
+            <p class="mb-1"><strong>Abia State Government</strong></p>
+            <p class="small">
+                <a href="{% url 'public_dashboard:feedback' %}">Contact Us</a> &bull;
+                <a href="{% url 'public_dashboard:migrant_register' %}">Register</a> &bull;
+                <a href="{% url 'public_dashboard:public_landing' %}">Refresh Data</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
