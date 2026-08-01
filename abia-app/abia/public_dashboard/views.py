@@ -134,3 +134,20 @@ def status_check(request):
         "public_dashboard/status_check.html",
         {"form": form, "result": result}
     )
+
+# ============================================
+# NASA: Authenticated Dashboard View
+# ============================================
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.views.generic import TemplateView
+
+@method_decorator(login_required, name='dispatch')
+class DashboardView(TemplateView):
+    template_name = 'dashboard.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Command Center Dashboard'
+        context['user'] = self.request.user
+        return context
