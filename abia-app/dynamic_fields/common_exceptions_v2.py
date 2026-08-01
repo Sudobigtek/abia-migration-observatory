@@ -51,7 +51,7 @@ class CaseNotFoundError(AbiaBaseException):
 class InvalidStatusTransitionError(AbiaBaseException):
     def __init__(self, from_status, to_status):
         super().__init__(
-            f'Invalid status transition: {from_status} -> {to_status}",
+            f'Invalid status transition: {from_status} -> {to_status}',
             "invalid_status_transition",
             422,
         )
@@ -65,14 +65,14 @@ class InvalidPriorityError(AbiaBaseException):
 class ReferralNotFoundError(AbiaBaseException):
     def __init__(self, referral_id):
         super().__init__(
-            f'Referral not found: {referral_id}", "referral_not_found", 404
+            f"Referral not found: {referral_id}", "referral_not_found", 404
         )
 
 
 class InvalidReferralStatusError(AbiaBaseException):
     def __init__(self, from_status, to_status):
         super().__init__(
-            f'Invalid referral status transition: {from_status} -> {to_status}",
+            f"Invalid referral status transition: {from_status} -> {to_status}",
             "invalid_referral_status",
             422,
         )
@@ -81,7 +81,7 @@ class InvalidReferralStatusError(AbiaBaseException):
 class SelfReferralError(AbiaBaseException):
     def __init__(self, lga_id):
         super().__init__(
-            f'Cannot create referral within the same LGA: {lga_id}",
+            f"Cannot create referral within the same LGA: {lga_id}",
             "self_referral",
             422,
         )
@@ -90,7 +90,7 @@ class SelfReferralError(AbiaBaseException):
 class ValidationError(AbiaBaseException):
     def __init__(self, message, field=None):
         super().__init__(
-            f'Validation error{f' [{field}]' if field else ''}: {message}",
+            f"Validation error{f' [{field}]' if field else ''}: {message}",
             "validation_error",
             400,
         )

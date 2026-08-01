@@ -231,7 +231,7 @@ class DatabaseRepository:
             "-U",
             user,
             "-c",
-            f'CREATE DATABASE {db_name};",
+            f'CREATE DATABASE {db_name};'
         ]
         result = subprocess.run(cmd, capture_output=True, text=True, check=False)
         return result.returncode == 0 or "already exists" in result.stderr

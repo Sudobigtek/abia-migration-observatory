@@ -50,7 +50,7 @@ class IOMService:
         )
         try:
             response = requests.post(
-                f'{config.api_base_url}/migrants/",
+                f'{config.api_base_url}/migrants/',
                 json=payload,
                 headers=IOMService._headers(config),
                 timeout=60
@@ -95,7 +95,7 @@ class IOMService:
         )
         try:
             response = requests.post(
-                f'{config.api_base_url}/cases/",
+                f"{config.api_base_url}/cases/",
                 json=payload,
                 headers=IOMService._headers(config),
                 timeout=60

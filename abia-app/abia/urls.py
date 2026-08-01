@@ -6,7 +6,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', landing, name='landing'),
     path('onboarding/', onboarding, name='onboarding'),
-    path('dashboard/', include('abia.public_dashboard.urls')),
     path('command-center/', include('abia.charts.urls')),
     path('reports/', include('abia.reports.urls')),
+    path('public-dashboard/', include('abia.public_dashboard.urls')),
 ]

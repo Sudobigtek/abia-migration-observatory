@@ -79,7 +79,7 @@ class ODKSyncResolver:
         lga = LGA.objects.filter(name__iexact=submission_lga_name.strip()).first()
         if not lga:
             raise LGANotFoundError(
-                f'LGA '{submission_lga_name}' not found in database.'
+                f"LGA '{submission_lga_name}' not found in database."
             )
 
         if migrant and migrant.current_lga_id and migrant.current_lga != lga:

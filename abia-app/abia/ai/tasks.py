@@ -1,6 +1,6 @@
 from celery import shared_task
 import random
-from .models import AIModel, RiskAssessment, PredictionLog
+from .models import RiskAssessment, AIPredictionLog
 
 
 @shared_task(bind=True, max_retries=3)

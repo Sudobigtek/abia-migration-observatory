@@ -14,3 +14,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+# Celery
+CELERY_BROKER_URL = 'redis://localhost:6380/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6380/0'
