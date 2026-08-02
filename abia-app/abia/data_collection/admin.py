@@ -9,10 +9,8 @@ def export_to_csv(modeladmin, request, queryset):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = f'attachment; filename={opts.verbose_name}.csv'
     writer = csv.writer(response)
-    
     fields = [f for f in opts.get_fields() if not f.many_to_many and not f.one_to_many]
     writer.writerow([f.verbose_name for f in fields])
-    
     for obj in queryset:
         row = []
         for f in fields:
@@ -36,7 +34,7 @@ class FormSubmissionAdmin(admin.ModelAdmin):
     ordering = ['-created_at']
     list_per_page = 25
     actions = [export_to_csv]
-    
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
