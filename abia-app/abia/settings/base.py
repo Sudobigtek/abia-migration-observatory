@@ -61,6 +61,8 @@ INSTALLED_APPS = [
  'abia.giz',
  'abia.ncfrmi_reporting',
     'abia.data_collection',
+    'abia.anti_trafficking',
+    'abia.lga_portal',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'

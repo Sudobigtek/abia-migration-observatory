@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Abia Migration Observatory{% endblock %}</title>
+    <title>{% block title %}Abia Migration and Anti Human Trafficking Agency{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
@@ -119,18 +119,7 @@
 <body>
     <!-- Sidebar -->
     <nav class="sidebar d-none d-md-block">
-        <div class="sidebar-brand">
-            <!-- Inline SVG Logo — never breaks -->
-            <div class="d-flex align-items-center">
-                <svg class="abia-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="50" cy="50" r="45" fill="#008751"/>
-                    <path d="M50 15 L65 40 L90 40 L70 58 L78 85 L50 68 L22 85 L30 58 L10 40 L35 40 Z" fill="white"/>
-                </svg>
-                <div>
-                    <h4>Abia Observatory</h4>
-                    <small>Migration Management System</small>
-                </div>
-            </div>
+        </div>
         </div>
         <div class="nav flex-column">
             <a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}" href="/dashboard/">
@@ -160,8 +149,7 @@
                     <circle cx="50" cy="50" r="45" fill="#008751"/>
                     <path d="M50 15 L65 40 L90 40 L70 58 L78 85 L50 68 L22 85 L30 58 L10 40 L35 40 Z" fill="white"/>
                 </svg>
-                <h5 class="mb-0 fw-bold text-dark">Abia State Government — Migration Observatory</h5>
-            </div>
+                </div>
             <div>
                 {% if user.is_authenticated %}
                     <span class="text-muted">{{ user.email|default:user.username }}</span>

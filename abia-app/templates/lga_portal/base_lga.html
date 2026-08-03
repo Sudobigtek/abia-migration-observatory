@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}LGA Portal | Abia Migration and Anti Human Trafficking Agency{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">{{ lga.name }} LGA Portal</h3>
+            <p class="text-muted mb-0">Subnational Anti-Trafficking Command Center</p>
+        </div>
+        <span class="badge bg-primary">LGA Officer</span>
+    </div>
+    
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-danger text-white h-100">
+                <div class="card-body text-center">
+                    <h3 class="display-5 fw-bold mb-0">{{ victim_count|default:"0" }}</h3>
+                    <small>Victims/Survivors</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body text-center">
+                    <h3 class="display-5 fw-bold mb-0">{{ shelter_count|default:"0" }}</h3>
+                    <small>Shelters</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body text-center">
+                    <h3 class="display-5 fw-bold mb-0">{{ case_count|default:"0" }}</h3>
+                    <small>Court Cases</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body text-center">
+                    <h3 class="display-5 fw-bold mb-0">{{ event_count|default:"0" }}</h3>
+                    <small>Awareness Events</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white fw-bold">
+            <i class="bi bi-people-fill me-2"></i>Recent Victim Intakes
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Status</th>
+                            <th>Exploitation</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in recent_victims %}
+                        <tr>
+                            <td class="fw-semibold">{{ v.full_name }}</td>
+                            <td>{{ v.age|default:"—" }}</td>
+                            <td><span class="badge bg-{% if v.status == 'rescued' %}danger{% elif v.status == 'reintegrated' %}success{% else %}warning{% endif %}">{{ v.get_status_display }}</span></td>
+                            <td>{{ v.get_exploitation_type_display }}</td>
+                            <td class="small text-muted">{{ v.intake_date|date:"M d, Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="text-center py-4 text-muted">No victim intakes in this LGA.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

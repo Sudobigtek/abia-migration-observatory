@@ -1,0 +1,25 @@
+{% extends "lga_portal/base_lga.html" %}
+{% block content %}
+<div class="container py-4">
+    <h4 class="fw-bold mb-3">{{ lga.name }} — Victim/Survivor Registry</h4>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark"><tr><th>Name</th><th>Age</th><th>Gender</th><th>Status</th><th>Exploitation</th><th>Date</th></tr></thead>
+            <tbody>
+                {% for v in victims %}
+                <tr>
+                    <td>{{ v.full_name }}</td>
+                    <td>{{ v.age|default:"—" }}</td>
+                    <td>{{ v.gender }}</td>
+                    <td><span class="badge bg-{% if v.status == 'rescued' %}danger{% elif v.status == 'reintegrated' %}success{% else %}warning{% endif %}">{{ v.get_status_display }}</span></td>
+                    <td>{{ v.get_exploitation_type_display }}</td>
+                    <td>{{ v.intake_date|date:"M d, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center py-4 text-muted">No records.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

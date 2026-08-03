@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Abia State Migration and Anti Human Trafficking Agency{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row align-items-center mb-5">
+        <div class="col-lg-8">
+            <h1 class="display-5 fw-bold mb-3">Abia State Migration and Anti Human Trafficking Agency</h1>
+            <p class="lead text-muted">Data-driven migration governance for Abia State. Tracking, protecting, and empowering migrants through transparent, real-time intelligence.</p>
+            <div class="d-flex gap-3 mt-4">
+                <a href="{% url 'public_dashboard:data_collection_hub' %}" class="btn btn-primary btn-lg px-4">Submit Data</a>
+                <a href="{% url 'public_dashboard:analytics' %}" class="btn btn-outline-primary btn-lg px-4">View Analytics</a>
+            </div>
+        </div>
+        <div class="col-lg-4 text-center">
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100 text-center p-3">
+                <div class="card-body">
+                    <h3 class="display-6 fw-bold text-primary">{{ total_submissions|default:"0" }}</h3>
+                    <p class="text-muted mb-0">Total Submissions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100 text-center p-3">
+                <div class="card-body">
+                    <h3 class="display-6 fw-bold text-success">{{ synced_ncfrmi|default:"0" }}</h3>
+                    <p class="text-muted mb-0">Synced to NCFRMI</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100 text-center p-3">
+                <div class="card-body">
+                    <h3 class="display-6 fw-bold text-info">{{ synced_iom|default:"0" }}</h3>
+                    <p class="text-muted mb-0">Synced to IOM</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100 text-center p-3">
+                <div class="card-body">
+                    <h3 class="display-6 fw-bold text-warning">{{ pending|default:"0" }}</h3>
+                    <p class="text-muted mb-0">Pending Sync</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Access Portals -->
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center p-4">
+                <div class="card-body">
+                    <i class="bi bi-shield-lock display-4 text-primary mb-3"></i>
+                    <h4>Government Portal</h4>
+                    <p class="text-muted">Command Center for officials.</p>
+                    <a href="/admin/" class="btn btn-primary">Enter Command Center</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center p-4">
+                <div class="card-body">
+                    <i class="bi bi-people display-4 text-success mb-3"></i>
+                    <h4>Partner Portal</h4>
+                    <p class="text-muted">Reports for partner organizations.</p>
+                    <a href="{% url 'public_dashboard:submission_list' %}" class="btn btn-success">Enter Partner Portal</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center p-4">
+                <div class="card-body">
+                    <i class="bi bi-globe display-4 text-info mb-3"></i>
+                    <h4>Public Dashboard</h4>
+                    <p class="text-muted">Open data for the public.</p>
+                    <a href="{% url 'public_dashboard:analytics' %}" class="btn btn-info text-white">View Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-5 pt-4 border-top text-muted small">
+        <p>© 2026 Abia State Government — Migration and Anti Human Trafficking Agency. All data is collected directly on this platform.</p>
+    </div>
+</div>
+{% endblock %}

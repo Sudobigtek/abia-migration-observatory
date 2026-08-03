@@ -1,0 +1,24 @@
+{% extends "lga_portal/base_lga.html" %}
+{% block content %}
+<div class="container py-4">
+    <h4 class="fw-bold mb-3">{{ lga.name }} — Court Cases</h4>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark"><tr><th>Case #</th><th>Victim</th><th>Perpetrator</th><th>Status</th><th>Next Hearing</th></tr></thead>
+            <tbody>
+                {% for c in cases %}
+                <tr>
+                    <td class="fw-bold">{{ c.case_number }}</td>
+                    <td>{{ c.victim.full_name }}</td>
+                    <td>{{ c.perpetrator.full_name }}</td>
+                    <td><span class="badge bg-secondary">{{ c.get_status_display }}</span></td>
+                    <td>{{ c.next_hearing_date|default:"—" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text-center py-4 text-muted">No court cases.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
