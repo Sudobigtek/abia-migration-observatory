@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Request Access | Abia Migration Observatory{% endblock %}
+{% block content %}
+<div class="container mt-5" style="max-width: 500px;">
+  <div class="card shadow-lg border-0">
+    <div class="card-header text-white text-center" style="background: linear-gradient(135deg, #0d3b1e, #1a5f2a);">
+      <h4 class="mb-0">📝 Request Partner Access</h4>
+      <small>Abia Migration Observatory</small>
+    </div>
+    <div class="card-body p-4">
+      <div class="alert alert-info small">
+        <strong>Note:</strong> New accounts are assigned <strong>Public</strong> access by default.
+        Admin approval is required for LGA Officer, Investigator, or Partner roles.
+      </div>
+      <form method="post" action="{% url 'account_signup' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" name="password1" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Confirm Password</label>
+          <input type="password" name="password2" class="form-control" required>
+        </div>
+        <button type="submit" class="btn w-100 text-white" style="background: #1a5f2a;">Request Account</button>
+      </form>
+      <hr>
+      <div class="text-center small">
+        Already have access? <a href="{% url 'account_login' %}">Sign in</a><br>
+        <a href="/onboarding/">← Back to Onboarding</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

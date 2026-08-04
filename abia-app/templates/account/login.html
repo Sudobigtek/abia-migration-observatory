@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Staff Login | Abia Migration Observatory{% endblock %}
+{% block content %}
+<div class="container mt-5" style="max-width: 450px;">
+  <div class="card shadow-lg border-0">
+    <div class="card-header text-white text-center" style="background: linear-gradient(135deg, #0d3b1e, #1a5f2a);">
+      <h4 class="mb-0">🛡️ Staff Login</h4>
+      <small>Abia Migration Observatory</small>
+    </div>
+    <div class="card-body p-4">
+      <form method="post" action="{% url 'account_login' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" name="login" class="form-control" placeholder="you@agency.gov.ng" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn w-100 text-white" style="background: #1a5f2a;">Sign In</button>
+      </form>
+      <hr>
+      <div class="text-center">
+        <a href="{% url 'account_reset_password' %}" class="small text-muted">Forgot password?</a><br>
+        <a href="/onboarding/" class="small">← Back to Onboarding</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

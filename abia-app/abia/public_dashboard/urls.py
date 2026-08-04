@@ -7,7 +7,7 @@ app_name = "public_dashboard"
 urlpatterns = [
     # Portal landing
     path('', views.portal, name='public_landing'),
-    path('stats/', views.public_dashboard, name='dashboard'),
+    path('stats/', views.public_dashboard, name='public_stats'),
     
     # Feedback (multiple aliases for template compatibility)
     path('feedback/', views.public_feedback, name='feedback'),

@@ -83,7 +83,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#333
     {% if report.status == "draft" %}
     <a href="{% url 'ncfrmi_submit' report.id %}" class="btn btn-success">Submit to NCFRMI</a>
     {% endif %}
-    <a href="{% url 'staff_dashboard' %}" class="btn btn-outline">Back to Dashboard</a>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline">Back to Dashboard</a>
   </div>
   <div class="footer">
     <p>Abia State Migration Observatory &mdash; Federal Republic of Nigeria</p>

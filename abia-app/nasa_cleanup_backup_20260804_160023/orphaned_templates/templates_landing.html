@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Abia Migration Observatory</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+.hero{background:linear-gradient(135deg,#0d6efd,#0a58ca);color:#fff;padding:4rem 0}
+.stat-card:hover{transform:translateY(-4px)}
+.portal-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+</style>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark"><div class="container">
+<a class="navbar-brand fw-bold" href="/">Abia Migration Observatory</a>
+<div class="navbar-nav ms-auto">
+<a class="nav-link" href="/dashboard/">Public Dashboard</a>
+<a class="nav-link" href="/onboarding/">Portals</a>
+</div>
+</div></nav>
+<section class="hero"><div class="container text-center">
+<h1 class="display-4 fw-bold">Abia State Migration Observatory</h1>
+<p class="lead">Tracking, protecting, and empowering migrants across Abia State.</p>
+<a href="/dashboard/" class="btn btn-light btn-lg me-2">View Public Data</a>
+<a href="/onboarding/" class="btn btn-outline-light btn-lg">Access Portals</a>
+</div></section>
+<div class="container py-5"><div class="row g-4">
+<div class="col-md-3"><div class="card text-center border-primary"><div class="card-body">
+<h2 class="text-primary fw-bold">{{ total_migrants }}</h2>
+<p class="text-muted mb-0">Migrants Registered</p>
+</div></div></div>
+<div class="col-md-3"><div class="card text-center border-success"><div class="card-body">
+<h2 class="text-success fw-bold">{{ total_cases }}</h2>
+<p class="text-muted mb-0">Total Cases</p>
+</div></div></div>
+<div class="col-md-3"><div class="card text-center border-warning"><div class="card-body">
+<h2 class="text-warning fw-bold">{{ pending_cases }}</h2>
+<p class="text-muted mb-0">Pending Cases</p>
+</div></div></div>
+<div class="col-md-3"><div class="card text-center border-info"><div class="card-body">
+<h2 class="text-info fw-bold">{{ resolved_cases }}</h2>
+<p class="text-muted mb-0">Resolved Cases</p>
+</div></div></div>
+</div>
+<h3 class="mt-5 mb-4 text-center">Access Portals</h3><div class="row g-4">
+<div class="col-md-4"><div class="card portal-card h-100 text-center p-4">
+<h5>Government Portal</h5><p class="text-muted">Command Center for officials.</p>
+<a href="/command-center/" class="btn btn-primary">Enter Command Center</a>
+</div></div>
+<div class="col-md-4"><div class="card portal-card h-100 text-center p-4">
+<h5>Partner Portal</h5><p class="text-muted">Reports for partner organizations.</p>
+<a href="/reports/" class="btn btn-success">Enter Partner Portal</a>
+</div></div>
+<div class="col-md-4"><div class="card portal-card h-100 text-center p-4">
+<h5>Public Dashboard</h5><p class="text-muted">Open data for the public.</p>
+<a href="/dashboard/" class="btn btn-info text-white">View Dashboard</a>
+</div></div>
+</div></div>
+<footer class="bg-light text-center py-4 mt-5 border-top">
+<p class="mb-0 text-muted">&copy; 2026 Abia State Migration Observatory</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body></html>

@@ -296,3 +296,16 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(hour=8, minute=0),
     },
 }
+
+# Allauth Configuration
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
+ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_UNIQUE_EMAIL = True
+LOGIN_REDIRECT_URL = '/onboarding/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+
+ACCOUNT_ADAPTER = 'abia.accounts.adapters.CustomAccountAdapter'

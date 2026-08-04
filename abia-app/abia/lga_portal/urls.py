@@ -4,7 +4,7 @@ from . import views
 app_name = 'lga_portal'
 
 urlpatterns = [
-    path("", views.lga_dashboard, name="dashboard"),
+    path("", views.lga_dashboard, name="lga_dashboard"),
     path("victims/", views.lga_victims, name="victims"),
     path("shelters/", views.lga_shelters, name="shelters"),
     path("cases/", views.lga_cases, name="cases"),
