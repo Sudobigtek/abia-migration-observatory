@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Verify Certificate | The Institute{% endblock %}
+{% block content %}
+<div style="max-width:800px;margin:0 auto;padding:2rem;">
+  <h1>🔍 Certificate Verification</h1>
+  {% if result == 'invalid' %}
+    <div style="background:#f8d7da;padding:1.5rem;border-radius:8px;color:#721c24;">
+      <h3>✗ Invalid Certificate</h3>
+      <p>The certificate number <strong>{{ cert_number }}</strong> could not be found or has been revoked.</p>
+    </div>
+  {% elif result %}
+    <div style="background:#d4edda;padding:1.5rem;border-radius:8px;color:#155724;">
+      <h3>✓ Valid Certificate</h3>
+      <p><strong>Certificate #:</strong> {{ result.certificate_number }}</p>
+      <p><strong>Student:</strong> {{ result.student_name }}</p>
+      <p><strong>Course:</strong> {{ result.course_title }}</p>
+      <p><strong>Issued:</strong> {{ result.issue_date }}</p>
+      <p><strong>Accredited By:</strong> {{ result.accredited_by|default:"Abia Migration Observatory" }}</p>
+      <p style="font-size:0.85rem;color:#666;">Verified {{ result.verified_count }} times. Last check: {{ result.last_verified|default:"Just now" }}</p>
+    </div>
+  {% else %}
+    <p>Enter a certificate number to verify.</p>
+  {% endif %}
+  <p style="margin-top:1rem;"><a href="{% url 'institute:dashboard' %}" style="color:#2c5aa0;">← Back to Institute</a></p>
+</div>
+{% endblock %}

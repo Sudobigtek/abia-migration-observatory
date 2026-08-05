@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}The Institute | Abia Migration Observatory{% endblock %}
+{% block content %}
+<div style="max-width:1200px;margin:0 auto;padding:2rem;">
+  <h1>🎓 The Institute</h1>
+  <p style="color:#666;">Accredited skills training, certification, and partnership management for Abia State</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin:2rem 0;">
+    <div style="background:#f8f9fa;padding:1.5rem;border-radius:8px;text-align:center;">
+      <div style="font-size:2rem;font-weight:bold;color:#2c5aa0;">{{ total_courses }}</div>
+      <div style="font-size:0.9rem;color:#666;">Active Courses</div>
+    </div>
+    <div style="background:#f8f9fa;padding:1.5rem;border-radius:8px;text-align:center;">
+      <div style="font-size:2rem;font-weight:bold;color:#2c5aa0;">{{ total_cohorts }}</div>
+      <div style="font-size:0.9rem;color:#666;">Active Cohorts</div>
+    </div>
+    <div style="background:#f8f9fa;padding:1.5rem;border-radius:8px;text-align:center;">
+      <div style="font-size:2rem;font-weight:bold;color:#2c5aa0;">{{ total_students }}</div>
+      <div style="font-size:0.9rem;color:#666;">Active Students</div>
+    </div>
+    <div style="background:#f8f9fa;padding:1.5rem;border-radius:8px;text-align:center;">
+      <div style="font-size:2rem;font-weight:bold;color:#2c5aa0;">{{ total_certificates }}</div>
+      <div style="font-size:0.9rem;color:#666;">Certificates Issued</div>
+    </div>
+    <div style="background:#f8f9fa;padding:1.5rem;border-radius:8px;text-align:center;">
+      <div style="font-size:2rem;font-weight:bold;color:#2c5aa0;">{{ partners }}</div>
+      <div style="font-size:0.9rem;color:#666;">Partner Institutions</div>
+    </div>
+  </div>
+
+  <h2>Recent Cohorts</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin:1rem 0;">
+    {% for c in recent_cohorts %}
+    <div style="border:1px solid #e0e0e0;padding:1rem;border-radius:8px;">
+      <strong>{{ c.course.code }} — Cohort {{ c.cohort_number }}</strong>
+      <p style="margin:0.25rem 0;">{{ c.course.title }}</p>
+      <p style="font-size:0.85rem;color:#666;">📅 {{ c.start_date|date:"M d, Y" }} — {{ c.end_date|date:"M d, Y" }}<br>
+      👤 Facilitator: {{ c.facilitator|default:"TBD" }}<br>
+      📍 {{ c.venue|default:"TBD" }} <span style="background:#2c5aa0;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;">{{ c.get_status_display }}</span></p>
+    </div>
+    {% empty %}
+    <p>No active cohorts.</p>
+    {% endfor %}
+  </div>
+
+  <h2>Course Catalog</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin:1rem 0;">
+    {% for course in courses %}
+    <div style="border:1px solid #e0e0e0;padding:1rem;border-radius:8px;">
+      <strong>{{ course.code }}</strong>
+      <p style="margin:0.25rem 0;">{{ course.title }}</p>
+      <p style="font-size:0.85rem;color:#666;">⏱️ {{ course.duration_hours }} hours · {{ course.get_delivery_mode_display }}<br>
+      📊 {{ course.get_level_display }} · {{ course.get_sector_display|default:"General" }}
+      {% if course.is_accredited %}<br><span style="color:green;">✓ Accredited</span>{% endif %}</p>
+    </div>
+    {% empty %}
+    <p>No courses in catalog.</p>
+    {% endfor %}
+  </div>
+  <p><a href="{% url 'institute:course_list' %}" style="color:#2c5aa0;">View Full Catalog →</a></p>
+
+  <div style="background:#fff3cd;padding:1.5rem;border-radius:8px;margin-top:2rem;">
+    <h3>🔍 Verify a Certificate</h3>
+    <p>Employers and partners can verify certificate authenticity here.</p>
+    <form method="get" action="{% url 'institute:verify_certificate' %}" style="display:flex;gap:0.5rem;">
+      <input type="text" name="cert" placeholder="Certificate Number" value="{{ cert_number|default:'' }}" style="padding:0.5rem;flex:1;border:1px solid #ccc;border-radius:4px;">
+      <button type="submit" style="padding:0.5rem 1rem;background:#2c5aa0;color:#fff;border:none;border-radius:4px;cursor:pointer;">Verify</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
