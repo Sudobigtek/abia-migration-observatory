@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'abia.data_collection',
     'abia.anti_trafficking',
     'abia.lga_portal',
+    'abia.japa_development',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'

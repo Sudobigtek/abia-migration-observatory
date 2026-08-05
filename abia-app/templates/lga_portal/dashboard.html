@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}LGA Portal | Abia Migration Observatory{% endblock %}
+{% block content %}
+<style>
+.lga-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.lga-header h1 { font-size: 1.8rem; color: #2e7d32; }
+.lga-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem; }
+.nav-card { background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%); color: white; padding: 1.2rem; border-radius: 10px; text-decoration: none; display: block; }
+.nav-card h3 { margin: 0 0 0.3rem; font-size: 1.1rem; }
+.nav-card p { margin: 0; opacity: 0.9; font-size: 0.85rem; }
+</style>
+<div class="lga-wrap">
+  <div class="lga-header">
+    <h1>🏛️ Local Government Area Portal</h1>
+    <p>Field data collection, case management, and community reporting for all 17 LGAs</p>
+  </div>
+  <div class="lga-grid">
+    <a href="/admin/lga_portal/" class="nav-card"><h3>📊 LGA Data</h3><p>Manage LGA-specific records and statistics</p></a>
+    <a href="/public-dashboard/" class="nav-card"><h3>📝 Field Collection</h3><p>Public data entry forms for field officers</p></a>
+    <a href="/reports/" class="nav-card"><h3>📈 Generate Reports</h3><p>Pull LGA-level analytics and summaries</p></a>
+  </div>
+</div>
+{% endblock %}

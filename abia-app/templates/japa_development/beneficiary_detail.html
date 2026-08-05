@@ -1,0 +1,86 @@
+
+{% extends "base.html" %}
+{% block title %}{{ beneficiary.full_name }} | Japa for Development{% endblock %}
+{% block content %}
+<style>
+.japa-wrap { max-width: 900px; margin: 0 auto; padding: 2rem; }
+.profile-header { background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem; }
+.profile-header h1 { margin: 0; font-size: 1.8rem; }
+.profile-header p { margin: 0.3rem 0 0; opacity: 0.9; }
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.info-card { background: white; padding: 1.2rem; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+.info-card h3 { margin-top: 0; font-size: 1rem; color: #1a237e; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
+.info-row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid #f5f5f5; font-size: 0.95rem; }
+.pillar-timeline { background: white; padding: 1.2rem; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); margin-bottom: 1rem; }
+.pillar-timeline h3 { margin-top: 0; color: #1a237e; }
+.pillar-item { padding: 0.8rem; border-left: 4px solid #3949ab; margin-bottom: 0.5rem; background: #fafafa; border-radius: 0 8px 8px 0; }
+.pillar-item.p1 { border-color: #e53935; }
+.pillar-item.p2 { border-color: #fb8c00; }
+.pillar-item.p3 { border-color: #43a047; }
+.pillar-item.p4 { border-color: #1e88e5; }
+.back-link { display: inline-block; margin-top: 1rem; color: #1a237e; font-weight: 600; }
+</style>
+
+<div class="japa-wrap">
+  <div class="profile-header">
+    <h1>{{ beneficiary.full_name }}</h1>
+    <p>{{ beneficiary.get_current_status_display }} · {{ beneficiary.lga }} · Enrolled {{ beneficiary.enrolled_date|date:"M d, Y" }}</p>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>👤 Identity</h3>
+      <div class="info-row"><span>Phone</span><span>{{ beneficiary.phone }}</span></div>
+      <div class="info-row"><span>Email</span><span>{{ beneficiary.email|default:"—" }}</span></div>
+      <div class="info-row"><span>Date of Birth</span><span>{{ beneficiary.date_of_birth }}</span></div>
+      <div class="info-row"><span>Gender</span><span>{{ beneficiary.get_gender_display }}</span></div>
+      <div class="info-row"><span>Age</span><span>{{ beneficiary.age|default:"—" }}</span></div>
+    </div>
+    <div class="info-card">
+      <h3>📍 Location</h3>
+      <div class="info-row"><span>LGA</span><span>{{ beneficiary.lga }}</span></div>
+      <div class="info-row"><span>Ward</span><span>{{ beneficiary.ward|default:"—" }}</span></div>
+      <div class="info-row"><span>Community</span><span>{{ beneficiary.community|default:"—" }}</span></div>
+      <div class="info-row"><span>Current Category</span><span>{{ beneficiary.get_current_location_category_display|default:"—" }}</span></div>
+      <div class="info-row"><span>Current Country</span><span>{{ beneficiary.current_country|default:"—" }}</span></div>
+    </div>
+    <div class="info-card">
+      <h3>🛠️ Skills</h3>
+      <div class="info-row"><span>Primary Skill</span><span>{{ beneficiary.primary_skill|default:"—" }}</span></div>
+      <div class="info-row"><span>Secondary Skill</span><span>{{ beneficiary.secondary_skill|default:"—" }}</span></div>
+      <div class="info-row"><span>Sector</span><span>{{ beneficiary.get_skill_sector_display|default:"—" }}</span></div>
+      <div class="info-row"><span>Experience</span><span>{{ beneficiary.years_of_experience }} years</span></div>
+      <div class="info-row"><span>Education</span><span>{{ beneficiary.education_level|default:"—" }}</span>   </div>
+    <div class="info-card">
+      <h3>💰 Economic Opt-in</h3>
+      <div class="info-row"><span>Willing to Invest</span><span>{{ beneficiary.willing_to_invest|yesno:"Yes,No" }}</span></div>
+      <div class="info-row"><span>Willing to Mentor</span><span>{{ beneficiary.willing_to_mentor|yesno:"Yes,No" }}</span></div>
+      <div class="info-row"><span>Willing to Return</span><span>{{ beneficiary.willing_to_return|yesno:"Yes,No" }}</span></div>
+      <div class="info-row"><span>Willing to Volunteer</span><span>{{ beneficiary.willing_to_volunteer|yesno:"Yes,No" }}</span></div>
+      <div class="info-row"><span>Remittance</span><span>₦{{ beneficiary.monthly_remittance_ngn|default:"0" }}</span></div>
+    </div>
+  </div>
+
+  <div class="pillar-timeline">
+    <h3>📊 Pillar Participation</h3>
+    {% for p in participations %}
+    <div class="pillar-item {{ p.pillar }}">
+      <strong>{{ p.get_pillar_display }}</strong>
+      <span style="float:right; font-size:0.85rem; color:#666;">
+       if p.completed_date %}Completed {{ p.completed_date }}{% else %}Enrolled {{ p.enrolled_date }}{% endif %}
+      </span>
+      <div style="margin-top:0.3rem; font-size:0.9rem; color:#555;">
+        {% if p.pillar == 'p1' %}Pathway: {{ p.get_migration_pathway_display|default:"—" }} | Referral: {{ p.protection_referral_made|yesno:"Yes,No" }}{% endif %}
+        {% if p.pillar == 'p2' %}Language: {{ p.language_course|default:"—" }} | Cultural Done: {{ p.cultural_orientation_completed|yesno:"Yes,No" }}{% endif %}
+        {% if p.pillar == 'p3' %}Certified: {{ p.certification_issued|yesno:"Yes,No" }} | Placement: {{ p.get_placement_status_display|default:"—" }}{% endif %}
+        {% if p.pillar == 'p4' %}Package Delivered: {{ p.reintegration_package_delivered|yesno:"Yes,No" }} | Micro-Enterprise: {{ p.micro_enterprise_registered|yesno:"Yes,No" }}{% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <p>No pillar participation records.</p>
+    {% endfor %}
+  </div>
+
+  <a href="{% url 'japa_development:beneficiary_list' %}" class="back-link">← Back to Beneficiary List</a>
+</div>
+{% endblock %}

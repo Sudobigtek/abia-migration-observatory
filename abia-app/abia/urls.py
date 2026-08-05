@@ -7,6 +7,7 @@ from abia.dashboard_view import landing, onboarding
 urlpatterns = [
     path("lga-portal/", include("abia.lga_portal.urls")),
     path("anti-trafficking/", include("abia.anti_trafficking.urls")),
+    path('japa/', include('abia.japa_development.urls')),
     path('accounts/', include('allauth.urls')),
     path("pwa/", include("abia.pwa.urls")),
     path('admin/', admin.site.urls),

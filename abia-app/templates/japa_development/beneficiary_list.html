@@ -1,0 +1,61 @@
+
+{% extends "base.html" %}
+{% block title %}Beneficiaries | Japa for Development{% endblock %}
+{% block content %}
+<style>
+.japa-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.filter-bar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; align-items: center; }
+.filter-bar select, .filter-bar input { padding: 0.5rem; border-radius: 6px; border: 1px solid #ddd; }
+.filter-bar button { background: #1a237e; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; }
+.badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+.badge-active { background: #e8f5e9; color: #2e7d32; }
+.badge-migrated { background: #e3f2fd; color: #1565c0; }
+.badge-returned { background: #fff3e0; color: #ef6c00; }
+.badge-dropped { background: #ffebee; color: #c62828; }
+table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+th, td { padding: 0.8rem 1rem; text-align: left; border-bottom: 1px solid #eee; }
+th { background: #f5f5f5; font-weight: 600; }
+tr:hover { background: #fafafa; }
+a { color: #1a237e; text-decoration: none; font-weight: 600; }
+</style>
+
+<div class="japa-wrap">
+  <h1>Beneficiary Registry</h1>
+  <form method="get" class="filter-bar">
+    <select name="status"><option value="">All Statuses</option>{% for v,l in status_choices %}<option value="{{ v }}" {% if request.GET.status == v %}selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+    <select name="location"><option value="">All Locations</option>{% for v,l in location_choices %}<option value="{{ v }}" {% if request.GET.location == v %}selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+    <select name="sector"><option value="">All Sectors</option>{% for v,l in sector_choices %}<option value="{{ v }}" {% if request.GET.sector == v %}selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+    <select name="gender"><option value="">All Genders</option>{% for v,l in gender_choices %}<option value="{{ v }}" {% if request.GET.gender == v %}selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+    <input type="text" name="lga" placeholder="Search LGA..." value="{{ request.GET.lga }}">
+    <button type="submit">Filter</button>
+    <a href="{% url 'japa_development:beneficiary_list' %}" style="margin-left:auto;">Clear Filters</a>
+  </form>
+
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Age</th><th>Gender</th><th>LGA</th><th>Status</th><th>Sector</th><th>Enrolled</th></tr>
+    </thead>
+    <tbody>
+      {% for b in beneficiaries %}
+      <tr>
+        <td><a href="{% url 'japa_development:beneficiary_detail' b.pk %}">{{ b.full_name }}</a></td>
+        <td>{{ b.age|default:"—" }}</td>
+        <td>{{ b.get_gender_display }}</td>
+        <td>{{ b.lga }}</td>
+        <td>
+          {% if b.current_status == 'active' %}<span class="badge badge-active">Active</span>
+          {% elif b.current_status == 'migrated_regular' %}<span class="badge badge-migrated">Regular</span>
+          {% elif b.current_status == 'returned' or b.current_status == 'reintegrated' %}<span class="badge badge-returned">Returned</span>
+          {% elif b.current_status == 'dropped_out' %}<span class="badge badge-dropped">Dropped</span>
+          {% else %}<span class="badge">{{ b.get_current_status_display }}</span>{% endif %}
+        </td>
+        <td>{{ b.get_skill_sector_display|default:"—" }}</td>
+        <td>{{ b.enrolled_date|date:"M d, Y" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" style="text-align:center; padding:2rem;">No beneficiaries found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

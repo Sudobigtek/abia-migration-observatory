@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Staff Dashboard | Abia Migration Observatory{% endblock %}
+{% block content %}
+<style>
+.dash-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.dash-header { margin-bottom: 2rem; }
+.dash-header h1 { font-size: 1.8rem; color: #1a237e; margin-bottom: 0.3rem; }
+.dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.dash-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #1a237e; }
+.dash-card .num { font-size: 2rem; font-weight: 700; color: #1a237e; }
+.dash-card .lbl { color: #555; font-size: 0.9rem; margin-top: 0.3rem; }
+.dash-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+.nav-card { background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%); color: white; padding: 1.2rem; border-radius: 10px; text-decoration: none; display: block; }
+.nav-card h3 { margin: 0 0 0.3rem; font-size: 1.1rem; }
+.nav-card p { margin: 0; opacity: 0.9; font-size: 0.85rem; }
+</style>
+
+<div class="dash-wrap">
+  <div class="dash-header">
+    <h1>🛡️ Staff Command Center</h1>
+    <p>Abia Migration Observatory — Internal Operations Dashboard</p>
+  </div>
+
+  <div class="dash-grid">
+    <div class="dash-card"><div class="num">—</div><div class="lbl">Total Migrants</div></div>
+    <div class="dash-card"><div class="num">—</div><div class="lbl">Active Cases</div></div>
+    <div class="dash-card"><div class="num">17</div><div class="lbl">LGAs Covered</div></div>
+    <div class="dash-card"><div class="num">—</div><div class="lbl">Partner Agencies</div></div>
+  </div>
+
+  <div class="dash-nav">
+    <a href="/anti-trafficking/" class="nav-card"><h3>🚨 Anti-Trafficking</h3><p>Victim intake, shelters, court cases, evidence</p></a>
+    <a href="/lga-portal/" class="nav-card"><h3>🏛️ LGA Portal</h3><p>Local government data and case management</p></a>
+    <a href="/reports/" class="nav-card"><h3>📊 Reports</h3><p>Generate partner and executive reports</p></a>
+    <a href="/japa/" class="nav-card"><h3>✈️ Japa for Development</h3><p>Beneficiary tracking, skills, reintegration</p></a>
+    <a href="/admin/" class="nav-card"><h3>⚙️ Django Admin</h3><p>User management, models, configuration</p></a>
+    <a href="/public-dashboard/" class="nav-card"><h3>🌍 Public Portal</h3><p>View the public-facing data entry portal</p></a>
+  </div>
+</div>
+{% endblock %}

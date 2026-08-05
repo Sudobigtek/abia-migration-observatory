@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Anti-Human Trafficking | Abia Migration Observatory{% endblock %}
+{% block content %}
+<style>
+.at-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.at-header { margin-bottom: 2rem; }
+.at-header h1 { font-size: 1.8rem; color: #c62828; margin-bottom: 0.3rem; }
+.at-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.at-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #c62828; }
+.at-card .num { font-size: 2rem; font-weight: 700; color: #c62828; }
+.at-card .lbl { color: #555; font-size: 0.9rem; margin-top: 0.3rem; }
+.at-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.nav-card { background: linear-gradient(135deg, #c62828 0%, #e53935 100%); color: white; padding: 1.2rem; border-radius: 10px; text-decoration: none; display: block; }
+.nav-card h3 { margin: 0 0 0.3rem; font-size: 1.1rem; }
+.nav-card p { margin: 0; opacity: 0.9; font-size: 0.85rem; }
+</style>
+
+<div class="at-wrap">
+  <div class="at-header">
+    <h1>🚨 Anti-Human Trafficking Command Center</h1>
+    <p>Victim protection, shelter management, prosecution support, and reintegration tracking</p>
+  </div>
+
+  <div class="at-grid">
+    <div class="at-card"><div class="num">—</div><div class="lbl">Victim Intakes</div></div>
+    <div class="at-card"><div class="num">—</div><div class="lbl">Active Shelter Residents</div></div>
+    <div class="at-card"><div class="num">—</div><div class="lbl">Open Court Cases</div></div>
+    <div class="at-card"><div class="num">—</div><div class="lbl">Reintegrated</div></div>
+  </div>
+
+  <div class="at-nav">
+    <a href="/admin/anti_trafficking/victimintake/" class="nav-card"><h3>📋 Victim Intake</h3><p>Register new survivors, risk assessment, needs evaluation</p></a>
+    <a href="/admin/anti_trafficking/shelter/" class="nav-card"><h3>🏠 Shelter Management</h3><p>Capacity tracking, resident logs, facility status</p></a>
+    <a href="/admin/anti_trafficking/courtcase/" class="nav-card"><h3>⚖️ Court Cases</h3><p>Hearing dates, perpetrator records, case outcomes</p></a>
+    <a href="/admin/anti_trafficking/psychosocialsession/" class="nav-card"><h3>🧠 Psychosocial Support</h3><p>Counseling sessions, therapy plans, progress notes</p></a>
+    <a href="/admin/anti_trafficking/reintegrationplan/" class="nav-card"><h3>🏡 Reintegration</h3><p>Family reunification, skills training, follow-up</p></a>
+    <a href="/admin/anti_trafficking/missingperson/" class="nav-card"><h3>🔍 Missing Persons</h3><p>Reports, search status, recovery tracking</p></a>
+  </div>
+</div>
+{% endblock %}
