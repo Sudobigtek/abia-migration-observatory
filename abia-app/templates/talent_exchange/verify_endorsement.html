@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Verify Endorsement | Abia State Migration Agency{% endblock %}
+{% block content %}
+<style>
+.verify-box{max-width:600px;margin:3rem auto;background:#fff;padding:2.5rem;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,0.1);text-align:center;animation:fadeInUp 0.8s ease-out}
+.verify-box h1{color:#1a3a6c;margin-bottom:1rem}
+.verify-box input{padding:0.75rem 1rem;border:2px solid #e5e7eb;border-radius:8px;width:100%;font-size:1rem;margin-bottom:1rem;transition:border-color 0.3s}
+.verify-box input:focus{border-color:#1a3a6c;outline:none}
+.verify-box button{background:#1a3a6c;color:#fff;padding:0.75rem 2rem;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:transform 0.2s}
+.verify-box button:hover{transform:scale(1.05)}
+.result-valid{background:#f0fdf4;border:2px solid #065f46;color:#064e3b;padding:1.5rem;border-radius:12px;margin-top:1rem;text-align:left;animation:fadeInUp 0.5s ease-out}
+.result-invalid{background:#fef2f2;border:2px solid #dc2626;color:#991b1b;padding:1.5rem;border-radius:12px;margin-top:1rem;animation:fadeInUp 0.5s ease-out}
+.hash{font-family:monospace;font-size:0.75rem;background:#e5e7eb;padding:0.3rem 0.5rem;border-radius:4px;word-break:break-all}
+</style>
+
+<div class="verify-box">
+  <h1>🔐 Verify Migrant Endorsement</h1>
+  <p style="color:#666;margin-bottom:1.5rem;">Embassy staff and border officials can instantly verify an Abia State endorsement.</p>
+  
+  <form method="get" action="{% url 'talent_exchange:verify_endorsement' %}">
+    <input type="text" name="endorsement" placeholder="Enter endorsement number" value="{{ endorsement_num|default:'' }}">
+    <button type="submit">Verify</button>
+  </form>
+
+  {% if result == 'invalid' %}
+  <div class="result-invalid">
+    <strong>✗ Invalid or Revoked</strong><br>
+    Endorsement number <strong>{{ endorsement_num }}</strong> not found, expired, or revoked.
+  </div>
+  {% elif result %}
+  <div class="result-valid">
+    <strong style="font-size:1.2rem;">✓ Valid Abia State Endorsement</strong>
+    <hr style="border-color:rgba(6,78,59,0.2);margin:1rem 0;">
+    <p><strong>Number:</strong> {{ result.endorsement_number }}</p>
+    <p><strong>Migrant:</strong> {{ result.candidate.full_name }}</p>
+    <p><strong>Destination:</strong> {{ result.destination_country }}</p>
+    <p><strong>Purpose:</strong> {{ result.get_purpose_display }}</p>
+    <p><strong>Sector:</strong> {{ result.candidate.sector|default:"—" }}</p>
+    <p><strong>Issued:</strong> {{ result.issued_date }} by {{ result.issued_by }}</p>
+    <p><strong>Valid Until:</strong> {{ result.valid_until }}</p>
+    <p><strong>Integrity Hash:</strong><br><span class="hash">{{ result.verification_hash }}</span></p>
+    {% if result.is_revoked %}
+    <p style="color:#dc2626;margin-top:1rem;"><strong>⚠️ REVOKED:</strong> {{ result.revocation_reason }}</p>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

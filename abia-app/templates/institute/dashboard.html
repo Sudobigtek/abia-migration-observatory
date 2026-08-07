@@ -1,69 +1,84 @@
 {% extends "base.html" %}
-{% block title %}The Institute | Abia Migration Observatory{% endblock %}
+{% block title %}Institute for Migration Governance and Policy | Abia Migration Observatory{% endblock %}
 {% block content %}
-<div style="max-width:1200px;margin:0 auto;padding:2rem;">
-  <h1>🎓 The Institute</h1>
-  <p style="color:#666;">Accredited skills training, certification, and partnership management for Abia State</p>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin:2rem 0;">
-    <div style="background:#f8f9fa;padding:1.5rem;border-radius:8px;text-align:center;">
-      <div style="font-size:2rem;font-weight:bold;color:#2c5aa0;">{{ total_courses }}</div>
-      <div style="font-size:0.9rem;color:#666;">Active Courses</div>
-    </div>
-    <div style="background:#f8f9fa;padding:1.5rem;border-radius:8px;text-align:center;">
-      <div style="font-size:2rem;font-weight:bold;color:#2c5aa0;">{{ total_cohorts }}</div>
-      <div style="font-size:0.9rem;color:#666;">Active Cohorts</div>
-    </div>
-    <div style="background:#f8f9fa;padding:1.5rem;border-radius:8px;text-align:center;">
-      <div style="font-size:2rem;font-weight:bold;color:#2c5aa0;">{{ total_students }}</div>
-      <div style="font-size:0.9rem;color:#666;">Active Students</div>
-    </div>
-    <div style="background:#f8f9fa;padding:1.5rem;border-radius:8px;text-align:center;">
-      <div style="font-size:2rem;font-weight:bold;color:#2c5aa0;">{{ total_certificates }}</div>
-      <div style="font-size:0.9rem;color:#666;">Certificates Issued</div>
-    </div>
-    <div style="background:#f8f9fa;padding:1.5rem;border-radius:8px;text-align:center;">
-      <div style="font-size:2rem;font-weight:bold;color:#2c5aa0;">{{ partners }}</div>
-      <div style="font-size:0.9rem;color:#666;">Partner Institutions</div>
-    </div>
-  </div>
+<div class="hero animate-up" style="padding:4rem 2rem 3rem;">
+  <div class="hero-badge">🎓 Platform 3 of 4</div>
+  <h1 class="animate-up delay-1">Institute for Migration Governance and Policy</h1>
+  <p class="animate-up delay-2">Accredited skills training, certification, and partnership management for Abia State. Building the human capital of the diaspora.</p>
+</div>
 
-  <h2>Recent Cohorts</h2>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin:1rem 0;">
+<div class="stats-bar">
+  <div class="stat-card animate-up delay-1">
+    <div class="stat-number">{{ total_courses|default:"0" }}</div>
+    <div class="stat-label">Active Courses</div>
+  </div>
+  <div class="stat-card animate-up delay-2">
+    <div class="stat-number">{{ total_cohorts|default:"0" }}</div>
+    <div class="stat-label">Active Cohorts</div>
+  </div>
+  <div class="stat-card animate-up delay-3">
+    <div class="stat-number">{{ total_students|default:"0" }}</div>
+    <div class="stat-label">Active Students</div>
+  </div>
+  <div class="stat-card animate-up delay-4">
+    <div class="stat-number">{{ total_certificates|default:"0" }}</div>
+    <div class="stat-label">Certificates Issued</div>
+  </div>
+  <div class="stat-card animate-up delay-5">
+    <div class="stat-number">{{ partners|default:"0" }}</div>
+    <div class="stat-label">Partner Institutions</div>
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title animate-up">Recent Cohorts</h2>
+  <p class="section-subtitle animate-up">Active training programs across partner institutions.</p>
+  <div class="card-grid">
     {% for c in recent_cohorts %}
-    <div style="border:1px solid #e0e0e0;padding:1rem;border-radius:8px;">
-      <strong>{{ c.course.code }} — Cohort {{ c.cohort_number }}</strong>
-      <p style="margin:0.25rem 0;">{{ c.course.title }}</p>
-      <p style="font-size:0.85rem;color:#666;">📅 {{ c.start_date|date:"M d, Y" }} — {{ c.end_date|date:"M d, Y" }}<br>
-      👤 Facilitator: {{ c.facilitator|default:"TBD" }}<br>
-      📍 {{ c.venue|default:"TBD" }} <span style="background:#2c5aa0;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;">{{ c.get_status_display }}</span></p>
+    <div class="feature-card animate-up delay-{{ forloop.counter }}">
+      <span class="feature-icon">📅</span>
+      <h3>{{ c.course.code }} — Cohort {{ c.cohort_number }}</h3>
+      <p><strong>{{ c.course.title }}</strong></p>
+      <p style="color:#666;font-size:0.9rem;">{{ c.start_date|date:"M d, Y" }} — {{ c.end_date|date:"M d, Y" }}<br>
+      👤 {{ c.facilitator|default:"TBD" }}<br>
+      📍 {{ c.venue|default:"TBD" }}</p>
+      <span style="display:inline-block;background:var(--primary);color:#fff;padding:0.25rem 0.75rem;border-radius:20px;font-size:0.75rem;">{{ c.get_status_display }}</span>
     </div>
     {% empty %}
-    <p>No active cohorts.</p>
+    <div class="feature-card animate-up">
+      <p>No active cohorts. <a href="/admin/institute/cohort/add/" style="color:var(--primary);">Create one in Admin →</a></p>
+    </div>
     {% endfor %}
   </div>
+</div>
 
-  <h2>Course Catalog</h2>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin:1rem 0;">
+<div class="section">
+  <h2 class="section-title animate-up">Course Catalog</h2>
+  <p class="section-subtitle animate-up">Accredited programs aligned to labor market demand.</p>
+  <div class="card-grid">
     {% for course in courses %}
-    <div style="border:1px solid #e0e0e0;padding:1rem;border-radius:8px;">
-      <strong>{{ course.code }}</strong>
-      <p style="margin:0.25rem 0;">{{ course.title }}</p>
-      <p style="font-size:0.85rem;color:#666;">⏱️ {{ course.duration_hours }} hours · {{ course.get_delivery_mode_display }}<br>
-      📊 {{ course.get_level_display }} · {{ course.get_sector_display|default:"General" }}
-      {% if course.is_accredited %}<br><span style="color:green;">✓ Accredited</span>{% endif %}</p>
+    <div class="feature-card animate-up delay-{{ forloop.counter }}">
+      <span class="feature-icon">📚</span>
+      <h3>{{ course.code }}</h3>
+      <p><strong>{{ course.title }}</strong></p>
+      <p style="color:#666;font-size:0.9rem;">⏱️ {{ course.duration_hours }} hours · {{ course.get_delivery_mode_display }}<br>
+      📊 {{ course.get_level_display }} · {{ course.get_sector_display|default:"General" }}</p>
+      {% if course.is_accredited %}<span style="color:green;font-weight:600;">✓ Accredited by {{ course.accreditation_body|default:"Abia State" }}</span>{% endif %}
     </div>
     {% empty %}
-    <p>No courses in catalog.</p>
+    <div class="feature-card animate-up"><p>No courses available.</p></div>
     {% endfor %}
   </div>
-  <p><a href="{% url 'institute:course_list' %}" style="color:#2c5aa0;">View Full Catalog →</a></p>
+  <p style="margin-top:1.5rem;"><a href="{% url 'institute:course_list' %}" class="btn">View Full Catalog →</a></p>
+</div>
 
-  <div style="background:#fff3cd;padding:1.5rem;border-radius:8px;margin-top:2rem;">
-    <h3>🔍 Verify a Certificate</h3>
-    <p>Employers and partners can verify certificate authenticity here.</p>
-    <form method="get" action="{% url 'institute:verify_certificate' %}" style="display:flex;gap:0.5rem;">
-      <input type="text" name="cert" placeholder="Certificate Number" value="{{ cert_number|default:'' }}" style="padding:0.5rem;flex:1;border:1px solid #ccc;border-radius:4px;">
-      <button type="submit" style="padding:0.5rem 1rem;background:#2c5aa0;color:#fff;border:none;border-radius:4px;cursor:pointer;">Verify</button>
+<div class="section">
+  <div class="verify-box animate-up">
+    <h3 style="margin-bottom:1rem;">🔍 Certificate Verification</h3>
+    <p style="margin-bottom:1rem;color:#666;">Employers and partners can verify certificate authenticity instantly.</p>
+    <form method="get" action="{% url 'institute:verify_certificate' %}" style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <input type="text" name="cert" placeholder="Enter Certificate Number (e.g. AMO-INST-2026-0001)" value="{{ cert_number|default:'' }}">
+      <button type="submit">Verify Certificate</button>
     </form>
   </div>
 </div>

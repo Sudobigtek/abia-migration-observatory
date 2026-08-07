@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Vacancies | Abia Talent Exchange{% endblock %}
+{% block content %}
+<style>
+.vac-hero{background:linear-gradient(135deg,#1a3a6c,#0f1f3d);padding:3rem 2rem;text-align:center;color:#fff;animation:fadeInUp 1s ease-out}
+.filter-bar{max-width:1000px;margin:1.5rem auto;display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+.filter-bar select,.filter-bar button{padding:0.6rem 1rem;border-radius:6px;border:1px solid #ccc;font-size:0.9rem}
+.filter-bar button{background:#1a3a6c;color:#fff;border:none;cursor:pointer}
+.vac-grid{max-width:1000px;margin:0 auto 2rem;display:grid;gap:1rem}
+.vac-card{background:#fff;padding:1.25rem;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.06);display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:1rem;align-items:center;animation:fadeInUp 0.5s ease-out both}
+.vac-card:hover{background:#f8fafc}
+</style>
+
+<div class="vac-hero">
+  <h1>🌍 Open Vacancies</h1>
+  <p>Verified foreign employment opportunities for Abia-origin talent.</p>
+</div>
+
+<div class="filter-bar">
+  <form method="get" style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+    <select name="sector"><option value="">All Sectors</option>{% for s in sectors %}<option value="{{ s.code }}" {% if request.GET.sector == s.code %}selected{% endif %}>{{ s.name }}</option>{% endfor %}</select>
+    <select name="country"><option value="">All Countries</option>{% for c in countries %}<option value="{{ c }}" {% if request.GET.country == c %}selected{% endif %}>{{ c }}</option>{% endfor %}</select>
+    <button type="submit">Filter</button>
+    <a href="{% url 'talent_exchange:vacancy_list' %}" style="padding:0.6rem 1rem;background:#e5e7eb;color:#333;border-radius:6px;text-decoration:none;">Clear</a>
+  </form>
+</div>
+
+<div class="vac-grid">
+  {% for v in vacancies %}
+  <div class="vac-card">
+    <div>
+      <strong>{{ v.title }}</strong><br>
+      <span style="font-size:0.8rem;color:#666;">{{ v.employer.company_name }} · {{ v.location_city }}, {{ v.location_country }}</span>
+    </div>
+    <div style="font-size:0.85rem;">{{ v.get_contract_type_display }}</div>
+    <div style="font-weight:700;color:#1a3a6c;">${{ v.salary_usd|default:"—" }}</div>
+    <div style="font-size:0.8rem;">{{ v.positions_filled }}/{{ v.positions_available }} filled</div>
+  </div>
+  {% empty %}
+  <div style="text-align:center;padding:2rem;color:#666;">No vacancies match your filters.</div>
+  {% endfor %}
+</div>
+{% endblock %}

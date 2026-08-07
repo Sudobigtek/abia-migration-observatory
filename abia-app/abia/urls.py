@@ -9,6 +9,8 @@ urlpatterns = [
     path("anti-trafficking/", include("abia.anti_trafficking.urls")),
     path('japa/', include('abia.japa_development.urls')),
     path('institute/', include('abia.institute.urls')),
+    path('corps/', include('abia.migration_corps.urls')),
+    path('talent-exchange/', include('abia.talent_exchange.urls')),
     path('accounts/', include('allauth.urls')),
     path("pwa/", include("abia.pwa.urls")),
     path('admin/', admin.site.urls),

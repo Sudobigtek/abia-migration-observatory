@@ -1,40 +1,60 @@
 {% extends "base.html" %}
-{% block title %}Staff Dashboard | Abia Migration Observatory{% endblock %}
+{% block title %}Staff Command Center | Abia Migration Observatory{% endblock %}
 {% block content %}
-<style>
-.dash-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-.dash-header { margin-bottom: 2rem; }
-.dash-header h1 { font-size: 1.8rem; color: #1a237e; margin-bottom: 0.3rem; }
-.dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-.dash-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #1a237e; }
-.dash-card .num { font-size: 2rem; font-weight: 700; color: #1a237e; }
-.dash-card .lbl { color: #555; font-size: 0.9rem; margin-top: 0.3rem; }
-.dash-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
-.nav-card { background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%); color: white; padding: 1.2rem; border-radius: 10px; text-decoration: none; display: block; }
-.nav-card h3 { margin: 0 0 0.3rem; font-size: 1.1rem; }
-.nav-card p { margin: 0; opacity: 0.9; font-size: 0.85rem; }
-</style>
+<div class="hero animate-up" style="padding:4rem 2rem 3rem;">
+  <div class="hero-badge">🔐 Staff Only</div>
+  <h1 class="animate-up delay-1">Staff Command Center</h1>
+  <p class="animate-up delay-2">Internal operations dashboard for the Abia State Migration Observatory federation.</p>
+</div>
 
-<div class="dash-wrap">
-  <div class="dash-header">
-    <h1>🛡️ Staff Command Center</h1>
-    <p>Abia Migration Observatory — Internal Operations Dashboard</p>
+<div class="section">
+  <h2 class="section-title animate-up">Platform Navigation</h2>
+  <p class="section-subtitle animate-up">Select a system to manage data, review reports, or configure settings.</p>
+  <div class="card-grid">
+    <div class="feature-card animate-up delay-1">
+      <span class="feature-icon">🚨</span>
+      <h3>Anti-Trafficking</h3>
+      <p>Victim intake, shelter management, court cases, evidence tracking, and psychosocial support.</p>
+      <a href="/anti-trafficking/" style="color:var(--primary);font-weight:600;">Open →</a>
+    </div>
+    <div class="feature-card animate-up delay-2">
+      <span class="feature-icon">🏛️</span>
+      <h3>LGA Portal</h3>
+      <p>Local government data collection, field officer management, and community reporting.</p>
+      <a href="/lga-portal/" style="color:var(--primary);font-weight:600;">Open →</a>
+    </div>
+    <div class="feature-card animate-up delay-3">
+      <span class="feature-icon">✈️</span>
+      <h3>Japa for Development</h3>
+      <p>Beneficiary registry, 4-pillar tracking, program sessions, attendance, and inventory.</p>
+      <a href="/japa/" style="color:var(--primary);font-weight:600;">Open →</a>
+    </div>
+    <div class="feature-card animate-up delay-4">
+      <span class="feature-icon">🎓</span>
+      <h3>Institute for Migration Governance and Policy</h3>
+      <p>Course catalog, cohorts, enrollments, exam scheduling, and certificate verification.</p>
+      <a href="/institute/" style="color:var(--primary);font-weight:600;">Open →</a>
+    </div>
+    <div class="feature-card animate-up delay-5">
+      <span class="feature-icon">🛡️</span>
+      <h3>Migration Volunteer Corps</h3>
+      <p>Volunteer certification, country clusters, welfare contacts, ethics, and diaspora partners.</p>
+      <a href="/corps/" style="color:var(--primary);font-weight:600;">Open →</a>
+    </div>
+    <div class="feature-card animate-up delay-5">
+      <span class="feature-icon">⚙️</span>
+      <h3>Django Admin</h3>
+      <p>User management, model configuration, raw data access, and system settings.</p>
+      <a href="/admin/" style="color:var(--primary);font-weight:600;">Open →</a>
+    </div>
   </div>
+</div>
 
-  <div class="dash-grid">
-    <div class="dash-card"><div class="num">—</div><div class="lbl">Total Migrants</div></div>
-    <div class="dash-card"><div class="num">—</div><div class="lbl">Active Cases</div></div>
-    <div class="dash-card"><div class="num">17</div><div class="lbl">LGAs Covered</div></div>
-    <div class="dash-card"><div class="num">—</div><div class="lbl">Partner Agencies</div></div>
-  </div>
-
-  <div class="dash-nav">
-    <a href="/anti-trafficking/" class="nav-card"><h3>🚨 Anti-Trafficking</h3><p>Victim intake, shelters, court cases, evidence</p></a>
-    <a href="/lga-portal/" class="nav-card"><h3>🏛️ LGA Portal</h3><p>Local government data and case management</p></a>
-    <a href="/reports/" class="nav-card"><h3>📊 Reports</h3><p>Generate partner and executive reports</p></a>
-    <a href="/japa/" class="nav-card"><h3>✈️ Japa for Development</h3><p>Beneficiary tracking, skills, reintegration</p></a>
-    <a href="/admin/" class="nav-card"><h3>⚙️ Django Admin</h3><p>User management, models, configuration</p></a>
-    <a href="/public-dashboard/" class="nav-card"><h3>🌍 Public Portal</h3><p>View the public-facing data entry portal</p></a>
+<div class="section">
+  <div class="cta-section animate-up">
+    <h2>System Status</h2>
+    <p>All 4 platforms operational. {{ total_beneficiaries|default:"0" }} beneficiaries tracked. {{ total_volunteers|default:"0" }} volunteers active. {{ total_courses|default:"0" }} courses accredited.</p>
+    <a href="/public-dashboard/" class="btn">View Public Portal</a>
   </div>
 </div>
 {% endblock %}

@@ -1,160 +1,63 @@
-
 {% extends "base.html" %}
-{% block title %}Japa for Development | Dashboard{% endblock %}
+{% block title %}Japa for Development | Abia Migration Observatory{% endblock %}
 {% block content %}
-<style>
-.japa-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-.japa-header { text-align: center; margin-bottom: 2rem; }
-.japa-header h1 { font-size: 2.2rem; margin-bottom: 0.3rem; color: #1a237e; }
-.japa-header p { color: #555; font-size: 1.1rem; }
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-.stat-card { background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%); color: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-.stat-card .num { font-size: 2.4rem; font-weight: 700; }
-.stat-card .lbl { font-size: 0.9rem; opacity: 0.9; margin-top: 0.3rem; }
-.pillar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-.pillar-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 5px solid; }
-.pillar-card.p1 { border-color: #e53935; }
-.pillar-card.p2 { border-color: #fb8c00; }
-.pillar-card.p3 { border-color: #43a047; }
-.pillar-card.p4 { border-color: #1e88e5; }
-.pillar-card h3 { margin-top: 0; font-size: 1.1rem; color: #333; }
-.metric { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid #f0f0f0; font-size: 0.95rem; }
-.metric span:last-child { font-weight: 600; color: #1a237e; }
-.section-title { font-size: 1.3rem; margin: 2rem 0 1rem; color: #1a237e; }
-.table-wrap { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
-th, td { padding: 0.8rem 1rem; text-align: left; border-bottom: 1px solid #eee; }
-th { background: #f5f5f5; font-weight: 600; color: #444; }
-tr:hover { background: #fafafa; }
-.badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
-.badge-pub { background: #e3f2fd; color: #1565c0; }
-.cta-row { text-align: center; margin-top: 2rem; }
-.btn-primary { display: inline-block; background: #1a237e; color: white; padding: 0.8rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; }
-.btn-primary:hover { background: #283593; }
-.chart-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-.chart-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-</style>
+<div class="hero animate-up" style="padding:4rem 2rem 3rem;">
+  <div class="hero-badge">✈️ Platform 2 of 4</div>
+  <h1 class="animate-up delay-1">Japa for Development</h1>
+  <p class="animate-up delay-2">Migration governance through skills, counseling, and reintegration — aligned to IOM M&E Framework and the Global Compact for Migration.</p>
+</div>
 
-<div class="japa-wrap">
-  <div class="japa-header">
-    <h1>✈️ Japa for Development</h1>
-    <p>Migration governance through skills, counseling, and reintegration — aligned to IOM M&E Framework</p>
+<div class="stats-bar">
+  <div class="stat-card animate-up delay-1">
+    <div class="stat-number">{{ total_beneficiaries|default:"0" }}</div>
+    <div class="stat-label">Total Beneficiaries</div>
   </div>
-
-  <div class="stats-grid">
-    <div class="stat-card"><div class="num">{{ total_beneficiaries }}</div><div class="lbl">Total Beneficiaries</div></div>
-    <div class="stat-card"><div class="num">{{ p3_metrics.certified|default:0 }}</div><div class="lbl">Certified</div></div>
-    <div class="stat-card"><div class="num">{{ p1_metrics.regular_pathway|default:0 }}</div><div class="lbl">Regular Migration</div></div>
-    <div class="stat-card"><div class="num">{{ p4_reint.packages_delivered|default:0 }}</div><div class="lbl">Reintegrated</div></div>
+  <div class="stat-card animate-up delay-2">
+    <div class="stat-number">{{ p3_metrics.certified|default:0 }}</div>
+    <div class="stat-label">Certified</div>
   </div>
-
-  <div class="pillar-grid">
-    <div class="pillar-card p1">
-      <h3>🛡️ Pillar 1 — Migration Governance</h3>
-      <div class="metric"><span>Counseling Sessions</span><span>{{ p1_metrics.total|default:0 }}</span></div>
-      <div class="metric"><span>Regular Pathway Uptake</span><span>{{ p1_metrics.regular_pathway|default:0 }}</span></div>
-      <div class="metric"><span>Irregular Pathway</span><span>{{ p1_metrics.irregular_pathway|default:0 }}</span></div>
-      <div class="metric"><span>Protection Referrals</span><span>{{ p1_metrics.referrals|default:0 }}</span></div>
-    </div>
-    <div class="pillar-card p2">
-      <h3>🌍 Pillar 2 — Language & Culture</h3>
-      <div class="metric"><span>Enrolled</span><span>{{ p2_metrics.total|default:0 }}</span></div>
-      <div class="metric"><span>Cultural Orientation Done</span><span>{{ p2_metrics.cultural_completed|default:0 }}</span></div>
-      <div class="metric"><span>Avg. Readiness Score</span><span>{{ p2_metrics.avg_readiness|default:"—"|floatformat:1 }}</span></div>
-    </div>
-    <div class="pillar-card p3">
-      <h3>🎓 Pillar 3 — Skills & Placement</h3>
-      <div class="metric"><span>Trained Total</span><span>{{ p3_metrics.total|default:0 }}</span></div>
-      <div class="metric"><span>Certifications Issued</span><span>{{ p3_metrics.certified|default:0 }}</span></div>
-      <div class="metric"><span>Employed (Domestic)</span><span>{{ p3_metrics.placed_employed|default:0 }}</span></div>
-      <div class="metric"><span>Self-Employed</span><span>{{ p3_metrics.placed_self|default:0 }}</span></div>
-      <div class="metric"><span>Employed Abroad</span><span>{{ p3_metrics.placed_abroad|default:0 }}</span></div>
-    </div>
-    <div class="pillar-card p4">
-      <h3>🏠 Pillar 4 — Return & Reintegration</h3>
-      <div class="metric"><span>Returnees Supported</span><span>{{ p4_metrics.total|default:0 }}</span></div>
-      <div class="metric"><span>Packages Delivered</span><span>{{ p4_metrics.packages_delivered|default:0 }}</span></div>
-      <div class="metric"><span>Micro-Enterprises</span><span>{{ p4_metrics.micro_enterprises|default:0 }}</span></div>
-      <div class="metric"><span>Alumni Network</span><span>{{ p4_metrics.alumni|default:0 }}</span></div>
-    </div>
+  <div class="stat-card animate-up delay-3">
+    <div class="stat-number">{{ p1_metrics.regular_pathway|default:0 }}</div>
+    <div class="stat-label">Regular Migration</div>
   </div>
-
-  <div class="chart-row">
-    <div class="chart-card">
-      <h4>Location Distribution</h4>
-      <canvas id="locChart" height="200"></canvas>
-    </div>
-    <div class="chart-card">
-      <h4>Skill Sector Distribution</h4>
-      <canvas id="secChart" height="200"></canvas>
-    </div>
-  </div>
-
-  {% if recent_evidence %}
-  <div class="section-title">Recent Policy Evidence</div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Title</th><th>Pillar</th><th>Submitted To</th><th>Status</th></tr></thead>
-      <tbody>
-        {% for e in recent_evidence %}
-        <tr>
-          <td>{{ e.title }}</td>
-          <td>{{ e.get_pillar_focus_display|default:"All" }}</td>
-          <td>{{ e.submitted_to|default:"—" }}</td>
-          <td>{% if e.is_published %}<span class="badge badge-pub">Published</span>{% else %}<span class="badge" style="background:#fff3e0;color:#ef6c00;">Draft</span>{% endif %}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% endif %}
-
-  {% if recent_engagements %}
-  <div class="section-title">Recent Stakeholder Engagements</div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Partner</th><th>Activity</th><th>Date</th><th>Beneficiaries</th><th>Value (₦)</th></tr></thead>
-      <tbody>
-        {% for g in recent_engagements %}
-        <tr>
-          <td>{{ g.get_partner_display }}</td>
-          <td>{{ g.get_activity_type_display }}</td>
-          <td>{{ g.engagement_date }}</td>
-          <td>{{ g.beneficiaries_reached }}</td>
-          <td>₦{{ g.value_ngn|default:"0" }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% endif %}
-
-  <div class="cta-row">
-    <a href="{% url 'japa_development:beneficiary_list' %}" class="btn-primary">View All Beneficiaries →</a>
+  <div class="stat-card animate-up delay-4">
+    <div class="stat-number">{{ p4_metrics.packages_delivered|default:0 }}</div>
+    <div class="stat-label">Reintegrated</div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-fetch("{% url 'japa_development:api_dashboard_data' %}")
-  .then(r => r.json())
-  .then(data => {
-    new Chart(document.getElementById('locChart'), {
-      type: 'doughnut',
-      data: {
-        labels: data.location_distribution.map(i => i.current_location_category || 'Unknown'),
-        datasets: [{ data: data.location_distribution.map(i => i.count), backgroundColor: ['#1a237e','#3949ab','#5e35b1','#8e24aa'] }]
-      },
-      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
-    });
-    new Chart(document.getElementById('secChart'), {
-      type: 'bar',
-      data: {
-        labels: data.sector_distribution.map(i => i.skill_sector),
-        datasets: [{ label: 'Beneficiaries', data: data.sector_distribution.map(i => i.count), backgroundColor: '#3949ab' }]
-      },
-      options: { responsive: true, scales: { y: { beginAtZero: true } } }
-    });
-  });
-</script>
+<div class="section">
+  <h2 class="section-title animate-up">Four-Pillar Framework</h2>
+  <p class="section-subtitle animate-up">Every beneficiary tracked across the complete migration lifecycle.</p>
+  <div class="card-grid">
+    <div class="feature-card animate-up delay-1">
+      <span class="feature-icon">🛡️</span>
+      <h3>Pillar 1 — Migration Governance</h3>
+      <p><strong>{{ p1_metrics.total|default:0 }}</strong> counseled. <strong>{{ p1_metrics.regular_pathway|default:0 }}</strong> regular pathway uptake. <strong>{{ p1_metrics.referrals|default:0 }}</strong> protection referrals.</p>
+    </div>
+    <div class="feature-card animate-up delay-2">
+      <span class="feature-icon">🌍</span>
+      <h3>Pillar 2 — Language & Culture</h3>
+      <p><strong>{{ p2_metrics.total|default:0 }}</strong> enrolled. <strong>{{ p2_metrics.cultural_completed|default:0 }}</strong> cultural orientation completed. Avg readiness: <strong>{{ p2_metrics.avg_readiness|default:"—"|floatformat:1 }}</strong>.</p>
+    </div>
+    <div class="feature-card animate-up delay-3">
+      <span class="feature-icon">🎓</span>
+      <h3>Pillar 3 — Skills & Placement</h3>
+      <p><strong>{{ p3_metrics.total|default:0 }}</strong> trained. <strong>{{ p3_metrics.certified|default:0 }}</strong> certified. <strong>{{ p3_metrics.placed_employed|default:0 }}</strong> employed domestically. <strong>{{ p3_metrics.placed_abroad|default:0 }}</strong> abroad.</p>
+    </div>
+    <div class="feature-card animate-up delay-4">
+      <span class="feature-icon">🏠</span>
+      <h3>Pillar 4 — Return & Reintegration</h3>
+      <p><strong>{{ p4_metrics.total|default:0 }}</strong> returnees supported. <strong>{{ p4_metrics.packages_delivered|default:0 }}</strong> packages delivered. <strong>{{ p4_metrics.micro_enterprises|default:0 }}</strong> micro-enterprises.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="padding-top:0;">
+  <div class="cta-section animate-up" style="margin:0;">
+    <h2>Beneficiary Registry</h2>
+    <p>Search, filter, and manage all enrolled beneficiaries across Abia State and the diaspora.</p>
+    <a href="{% url 'japa_development:beneficiary_list' %}" class="btn">View All Beneficiaries →</a>
+  </div>
+</div>
 {% endblock %}

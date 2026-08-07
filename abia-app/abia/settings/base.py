@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-restore-key-change-in-production')
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*', 'harris-seemed-lauren-naples.trycloudflare.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -65,6 +65,8 @@ INSTALLED_APPS = [
     'abia.lga_portal',
     'abia.japa_development',
     'abia.institute',
+    'abia.migration_corps',
+    'abia.talent_exchange',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -279,7 +281,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_CACHE_ALIAS = "default"
 
 # CSRF trusted origins for Nginx proxy
-CSRF_TRUSTED_ORIGINS = [
+CSRF_TRUSTED_ORIGINS = ['https://harris-seemed-lauren-naples.trycloudflare.com', 'http://harris-seemed-lauren-naples.trycloudflare.com', 'https://*', 'http://*', 
     "http://localhost:8080",
     "http://127.0.0.1:8080",
     "https://abia-migration.gov.ng",
@@ -311,3 +313,4 @@ LOGIN_REDIRECT_URL = '/onboarding/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
 ACCOUNT_ADAPTER = 'abia.accounts.adapters.CustomAccountAdapter'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

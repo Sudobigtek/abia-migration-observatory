@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Volunteer Directory | Migration Volunteer Corps{% endblock %}
+{% block content %}
+<div style="max-width:1200px;margin:0 auto;padding:2rem;">
+  <h1>🌍 Volunteer Directory</h1>
+  <form method="get" style="display:flex;gap:0.5rem;margin:1rem 0;">
+    <select name="country" style="padding:0.5rem;">
+      <option value="">All Countries</option>
+      {% for c in countries %}<option value="{{ c }}" {% if request.GET.country == c %}selected{% endif %}>{{ c }}</option>{% endfor %}
+    </select>
+    <select name="status" style="padding:0.5rem;">
+      <option value="">All Statuses</option>
+      {% for code, label in status_choices %}<option value="{{ code }}" {% if request.GET.status == code %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    <button type="submit" style="padding:0.5rem 1rem;background:#2c5aa0;color:#fff;border:none;border-radius:4px;">Filter</button>
+    <a href="." style="padding:0.5rem 1rem;background:#ccc;color:#333;border-radius:4px;text-decoration:none;">Clear</a>
+  </form>
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr style="background:#2c5aa0;color:#fff;">
+      <th style="padding:0.75rem;text-align:left;">Name</th>
+      <th style="padding:0.75rem;text-align:left;">Location</th>
+      <th style="padding:0.75rem;text-align:left;">Status</th>
+      <th style="padding:0.75rem;text-align:left;">Cert #</th>
+      <th style="padding:0.75rem;text-align:left;">Hours</th>
+    </tr></thead>
+    <tbody>
+      {% for v in volunteers %}
+      <tr style="border-bottom:1px solid #e0e0e0;">
+        <td style="padding:0.75rem;"><a href="{% url 'migration_corps:volunteer_detail' v.pk %}" style="color:#2c5aa0;">{{ v.full_name }}</a></td>
+        <td style="padding:0.75rem;">{{ v.city }}, {{ v.country }}</td>
+        <td style="padding:0.75rem;">{{ v.get_status_display }}</td>
+        <td style="padding:0.75rem;font-family:monospace;">{{ v.certification_number|default:"—" }}</td>
+        <td style="padding:0.75rem;">{{ v.hours_served_total }}</td>
+      </tr>
+      {% empty %}<tr><td colspan="5" style="padding:1rem;text-align:center;">No volunteers found.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

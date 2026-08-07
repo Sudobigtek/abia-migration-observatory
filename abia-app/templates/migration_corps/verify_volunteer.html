@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Verify Volunteer | Migration Volunteer Corps{% endblock %}
+{% block content %}
+<div style="max-width:800px;margin:0 auto;padding:2rem;">
+  <h1>🔍 Verify a Certified Volunteer</h1>
+  {% if result == 'invalid' %}
+    <div style="background:#f8d7da;padding:1.5rem;border-radius:8px;color:#721c24;">
+      <h3>✗ Invalid or Inactive</h3>
+      <p>Certification number <strong>{{ cert_num }}</strong> not found or volunteer decertified.</p>
+    </div>
+  {% elif result %}
+    <div style="background:#d4edda;padding:1.5rem;border-radius:8px;color:#155724;">
+      <h3>✓ Certified Volunteer</h3>
+      <p><strong>Name:</strong> {{ result.full_name }}</p>
+      <p><strong>Cert #:</strong> {{ result.certification_number }}</p>
+      <p><strong>Status:</strong> {{ result.get_status_display }}</p>
+      <p><strong>Deployment:</strong> {{ result.deployment_city|default:result.city }}, {{ result.deployment_country|default:result.country }}</p>
+      <p><strong>Authority Letter:</strong> {% if result.authority_letter_issued %}Valid until {{ result.authority_letter_valid_until }}{% else %}Not issued{% endif %}</p>
+    </div>
+  {% else %}
+    <p>Enter a certification number to verify volunteer authority.</p>
+  {% endif %}
+</div>
+{% endblock %}

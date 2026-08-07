@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Migration Volunteer Corps | Abia Migration Observatory{% endblock %}
+{% block content %}
+<div class="hero animate-up" style="padding:4rem 2rem 3rem;">
+  <div class="hero-badge">🛡️ Platform 4 of 4</div>
+  <h1 class="animate-up delay-1">Migration Volunteer Corps</h1>
+  <p class="animate-up delay-2">Trusted first point of contact for Abia-origin migrants and diaspora members worldwide. A subsidiary body of the Institute for Migration Governance and Policy.</p>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-card animate-up delay-1">
+    <div class="stat-number">{{ total_volunteers|default:"0" }}</div>
+    <div class="stat-label">Active Volunteers</div>
+  </div>
+  <div class="stat-card animate-up delay-2">
+    <div class="stat-number">{{ certified|default:"0" }}</div>
+    <div class="stat-label">Certified</div>
+  </div>
+  <div class="stat-card animate-up delay-3">
+    <div class="stat-number">{{ clusters|default:"0" }}</div>
+    <div class="stat-label">Country Clusters</div>
+  </div>
+  <div class="stat-card animate-up delay-4">
+    <div class="stat-number">{{ contacts_month|default:"0" }}</div>
+    <div class="stat-label">Contacts This Month</div>
+  </div>
+  <div class="stat-card animate-up delay-5">
+    <div class="stat-number">{{ pending_ethics|default:"0" }}</div>
+    <div class="stat-label">Pending Ethics Cases</div>
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title animate-up">🌍 Country Clusters</h2>
+  <p class="section-subtitle animate-up">Volunteer networks organized by region and city.</p>
+  <div class="card-grid">
+    {% for c in clusters_list %}
+    <div class="feature-card animate-up delay-{{ forloop.counter }}">
+      <span class="feature-icon">🌐</span>
+      <h3>{{ c.city|default:c.country }}</h3>
+      <p style="color:#666;font-size:0.9rem;">{{ c.get_region_display }}</p>
+      <p>Coordinator: <strong>{{ c.coordinator.full_name|default:"TBD" }}</strong></p>
+      <p style="font-size:0.85rem;color:#666;">{{ c.volunteers.count }} volunteer{{ c.volunteers.count|pluralize }}</p>
+    </div>
+    {% empty %}
+    <div class="feature-card animate-up"><p>No active clusters.</p></div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="section">
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:2rem;">
+    <div>
+      <h2 class="section-title animate-up">📋 Recent Welfare Contacts</h2>
+      <p class="section-subtitle animate-up">Frontline interactions with migrants in destination countries.</p>
+      <table class="data-table animate-up">
+        <thead><tr><th>Volunteer</th><th>Type</th><th>Date</th><th>Referral</th></tr></thead>
+        <tbody>
+          {% for w in recent_contacts %}
+          <tr>
+            <td>{{ w.volunteer.full_name }}</td>
+            <td>{{ w.get_contact_type_display }}</td>
+            <td>{{ w.contact_date }}</td>
+            <td>{% if w.referral_made %}<span style="color:green;">✓</span> {{ w.referral_to|truncatechars:20 }}{% else %}—{% endif %}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" style="text-align:center;padding:2rem;">No recent contacts recorded.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h2 class="section-title animate-up">🏛️ Corps Leadership</h2>
+      {% for l in leadership %}
+      <div class="feature-card animate-up delay-{{ forloop.counter }}" style="margin-bottom:1rem;">
+        <span class="feature-icon">⭐</span>
+        <h3>{{ l.get_role_display }}</h3>
+        <p><strong>{{ l.volunteer.full_name }}</strong></p>
+        <p style="font-size:0.85rem;color:#666;">Term: {{ l.term_start }} — {{ l.term_end }}</p>
+      </div>
+      {% empty %}
+      <div class="feature-card animate-up"><p>No active leadership.</p></div>
+      {% endfor %}
+
+      <div class="verify-box animate-up" style="margin-top:2rem;">
+        <h3 style="margin-bottom:0.5rem;">🔍 Verify a Volunteer</h3>
+        <p style="font-size:0.85rem;color:#666;margin-bottom:1rem;">Confirm certification and authority instantly.</p>
+        <form method="get" action="{% url 'migration_corps:verify_volunteer' %}" style="display:flex;gap:0.5rem;flex-direction:column;">
+          <input type="text" name="cert" placeholder="Certification Number" style="width:100%;">
+          <button type="submit" style="width:100%;">Verify</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title animate-up">🤝 Diaspora Partners</h2>
+  <p class="section-subtitle animate-up">Registered associations with Letters of Cooperation.</p>
+  <div class="card-grid">
+    {% for p in partners %}
+    <div class="feature-card animate-up delay-{{ forloop.counter }}">
+      <span class="feature-icon">🤝</span>
+      <h3>{{ p.association_name }}</h3>
+      <p style="color:#666;font-size:0.9rem;">{{ p.city|default:"" }}{% if p.city %}, {% endif %}{{ p.country }}</p>
+      {% if p.letter_of_cooperation_signed %}<span style="color:green;font-weight:600;font-size:0.85rem;">✓ Letter of Cooperation Signed</span>{% endif %}
+    </div>
+    {% empty %}
+    <div class="feature-card animate-up"><p>No partners yet.</p></div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="section">
+  <div class="cta-section animate-up">
+    <h2>Serve the Diaspora. Protect Our People.</h2>
+    <p>From London to Dubai, Johannesburg to New York — certified volunteers are the eyes, ears, and helping hands of Abia State.</p>
+    <a href="{% url 'migration_corps:volunteer_list' %}" class="btn">View Volunteer Directory →</a>
+  </div>
+</div>
+{% endblock %}

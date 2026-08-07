@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Abia Talent Exchange & Verification System | Abia Migration Observatory{% endblock %}
+{% block content %}
+<style>
+.atevs-hero{background:linear-gradient(135deg,#0f1f3d 0%,#1a3a6c 50%,#0d2137 100%);position:relative;overflow:hidden;padding:4rem 2rem;text-align:center;color:#fff}
+.atevs-hero::before{content:"";position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,215,0,0.08) 1px,transparent 1px);background-size:40px 40px;animation:floatGrid 20s linear infinite}
+@keyframes floatGrid{0%{transform:translate(0,0)}100%{transform:translate(40px,40px)}}
+.atevs-hero h1{font-size:2.8rem;margin-bottom:0.5rem;animation:fadeInUp 1s ease-out}
+.atevs-hero p{font-size:1.15rem;opacity:0.9;max-width:700px;margin:0 auto 1.5rem;animation:fadeInUp 1s ease-out 0.2s both}
+.atevs-badge{display:inline-block;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.4);color:#ffd700;padding:0.4rem 1rem;border-radius:20px;font-size:0.85rem;font-weight:600;animation:fadeInUp 1s ease-out 0.4s both}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;max-width:1000px;margin:2rem auto}
+.stat-card{background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);padding:1.5rem;border-radius:12px;text-align:center;animation:fadeInUp 0.8s ease-out both}
+.stat-card:nth-child(1){animation-delay:0.1s}
+.stat-card:nth-child(2){animation-delay:0.2s}
+.stat-card:nth-child(3){animation-delay:0.3s}
+.stat-card:nth-child(4){animation-delay:0.4s}
+.stat-card:nth-child(5){animation-delay:0.5s}
+.stat-card:nth-child(6){animation-delay:0.6s}
+.stat-number{font-size:2rem;font-weight:700;color:#ffd700}
+.stat-label{font-size:0.8rem;opacity:0.8;margin-top:0.3rem}
+.section-title{font-size:1.6rem;color:#1a3a6c;margin:2.5rem 0 1rem;text-align:center;animation:fadeInUp 0.8s ease-out}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;max-width:1200px;margin:0 auto 2rem}
+.feature-card{background:#fff;border-radius:12px;padding:1.5rem;box-shadow:0 4px 20px rgba(0,0,0,0.08);border-top:4px solid #1a3a6c;transition:transform 0.3s,box-shadow 0.3s;animation:fadeInUp 0.8s ease-out both}
+.feature-card:hover{transform:translateY(-5px);box-shadow:0 8px 30px rgba(0,0,0,0.12)}
+.feature-card h3{color:#1a3a6c;margin-bottom:0.5rem;font-size:1.1rem}
+.feature-card p{color:#555;font-size:0.9rem;line-height:1.5}
+.employer-card{display:flex;align-items:center;gap:1rem;padding:1rem;background:#f8fafc;border-radius:8px;margin-bottom:0.75rem;animation:slideInLeft 0.6s ease-out both}
+.employer-card:nth-child(2){animation-delay:0.1s}
+.employer-card:nth-child(3){animation-delay:0.2s}
+.employer-card:nth-child(4){animation-delay:0.3s}
+.employer-card:nth-child(5){animation-delay:0.4s}
+.employer-card:nth-child(6){animation-delay:0.5s}
+.tier-badge{padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:700;text-transform:uppercase}
+.tier-platinum{background:#e0f2fe;color:#0369a1}
+.tier-gold{background:#fef3c7;color:#92400e}
+.tier-silver{background:#f3f4f6;color:#4b5563}
+.tier-bronze{background:#ffedd5;color:#9a3412}
+.tier-blacklisted{background:#fee2e2;color:#991b1b}
+.cta-box{background:linear-gradient(135deg,#1a3a6c,#0f1f3d);color:#fff;padding:2.5rem;border-radius:16px;text-align:center;margin:2rem auto;max-width:800px;animation:fadeInUp 1s ease-out}
+.cta-box h2{margin-bottom:0.75rem}
+.cta-box p{opacity:0.9;margin-bottom:1.5rem}
+.btn-primary{display:inline-block;background:#ffd700;color:#0f1f3d;padding:0.75rem 2rem;border-radius:8px;text-decoration:none;font-weight:700;transition:transform 0.2s}
+.btn-primary:hover{transform:scale(1.05)}
+.btn-secondary{display:inline-block;background:transparent;color:#ffd700;border:2px solid #ffd700;padding:0.6rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:600;margin-left:0.5rem;transition:all 0.2s}
+.btn-secondary:hover{background:#ffd700;color:#0f1f3d}
+.vacancy-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:1rem;padding:0.75rem;border-bottom:1px solid #e5e7eb;align-items:center;font-size:0.9rem;animation:fadeInUp 0.5s ease-out both}
+.vacancy-row.header{background:#1a3a6c;color:#fff;font-weight:600;border-radius:6px 6px 0 0}
+.vacancy-row:hover{background:#f8fafc}
+</style>
+
+<div class="atevs-hero">
+  <div class="atevs-badge">🌍 Diplomatic-Facing Platform</div>
+  <h1>Abia Talent Exchange & Verification System</h1>
+  <p>State-backed ethical labour mobility. Verified credentials. Transparent placements. Trusted by embassies, employers, and the Abia State Government.</p>
+  <a href="{% url 'talent_exchange:transparency' %}" class="btn-primary">View Public Transparency Dashboard</a>
+  <a href="{% url 'talent_exchange:verify_endorsement' %}" class="btn-secondary">Verify Endorsement</a>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card"><div class="stat-number">{{ total_candidates|default:"0" }}</div><div class="stat-label">Registered Candidates</div></div>
+  <div class="stat-card"><div class="stat-number">{{ open_vacancies|default:"0" }}</div><div class="stat-label">Open Vacancies</div></div>
+  <div class="stat-card"><div class="stat-number">{{ deployed|default:"0" }}</div><div class="stat-label">Workers Deployed</div></div>
+  <div class="stat-card"><div class="stat-number">{{ endorsed|default:"0" }}</div><div class="stat-label">Endorsements Issued</div></div>
+  <div class="stat-card"><div class="stat-number">{{ missions|default:"0" }}</div><div class="stat-label">Mission Partners</div></div>
+  <div class="stat-card"><div class="stat-number">{{ employers_verified|default:"0" }}</div><div class="stat-label">Verified Employers</div></div>
+</div>
+
+<h2 class="section-title">Open Vacancies from Verified Employers</h2>
+<div class="card-grid" style="max-width:1000px;">
+  {% for v in recent_vacancies %}
+  <div class="feature-card">
+    <h3>{{ v.title }}</h3>
+    <p style="font-size:0.8rem;color:#888;margin-bottom:0.5rem;">📍 {{ v.employer.company_name }} · {{ v.location_city }}, {{ v.location_country }} · {{ v.get_contract_type_display }}</p>
+    <p>💰 ${{ v.salary_usd|default:"—" }} · 🏢 {{ v.positions_filled }}/{{ v.positions_available }} filled</p>
+    <p style="margin-top:0.5rem;">{{ v.requirements|truncatewords:15 }}</p>
+  </div>
+  {% empty %}
+  <div class="feature-card"><p>No open vacancies at this time. Check back soon.</p></div>
+  {% endfor %}
+</div>
+<div style="text-align:center;margin-bottom:2rem;">
+  <a href="{% url 'talent_exchange:vacancy_list' %}" class="btn-primary">Browse All Vacancies →</a>
+</div>
+
+<h2 class="section-title">Top Verified Employers</h2>
+<div style="max-width:800px;margin:0 auto 2rem;">
+  {% for e in top_employers %}
+  <div class="employer-card">
+    <div style="flex:1;">
+      <strong>{{ e.company_name }}</strong><br>
+      <span style="font-size:0.8rem;color:#666;">{{ e.city|default:"" }}{% if e.city %}, {% endif %}{{ e.country }} · {{ e.get_sector_display|default:e.sector }}</span>
+    </div>
+    <div><span class="tier-badge tier-{{ e.compliance_tier }}">{{ e.get_compliance_tier_display }}</span></div>
+    <div style="text-align:right;font-size:0.85rem;">
+      <div style="color:#1a3a6c;font-weight:700;">{{ e.compliance_score }}%</div>
+      <div style="font-size:0.75rem;color:#888;">Compliance</div>
+    </div>
+  </div>
+  {% empty %}
+  <p style="text-align:center;color:#666;">No employer data available.</p>
+  {% endfor %}
+  <div style="text-align:center;margin-top:1rem;">
+    <a href="{% url 'talent_exchange:employer_list' %}" class="btn-secondary">View All Employers</a>
+  </div>
+</div>
+
+<h2 class="section-title">Recent Deployments</h2>
+<div style="max-width:900px;margin:0 auto 2rem;">
+  {% for d in recent_deployments %}
+  <div class="vacancy-row">
+    <div><strong>{{ d.candidate.full_name }}</strong><br><span style="font-size:0.75rem;color:#666;">{{ d.candidate.occupation|default:"" }}</span></div>
+    <div>→ {{ d.vacancy.employer.company_name }}</div>
+    <div>{{ d.vacancy.location_country }}</div>
+    <div>${{ d.salary_agreed_usd|default:"—" }}</div>
+    <div><span style="color:{% if d.welfare_status == 'good' %}green{% elif d.welfare_status == 'concern' %}orange{% else %}red{% endif % %};font-size:0.8rem;">● {{ d.get_welfare_status_display }}</span></div>
+  </div>
+  {% empty %}
+  <p style="text-align:center;color:#666;padding:1rem;">No deployment records yet.</p>
+  {% endfor %}
+</div>
+
+<div class="cta-box">
+  <h2>🔍 Verify a Migrant Endorsement</h2>
+  <p>Embassy staff, border officials, and employers can instantly verify the authenticity of an Abia State digital endorsement.</p>
+  <form method="get" action="{% url 'talent_exchange:verify_endorsement' %}" style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+    <input type="text" name="endorsement" placeholder="Enter endorsement number (e.g. AMO-END-2026-0001)" style="padding:0.75rem 1rem;border-radius:8px;border:none;min-width:320px;font-size:0.95rem;">
+    <button type="submit" class="btn-primary" style="border:none;cursor:pointer;">Verify Now</button>
+  </form>
+</div>
+
+<div class="cta-box" style="background:linear-gradient(135deg,#064e3b,#065f46);">
+  <h2>📊 Public Transparency Dashboard</h2>
+  <p>Real-time anonymized data on worker placements, employer compliance, and sectoral deployment — published to build diplomatic trust.</p>
+  <a href="{% url 'talent_exchange:transparency' %}" class="btn-primary" style="background:#fff;color:#064e3b;">View Transparency Data →</a>
+</div>
+{% endblock %}
