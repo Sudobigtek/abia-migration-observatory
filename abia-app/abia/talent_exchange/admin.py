@@ -26,14 +26,14 @@ class EmbassyMissionAdmin(admin.ModelAdmin):
 @admin.register(ForeignEmployer)
 class ForeignEmployerAdmin(admin.ModelAdmin):
     list_display = ['company_name', 'country', 'compliance_tier', 'compliance_score', 'embassy_verified', 'is_blacklisted', 'is_active']
-    list_filter = ['compliance_tier', 'embassy_verified', 'is_blacklisted', 'is_active', 'sector']
+    list_filter = ['compliance_tier', 'embassy_verified', 'is_blacklisted', 'is_active']
     search_fields = ['company_name', 'country', 'company_reg']
 
 @admin.register(Vacancy)
 class VacancyAdmin(admin.ModelAdmin):
     list_display = ['vacancy_code', 'title', 'employer', 'occupation', 'status', 'positions_available', 'positions_filled']
-    list_filter = ['status', 'contract_type', 'occupation__sector']
-    search_fields = ['vacancy_code', 'title', 'employer__company_name']
+    list_filter = ['status', 'contract_type']
+    search_fields = ['vacancy_code', 'title']
 
 @admin.register(TalentPool)
 class TalentPoolAdmin(admin.ModelAdmin):
@@ -60,7 +60,7 @@ class WelfareCheckAdmin(admin.ModelAdmin):
 
 @admin.register(GrievanceTicket)
 class GrievanceTicketAdmin(admin.ModelAdmin):
-    list_display = ['ticket_number', 'deployment', 'category', 'status', 'created_at']
+    list_display = ['ticket_number', 'deployment', 'category', 'status']
     list_filter = ['category', 'status']
     search_fields = ['ticket_number', 'deployment__candidate__full_name']
 
@@ -68,3 +68,4 @@ class GrievanceTicketAdmin(admin.ModelAdmin):
 class TransparencyReportAdmin(admin.ModelAdmin):
     list_display = ['snapshot_date', 'period_type', 'year', 'quarter', 'workers_deployed_total']
     list_filter = ['period_type', 'year']
+
