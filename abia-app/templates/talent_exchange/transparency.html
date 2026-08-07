@@ -1,70 +1,51 @@
 {% extends "base.html" %}
 {% block title %}Transparency Dashboard | Abia Talent Exchange{% endblock %}
 {% block content %}
-<style>
-.trans-hero{background:linear-gradient(135deg,#064e3b,#065f46);padding:3rem 2rem;text-align:center;color:#fff;animation:fadeInUp 1s ease-out}
-.trans-hero h1{font-size:2.2rem;margin-bottom:0.5rem}
-.trans-hero p{opacity:0.9;max-width:600px;margin:0 auto}
-.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;max-width:1000px;margin:2rem auto}
-.metric-card{background:#fff;padding:1.5rem;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.08);text-align:center;animation:fadeInUp 0.8s ease-out both}
-.metric-number{font-size:2rem;font-weight:700;color:#065f46}
-.table-wrap{max-width:1000px;margin:0 auto 2rem;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.08)}
-.table-header{background:#064e3b;color:#fff;padding:1rem;font-weight:700}
-.table-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:1rem;padding:0.75rem 1rem;border-bottom:1px solid #e5e7eb;align-items:center;font-size:0.9rem}
-.table-row:hover{background:#f0fdf4}
-</style>
-
-<div class="trans-hero">
-  <h1>📊 Worker Transparency Dashboard</h1>
-  <p>Anonymized, real-time data on Abia-origin worker placements, welfare metrics, and employer compliance — published to build embassy and mission trust.</p>
-</div>
-
-<div class="metric-grid">
-  <div class="metric-card"><div class="metric-number">{{ report.workers_deployed_total|default:"0" }}</div><div style="font-size:0.8rem;color:#666;">Workers Deployed</div></div>
-  <div class="metric-card"><div class="metric-number">{{ employers_verified|default:"0" }}</div><div style="font-size:0.8rem;color:#666;">Verified Employers</div></div>
-  <div class="metric-card"><div class="metric-number">{{ report.employers_blacklisted|default:"0" }}</div><div style="font-size:0.8rem;color:#666;">Blacklisted Employers</div></div>
-  <div class="metric-card"><div class="metric-number">{{ report.endorsements_issued|default:"0" }}</div><div style="font-size:0.8rem;color:#666;">Endorsements Issued</div></div>
-</div>
-
-<h2 style="text-align:center;color:#064e3b;margin:2rem 0 1rem;">Destination Countries</h2>
-<div style="max-width:800px;margin:0 auto 2rem;display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;">
-  {% for dest, count in destinations.items %}
-  <div style="background:#fff;padding:1rem 1.5rem;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08);animation:fadeInUp 0.5s ease-out both;">
-    <strong>{{ dest }}</strong><br><span style="color:#065f46;font-size:1.2rem;font-weight:700;">{{ count }}</span> <span style="font-size:0.8rem;color:#666;">workers</span>
+<style>.t-hero{background:linear-gradient(135deg,#0d2137,#1a3a6c);color:#fff;padding:3rem 2rem;text-align:center;border-radius:0 0 12px 12px;margin-bottom:2rem}
+.t-stat{background:#fff;border-radius:10px;padding:1.5rem;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.07)}
+.t-stat h3{margin:0;font-size:2rem;color:#1a3a6c}.t-stat p{margin:0.25rem 0 0;color:#666}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.06)}
+th,td{padding:0.75rem 1rem;text-align:left;border-bottom:1px solid #eee}
+th{background:#f8fafc;font-weight:700;color:#555}</style>
+<div class="t-hero"><h1 style="margin:0;">&#128202; Worker Transparency Dashboard</h1>
+<p style="opacity:0.9;max-width:700px;margin:0.5rem auto 0;">Anonymized, real-time data on Abia-origin worker placements, welfare metrics, and employer compliance — published to build embassy and mission trust.</p></div>
+<div style="max-width:1200px;margin:0 auto;padding:0 1rem 2rem;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem;">
+    <div class="t-stat"><h3>{{ report.workers_deployed_total|default:"0" }}</h3><p>Workers Deployed</p></div>
+    <div class="t-stat"><h3>{{ employers|length|default:"0" }}</h3><p>Verified Employers</p></div>
+    <div class="t-stat"><h3>{{ report.employers_blacklisted|default:"0" }}</h3><p>Blacklisted Employers</p></div>
+    <div class="t-stat"><h3>{{ report.endorsements_issued|default:"0" }}</h3><p>Endorsements Issued</p></div>
   </div>
-  {% empty %}
-  <p style="color:#666;">No destination data published yet.</p>
-  {% endfor %}
-</div>
-
-<h2 style="text-align:center;color:#064e3b;margin:2rem 0 1rem;">Sectors Sourced</h2>
-<div style="max-width:800px;margin:0 auto 2rem;display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;">
-  {% for sector, count in sectors.items %}
-  <div style="background:#fff;padding:1rem 1.5rem;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08);animation:fadeInUp 0.5s ease-out both;">
-    <strong>{{ sector|title }}</strong><br><span style="color:#065f46;font-size:1.2rem;font-weight:700;">{{ count }}</span> <span style="font-size:0.8rem;color:#666;">workers</span>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem;">
+    <div><h2 style="color:#1a3a6c;">&#127758; Destination Countries</h2>
+      {% for dest, count in destinations.items %}
+      <div style="display:flex;justify-content:space-between;padding:0.75rem;background:#fff;border-radius:6px;margin-bottom:0.5rem;box-shadow:0 1px 5px rgba(0,0,0,0.05);">
+        <span>{{ dest }}</span><strong>{{ count }} workers</strong></div>
+      {% empty %}
+      <p style="color:#666;">No destination data published yet.</p>
+      {% endfor %}
+    </div>
+    <div><h2 style="color:#1a3a6c;">&#127981; Sectors Sourced</h2>
+      {% for sector, count in sectors.items %}
+      <div style="display:flex;justify-content:space-between;padding:0.75rem;background:#fff;border-radius:6px;margin-bottom:0.5rem;box-shadow:0 1px 5px rgba(0,0,0,0.05);">
+        <span>{{ sector|title }}</span><strong>{{ count }} workers</strong></div>
+      {% empty %}
+      <p style="color:#666;">No sector data published yet.</p>
+      {% endfor %}
+    </div>
   </div>
-  {% empty %}
-  <p style="color:#666;">No sector data published yet.</p>
-  {% endfor %}
-</div>
-
-<h2 style="text-align:center;color:#064e3b;margin:2rem 0 1rem;">Employer Compliance Ratings</h2>
-<div class="table-wrap">
-  <div class="table-header" style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:1rem;">Employer · Country · Sector · Compliance · Status</div>
+  <h2 style="color:#1a3a6c;">&#127942; Employer Compliance Ratings</h2>
+  <table><thead><tr><th>Employer</th><th>Country</th><th>Sector</th><th>Compliance</th><th>Status</th></tr></thead><tbody>
   {% for e in employers %}
-  <div class="table-row">
-    <div><strong>{{ e.company_name }}</strong></div>
-    <div>{{ e.country }}</div>
-    <div>{{ e.get_sector_display|default:e.sector }}</div>
-    <div><strong style="color:{% if e.compliance_score >= 80 %}#065f46{% elif e.compliance_score >= 60 %}#ca8a04{% else %}#dc2626{% endif %};">{{ e.compliance_score }}%</strong></div>
-    <div>{% if e.embassy_verified %}<span style="color:#065f46;font-size:0.8rem;">✓ Embassy Verified</span>{% else %}<span style="color:#666;font-size:0.8rem;">Pending</span>{% endif %}</div>
-  </div>
+  <tr><td><strong>{{ e.company_name }}</strong></td><td>{{ e.country }}</td><td>{{ e.get_sector_display|default:e.sector }}</td>
+  <td style="font-weight:700;">{{ e.compliance_score }}%</td>
+  <td>{% if e.embassy_verified %}&#10003; Embassy Verified{% else %}Pending{% endif %}</td></tr>
   {% empty %}
-  <div style="padding:1rem;text-align:center;color:#666;">No employer data published.</div>
+  <tr><td colspan="5" style="color:#666;">No employer data published.</td></tr>
   {% endfor %}
-</div>
-
-<div style="text-align:center;margin:2rem;">
-  <a href="{% url 'talent_exchange:verify_endorsement' %}" style="display:inline-block;background:#064e3b;color:#fff;padding:0.75rem 2rem;border-radius:8px;text-decoration:none;font-weight:700;">🔐 Verify an Endorsement</a>
+  </tbody></table>
+  <div style="text-align:center;margin-top:2rem;">
+    <a href="/talent-exchange/verify-endorsement/" style="display:inline-block;background:#1a3a6c;color:#fff;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:700;">&#128274; Verify an Endorsement</a>
+  </div>
 </div>
 {% endblock %}

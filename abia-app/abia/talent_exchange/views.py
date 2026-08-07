@@ -2,9 +2,9 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Count, Avg, Q
 from django.utils import timezone
 from .models import (
-    Sector, Occupation, EmbassyMission, ForeignEmployer, Vacancy,
-    TalentPool, Deployment, CredentialEndorsement, WelfareCheck,
-    GrievanceTicket, TransparencyReport
+    Sector, Occupation, EmbassyMission, ForeignEmployer,
+    Vacancy, TalentPool, Deployment, CredentialEndorsement,
+    WelfareCheck, GrievanceTicket, TransparencyReport
 )
 
 def atevs_dashboard(request):
@@ -15,11 +15,11 @@ def atevs_dashboard(request):
     missions = EmbassyMission.objects.filter(mou_signed=True, is_active=True).count()
     employers_verified = ForeignEmployer.objects.filter(embassy_verified=True, is_active=True).count()
     open_grievances = GrievanceTicket.objects.filter(status__in=['open','investigating']).count()
-    
+
     recent_vacancies = Vacancy.objects.filter(is_active=True).select_related('employer').order_by('-posted_date')[:6]
     recent_deployments = Deployment.objects.select_related('candidate','vacancy__employer').order_by('-deployment_date')[:5]
     top_employers = ForeignEmployer.objects.filter(is_active=True).order_by('-compliance_score')[:6]
-    
+
     context = {
         'total_candidates': total_candidates,
         'open_vacancies': open_vacancies,
@@ -42,7 +42,7 @@ def transparency_public(request):
     if report:
         destinations = report.workers_by_destination
         sectors = report.workers_by_sector
-    
+
     context = {
         'report': report,
         'employers': employers,
@@ -52,7 +52,6 @@ def transparency_public(request):
     return render(request, 'talent_exchange/transparency.html', context)
 
 def verify_endorsement(request):
-    from .models import CredentialEndorsement
     result = None
     endorsement_num = request.GET.get('endorsement')
     if endorsement_num:
@@ -70,10 +69,10 @@ def vacancy_list(request):
         vacancies = vacancies.filter(occupation__sector__code__iexact=sector)
     if country:
         vacancies = vacancies.filter(employer__country__iexact=country)
-    
+
     sectors = Sector.objects.filter(is_active=True)
     countries = ForeignEmployer.objects.filter(is_active=True).values_list('country', flat=True).distinct()
-    
+
     context = {
         'vacancies': vacancies,
         'sectors': sectors,

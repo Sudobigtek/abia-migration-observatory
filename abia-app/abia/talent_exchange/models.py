@@ -9,6 +9,9 @@ class Sector(models.Model):
     code = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
+    is_blacklisted = models.BooleanField(default=False)
+    blacklist_reason = models.TextField(blank=True)
+    blacklisted_at = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     class Meta:
         ordering = ['code']
@@ -21,6 +24,9 @@ class Occupation(models.Model):
     title = models.CharField(max_length=200)
     skills_required = models.TextField(blank=True)
     experience_years_min = models.PositiveIntegerField(default=0)
+    is_blacklisted = models.BooleanField(default=False)
+    blacklist_reason = models.TextField(blank=True)
+    blacklisted_at = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     class Meta:
         ordering = ['code']
@@ -42,6 +48,9 @@ class EmbassyMission(models.Model):
     mou_signed = models.BooleanField(default=False)
     mou_date = models.DateField(null=True, blank=True)
     bla_aligned = models.BooleanField(default=False, verbose_name="Bilateral Labour Agreement Aligned")
+    is_blacklisted = models.BooleanField(default=False)
+    blacklist_reason = models.TextField(blank=True)
+    blacklisted_at = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     class Meta:
@@ -75,6 +84,9 @@ class ForeignEmployer(models.Model):
     worker_complaints = models.PositiveIntegerField(default=0)
     contract_compliance_rate = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
     avg_salary_usd = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    blacklist_reason = models.TextField(blank=True)
+    blacklisted_at = models.DateField(null=True, blank=True)
+    is_blacklisted = models.BooleanField(default=False)
     blacklist_reason = models.TextField(blank=True)
     blacklisted_at = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -113,6 +125,9 @@ class Vacancy(models.Model):
     posted_by_mission = models.ForeignKey(EmbassyMission, on_delete=models.SET_NULL, null=True, blank=True)
     posted_date = models.DateField(auto_now_add=True)
     closing_date = models.DateField(null=True, blank=True)
+    is_blacklisted = models.BooleanField(default=False)
+    blacklist_reason = models.TextField(blank=True)
+    blacklisted_at = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     class Meta:
         ordering = ['-posted_date']
@@ -141,6 +156,9 @@ class TalentPool(models.Model):
     preferred_destinations = models.CharField(max_length=300, blank=True)
     stage = models.CharField(max_length=20, choices=PIPELINE_STAGE, default='registered')
     assigned_vacancy = models.ForeignKey(Vacancy, on_delete=models.SET_NULL, null=True, blank=True, related_name='candidates')
+    is_blacklisted = models.BooleanField(default=False)
+    blacklist_reason = models.TextField(blank=True)
+    blacklisted_at = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     class Meta:

@@ -1,74 +1,70 @@
 from django.contrib import admin
 from .models import (
-    Sector, Occupation, EmbassyMission, ForeignEmployer, Vacancy,
-    TalentPool, Deployment, CredentialEndorsement, WelfareCheck,
-    GrievanceTicket, TransparencyReport
+    Sector, Occupation, EmbassyMission, ForeignEmployer,
+    Vacancy, TalentPool, Deployment, CredentialEndorsement,
+    WelfareCheck, GrievanceTicket, TransparencyReport
 )
 
 @admin.register(Sector)
 class SectorAdmin(admin.ModelAdmin):
     list_display = ['code', 'name', 'is_active']
+    list_filter = ['is_active']
+    search_fields = ['code', 'name']
 
 @admin.register(Occupation)
 class OccupationAdmin(admin.ModelAdmin):
-    list_display = ['code', 'title', 'sector', 'experience_years_min', 'is_active']
-    list_filter = ['sector', 'is_active']
+    list_display = ['code', 'title', 'sector', 'experience_years_min']
+    list_filter = ['sector']
+    search_fields = ['code', 'title']
 
 @admin.register(EmbassyMission)
 class EmbassyMissionAdmin(admin.ModelAdmin):
-    list_display = ['mission_name', 'country', 'city', 'mission_type', 'mou_signed', 'bla_aligned', 'is_active']
-    list_filter = ['mission_type', 'mou_signed', 'bla_aligned', 'is_active']
-    search_fields = ['mission_name', 'labour_attache_name']
+    list_display = ['mission_name', 'country', 'city', 'mou_signed', 'bla_aligned']
+    list_filter = ['mou_signed', 'bla_aligned', 'mission_type']
+    search_fields = ['mission_name', 'country', 'city']
 
 @admin.register(ForeignEmployer)
 class ForeignEmployerAdmin(admin.ModelAdmin):
-    list_display = ['company_name', 'country', 'city', 'compliance_tier', 'compliance_score', 'embassy_verified', 'active_workers', 'is_active']
-    list_filter = ['compliance_tier', 'embassy_verified', 'is_active', 'sector']
-    search_fields = ['company_name', 'company_reg', 'city']
-    fieldsets = (
-        ("Identity", {"fields": (("company_name", "trading_name"), "country", "city", "sector", "company_reg", "website")}),
-        ("Contact", {"fields": ("contact_email", "contact_phone")}),
-        ("Compliance", {"fields": ("compliance_tier", "compliance_score", "embassy_verified", "verified_by_mission", "verification_date", "contract_compliance_rate")}),
-        ("Workers", {"fields": ("total_workers_sourced", "active_workers", "worker_complaints", "avg_salary_usd")}),
-        ("Blacklist", {"fields": ("blacklist_reason", "blacklisted_at"), "classes": ("collapse",)}),
-        ("System", {"fields": ("is_active", "created_at"), "classes": ("collapse",)}),
-    )
+    list_display = ['company_name', 'country', 'compliance_tier', 'compliance_score', 'embassy_verified', 'is_blacklisted', 'is_active']
+    list_filter = ['compliance_tier', 'embassy_verified', 'is_blacklisted', 'is_active', 'sector']
+    search_fields = ['company_name', 'country', 'company_reg']
 
 @admin.register(Vacancy)
 class VacancyAdmin(admin.ModelAdmin):
-    list_display = ['vacancy_code', 'title', 'employer', 'positions_available', 'positions_filled', 'contract_type', 'salary_usd', 'status']
+    list_display = ['vacancy_code', 'title', 'employer', 'occupation', 'status', 'positions_available', 'positions_filled']
     list_filter = ['status', 'contract_type', 'occupation__sector']
     search_fields = ['vacancy_code', 'title', 'employer__company_name']
 
 @admin.register(TalentPool)
 class TalentPoolAdmin(admin.ModelAdmin):
-    list_display = ['full_name', 'lga', 'sector', 'occupation', 'stage', 'assigned_vacancy', 'created_at']
-    list_filter = ['stage', 'sector', 'gender', 'is_active']
-    search_fields = ['full_name', 'phone', 'email', 'japa_beneficiary_id', 'observatory_person_id']
+    list_display = ['japa_beneficiary_id', 'full_name', 'lga', 'sector', 'stage', 'is_active']
+    list_filter = ['stage', 'sector', 'is_active']
+    search_fields = ['full_name', 'japa_beneficiary_id', 'email']
 
 @admin.register(Deployment)
 class DeploymentAdmin(admin.ModelAdmin):
-    list_display = ['candidate', 'vacancy', 'deployment_date', 'welfare_status', 'salary_agreed_usd', 'embassy_notified']
-    list_filter = ['welfare_status', 'embassy_notified', 'deployment_date']
-    date_hierarchy = 'deployment_date'
+    list_display = ['candidate', 'vacancy', 'deployment_date', 'welfare_status', 'embassy_notified']
+    list_filter = ['welfare_status', 'embassy_notified']
+    search_fields = ['candidate__full_name', 'vacancy__title']
 
 @admin.register(CredentialEndorsement)
 class CredentialEndorsementAdmin(admin.ModelAdmin):
-    list_display = ['endorsement_number', 'candidate', 'destination_country', 'purpose', 'issued_date', 'valid_until', 'is_revoked']
-    list_filter = ['purpose', 'is_revoked', 'issued_date']
-    readonly_fields = ['verification_hash', 'issued_date']
+    list_display = ['endorsement_number', 'candidate', 'destination_country', 'purpose', 'is_revoked', 'valid_until']
+    list_filter = ['purpose', 'is_revoked', 'destination_country']
+    search_fields = ['endorsement_number', 'candidate__full_name']
 
 @admin.register(WelfareCheck)
 class WelfareCheckAdmin(admin.ModelAdmin):
-    list_display = ['deployment', 'check_date', 'check_type', 'salary_paid_on_time', 'accommodation_acceptable', 'escalated_to_embassy']
-    list_filter = ['check_type', 'salary_paid_on_time', 'escalated_to_embassy']
+    list_display = ['deployment', 'check_date', 'check_type', 'salary_paid_on_time', 'accommodation_acceptable']
+    list_filter = ['check_type', 'salary_paid_on_time', 'accommodation_acceptable']
 
 @admin.register(GrievanceTicket)
 class GrievanceTicketAdmin(admin.ModelAdmin):
-    list_display = ['ticket_number', 'deployment', 'category', 'severity', 'status', 'reported_date']
-    list_filter = ['severity', 'status', 'category']
+    list_display = ['ticket_number', 'deployment', 'category', 'status', 'created_at']
+    list_filter = ['category', 'status']
+    search_fields = ['ticket_number', 'deployment__candidate__full_name']
 
 @admin.register(TransparencyReport)
 class TransparencyReportAdmin(admin.ModelAdmin):
-    list_display = ['snapshot_date', 'period_type', 'year', 'quarter', 'workers_deployed_total', 'employers_verified', 'endorsements_issued']
+    list_display = ['snapshot_date', 'period_type', 'year', 'quarter', 'workers_deployed_total']
     list_filter = ['period_type', 'year']
