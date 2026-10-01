@@ -1,24 +1,35 @@
+"""
+ABIA Migration Observatory — Root URL Configuration
+Clean, minimal, production-oriented routing.
+"""
+
 from django.contrib import admin
 from django.urls import path, include
-from django.contrib.auth.decorators import login_required
-from abia.public_dashboard.views import DashboardView
-from abia.dashboard_view import landing, onboarding
+from django.views.generic import TemplateView
+
+# Dashboard views (Batch 1)
+from abia.dashboard.views import public_dashboard, command_center, dashboard
 
 urlpatterns = [
-    path("lga-portal/", include("abia.lga_portal.urls")),
-    path("anti-trafficking/", include("abia.anti_trafficking.urls")),
-    path('japa/', include('abia.japa_development.urls')),
-    path('institute/', include('abia.institute.urls')),
-    path('corps/', include('abia.migration_corps.urls')),
-    path('talent-exchange/', include('abia.talent_exchange.urls')),
-    path('accounts/', include('allauth.urls')),
-    path("pwa/", include("abia.pwa.urls")),
-    path('admin/', admin.site.urls),
-    path('', landing, name='landing'),
-    path('onboarding/', onboarding, name='onboarding'),
-    path('dashboard/', login_required(DashboardView.as_view()), name='staff_dashboard'),
-    path('command-center/', include('abia.charts.urls')),
-    path('reports/', include('abia.reports.urls')),
-    path('public-dashboard/', include('abia.public_dashboard.urls')),
-    path('api/v1/', include('abia.api.urls')),
+    # ---------- Public ----------
+    path("", TemplateView.as_view(template_name="landing.html"), name="home"),
+    path("public-dashboard/", public_dashboard, name="public_dashboard"),
+
+    # ---------- Authenticated dashboards ----------
+    path("dashboard/", dashboard, name="dashboard"),
+    path("command-center/", command_center, name="command_center"),
+
+    # ---------- Admin ----------
+    path("admin/", admin.site.urls),
+
+    # ---------- Core API modules (safe includes) ----------
+    path("api/v1/accounts/", include("abia.accounts.urls")),
+    path("api/v1/cases/", include("abia.cases.urls")),
+    path("api/v1/anti-trafficking/", include("abia.anti_trafficking.urls")),
+    path("api/v1/analytics/", include("abia.analytics.urls")),
+    path("api/v1/charts/", include("abia.charts.urls")),
+    path("api/v1/ai/", include("abia.ai.urls")),
+    path("api/v1/audit/", include("abia.audit.urls")),
+    path("api/v1/backup/", include("abia.backup.urls")),
+    path("api/v1/cbn/", include("abia.cbn.urls")),
 ]

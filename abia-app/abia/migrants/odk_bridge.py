@@ -6,7 +6,7 @@ Per Architecture Contract §2.4 (Data Collection) and §16 (Offline-First Field 
 import logging
 from typing import Optional
 
-from django.contrib.gis.geos import Point
+# # GIS geos import disabled
 
 from abia.accounts.models import LGA
 from abia.common.exceptions import (
@@ -87,7 +87,7 @@ class ODKBridge:
             raise InvalidGPSDataError(f"GPS string '{gps_str}' has <2 coordinates")
         try:
             lat, lon = float(parts[0]), float(parts[1])
-            return Point(lon, lat, srid=4326)
+            return Point(lon, lat)
         except ValueError as exc:
             raise InvalidGPSDataError(f"Cannot parse GPS '{gps_str}': {exc}") from exc
 

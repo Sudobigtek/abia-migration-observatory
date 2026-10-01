@@ -66,7 +66,7 @@ class Migration(migrations.Migration):
                 (
                     "location",
                     django.contrib.gis.db.models.fields.PointField(
-                        blank=True, geography=True, null=True, srid=4326
+                        blank=True, null=True
                     ),
                 ),
                 (

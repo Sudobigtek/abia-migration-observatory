@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 (
                     "boundary",
                     django.contrib.gis.db.models.fields.MultiPolygonField(
-                        blank=True, null=True, srid=4326
+                        blank=True, null=True
                     ),
                 ),
                 ("population_2023", models.IntegerField(blank=True, null=True)),

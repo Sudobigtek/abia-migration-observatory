@@ -1,6 +1,6 @@
 import uuid
 from django.db import models
-from django.contrib.gis.db import models as gis_models
+from django.db import models as gis_models  # TEMP: GIS disabled for SQLite
 from django.contrib.auth import get_user_model
 
 User = get_user_model()

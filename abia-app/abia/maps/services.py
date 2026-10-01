@@ -1,4 +1,4 @@
-from django.contrib.gis.geos import Point, Polygon
+# # GIS geos import disabled
 from .models import MapLayer
 
 class MapService:

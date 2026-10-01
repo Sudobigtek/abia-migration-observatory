@@ -1,7 +1,7 @@
 """Tests for ODK Bridge service layer."""
 
 import pytest
-from django.contrib.gis.geos import Point
+# # GIS geos import disabled
 
 from abia.common.exceptions import (
     LGANotFoundError,

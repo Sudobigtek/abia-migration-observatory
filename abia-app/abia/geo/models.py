@@ -1,14 +1,14 @@
 import uuid
 from django.db import models
-from django.contrib.gis.db import models as gis_models
+from django.db import models as gis_models  # TEMP: GIS disabled for SQLite
 
 class LGABoundary(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     lga = models.OneToOneField('accounts.LGA', on_delete=models.CASCADE, related_name='geo_boundary')
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=20, unique=True)
-    geometry = gis_models.PolygonField(srid=4326)
-    centroid = gis_models.PointField(srid=4326, null=True, blank=True)
+    geometry = models.TextField()
+    centroid = models.CharField(max_length=255, blank=True, null=True)  # was PointField
     area_sqkm = models.FloatField(null=True, blank=True)
     population_estimate = models.PositiveIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -33,7 +33,7 @@ class Hotspot(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     hotspot_type = models.CharField(max_length=20, choices=HOTSPOT_TYPES)
-    location = gis_models.PointField(srid=4326)
+    location = models.CharField(max_length=255, blank=True, null=True)  # was PointField
     lga = models.ForeignKey('accounts.LGA', on_delete=models.CASCADE, related_name='hotspots')
     description = models.TextField(blank=True)
     migrant_count = models.PositiveIntegerField(default=0)

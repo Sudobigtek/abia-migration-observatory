@@ -7,10 +7,10 @@ from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework_gis.filters import InBBoxFilter
+# from rest_framework_gis.filters import   # was InBBoxFilter  # disabled
 from django_filters.rest_framework import DjangoFilterBackend
-from django.contrib.gis.measure import D
-from django.contrib.gis.geos import Point
+# from django.contrib.gis.measure import D  # disabled
+# # GIS geos import disabled
 
 from abia.migrants.models import Migrant, MigrantVersion, PhotoUploadQueue
 from abia.migrants.serializers import (
@@ -41,7 +41,7 @@ class MigrantViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
-        InBBoxFilter,
+          # was InBBoxFilter
     ]
     filterset_fields = ["status", "gender", "nationality", "current_lga"]
     search_fields = ["full_name", "phone", "email", "id_number", "odk_submission_id"]
@@ -66,7 +66,7 @@ class MigrantViewSet(viewsets.ModelViewSet):
         radius = self.request.query_params.get("radius", 5000)  # meters
 
         if lat and lon:
-            point = Point(float(lon), float(lat), srid=4326)
+            point = Point(float(lon), float(lat))
             queryset = queryset.filter(location__distance_lte=(point, D(m=radius)))
 
         # Date range filter

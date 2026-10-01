@@ -4,8 +4,8 @@ NASA-level design: explicit fields, validation, audit trail support.
 """
 
 from rest_framework import serializers
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
-from django.contrib.gis.geos import Point
+# from rest_framework_gis.serializers import serializers.ModelSerializer  # was GeoFeatureModelSerializer  # disabled
+# # GIS geos import disabled
 
 from abia.migrants.models import Migrant, MigrantVersion, PhotoUploadQueue
 
@@ -35,7 +35,7 @@ class MigrantListSerializer(serializers.ModelSerializer):
         return None
 
 
-class MigrantDetailSerializer(GeoFeatureModelSerializer):
+class MigrantDetailSerializer(serializers.ModelSerializer):  # was GeoFeatureModelSerializer
     """Full serializer with GeoJSON support for spatial data."""
     current_lga_name = serializers.CharField(source="current_lga.name", read_only=True)
     current_lga_id = serializers.UUIDField(source="current_lga.id", read_only=True)
@@ -134,7 +134,7 @@ class MigrantCreateUpdateSerializer(serializers.ModelSerializer):
         lat = data.pop("latitude", None)
         lon = data.pop("longitude", None)
         if lat is not None and lon is not None:
-            data["location"] = Point(lon, lat, srid=4326)
+            data["location"] = Point(lon, lat)
         return data
 
     def validate_phone(self, value):

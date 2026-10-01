@@ -1,12 +1,12 @@
 from django.contrib.auth.models import AbstractUser
-from django.contrib.gis.db import models as gis_models
+from django.db import models as gis_models  # TEMP: GIS disabled for SQLite
 from django.db import models
 
 
 class LGA(models.Model):
     name = models.CharField(max_length=100, unique=True)
     code = models.CharField(max_length=10, unique=True)
-    boundary = gis_models.MultiPolygonField(srid=4326, null=True, blank=True)
+    boundary = models.TextField(null=True, blank=True)
     population_2023 = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

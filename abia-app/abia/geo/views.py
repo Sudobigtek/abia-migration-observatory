@@ -10,8 +10,8 @@ from abia.common.response_serializers import (
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from django.contrib.gis.db.models.functions import Centroid, Area
-from django.contrib.gis.geos import Point
+# GIS db functions import disabled
+# # GIS geos import disabled
 from .models import LGABoundary, Hotspot
 from .serializers import LGABoundarySerializer, HotspotSerializer, HotspotListSerializer
 
@@ -98,7 +98,7 @@ def geo_nearby(request):
     lng = float(request.query_params.get('lng', 0))
     radius_km = float(request.query_params.get('radius', 10))
 
-    point = Point(lng, lat, srid=4326)
+    point = Point(lng, lat)
     hotspots = Hotspot.objects.filter(
         location__distance_lte=(point, radius_km * 1000)
     ).distance(point).order_by('distance')

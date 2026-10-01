@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from django.contrib.gis.geos import Point
+# # GIS geos import disabled
 from .models import HotspotPrediction
 
 class HotspotService:

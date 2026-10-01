@@ -1,14 +1,14 @@
 from rest_framework import serializers
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
+# from rest_framework_gis.serializers import serializers.ModelSerializer  # was GeoFeatureModelSerializer  # disabled
 from .models import LGABoundary, Hotspot
 
-class LGABoundarySerializer(GeoFeatureModelSerializer):
+class LGABoundarySerializer(serializers.ModelSerializer):  # was GeoFeatureModelSerializer
     class Meta:
         model = LGABoundary
         geo_field = 'geometry'
         fields = ['id', 'name', 'code', 'lga', 'area_sqkm', 'population_estimate', 'created_at']
 
-class HotspotSerializer(GeoFeatureModelSerializer):
+class HotspotSerializer(serializers.ModelSerializer):  # was GeoFeatureModelSerializer
     class Meta:
         model = Hotspot
         geo_field = 'location'

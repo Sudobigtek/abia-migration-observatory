@@ -4,8 +4,8 @@ NASA-level: explicit fields, nested relations, workflow validation.
 """
 
 from rest_framework import serializers
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
-from django.contrib.gis.geos import Point
+# from rest_framework_gis.serializers import serializers.ModelSerializer  # was GeoFeatureModelSerializer  # disabled
+# # GIS geos import disabled
 
 from abia.cases.models import Case
 from abia.referrals.models import Referral
@@ -38,7 +38,7 @@ class CaseListSerializer(serializers.ModelSerializer):
         return (datetime.now(obj.created_at.tzinfo) - obj.created_at).days
 
 
-class CaseDetailSerializer(GeoFeatureModelSerializer):
+class CaseDetailSerializer(serializers.ModelSerializer):  # was GeoFeatureModelSerializer
     """Full case serializer with GeoJSON support."""
     migrant = MigrantListSerializer(read_only=True)
     migrant_id = serializers.UUIDField(write_only=True)
@@ -116,7 +116,7 @@ class CaseCreateUpdateSerializer(serializers.ModelSerializer):
         lat = data.pop("latitude", None)
         lon = data.pop("longitude", None)
         if lat is not None and lon is not None:
-            data["location"] = Point(lon, lat, srid=4326)
+            data["location"] = Point(lon, lat)
 
         # Workflow: set resolved_at if status is resolved
         if data.get("status") == "resolved" and not data.get("resolved_at"):

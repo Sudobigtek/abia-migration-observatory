@@ -2,7 +2,7 @@
 import uuid
 from django.conf import settings
 from django.db import models
-from django.contrib.gis.db import models as gis_models
+from django.db import models as gis_models  # TEMP: GIS disabled for SQLite
 from django.utils import timezone
 
 class HotspotPrediction(models.Model):
@@ -19,7 +19,7 @@ class HotspotPrediction(models.Model):
     predicted_migrant_count = models.PositiveIntegerField()
     contributing_factors = models.JSONField(
         default=dict, help_text="AI-identified risk factors")
-    centroid = gis_models.PointField(null=True, blank=True, srid=4326)
+    centroid = models.CharField(null=True, blank=True)
     analysis_period_start = models.DateField()
     analysis_period_end = models.DateField()
     model_version = models.CharField(max_length=50, default="v1.0")
@@ -60,8 +60,7 @@ class HotspotAlert(models.Model):
     description = models.TextField()
     estimated_affected = models.PositiveIntegerField(
         null=True, blank=True)
-    location = gis_models.PointField(
-        geography=True, null=True, blank=True)
+    location = models.CharField( null=True, blank=True)
     triggered_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
         null=True, blank=True, related_name="triggered_alerts")

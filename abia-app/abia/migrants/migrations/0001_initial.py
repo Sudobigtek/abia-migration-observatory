@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
                 (
                     "location",
                     django.contrib.gis.db.models.fields.PointField(
-                        blank=True, null=True, srid=4326
+                        blank=True, null=True
                     ),
                 ),
                 ("photo_url", models.URLField(blank=True, max_length=500)),

@@ -1,8 +1,8 @@
 import uuid
 
 from django.conf import settings
-from django.contrib.gis.db import models
-from django.contrib.gis.db import models as gis_models
+from django.db import models  # TEMP: GIS disabled for SQLite
+from django.db import models as gis_models  # TEMP: GIS disabled for SQLite
 
 
 class Migrant(models.Model):
@@ -32,7 +32,7 @@ class Migrant(models.Model):
         "accounts.LGA", on_delete=models.PROTECT, related_name="migrants"
     )
     current_address = models.TextField(blank=True)
-    location = gis_models.PointField(srid=4326, null=True, blank=True)
+    location = models.CharField(max_length=255, blank=True, null=True)  # was PointField
     photo_url = models.URLField(max_length=500, blank=True)
     status = models.CharField(max_length=20, choices=STATUS, default="active")
     created_by = models.ForeignKey(
@@ -80,12 +80,7 @@ class Migrant(models.Model):
         db_index=True,
         help_text="ODK Central submission ID for duplicate detection",
     )
-    gps_coordinates = models.PointField(
-        srid=4326,
-        null=True,
-        blank=True,
-        help_text="GPS coordinates captured by ODK Collect",
-    )
+    gps_coordinates = models.CharField(max_length=255, blank=True, null=True)  # was PointField
 
     id_number_encrypted = models.TextField(
         null=True,

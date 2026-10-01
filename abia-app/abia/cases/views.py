@@ -7,10 +7,10 @@ from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_gis.filters import InBBoxFilter
+# from rest_framework_gis.filters import   # was InBBoxFilter  # disabled for local SQLite
 from django_filters.rest_framework import DjangoFilterBackend
-from django.contrib.gis.measure import D
-from django.contrib.gis.geos import Point
+# from django.contrib.gis.measure import D  # disabled
+# # GIS geos import disabled
 from django.db.models import Count, Avg, F, ExpressionWrapper, DurationField, Q
 from django.utils import timezone
 
@@ -71,7 +71,7 @@ class CaseViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
-        InBBoxFilter,
+          # was InBBoxFilter
     ]
     filterset_fields = ["status", "priority", "case_type", "lga", "assigned_to"]
     search_fields = ["description", "migrant__full_name", "migrant__phone"]

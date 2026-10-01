@@ -1,7 +1,7 @@
 import uuid
 
 from django.conf import settings
-from django.contrib.gis.db import models as gis_models
+from django.db import models as gis_models  # TEMP: GIS disabled for SQLite
 from django.db import models
 
 
@@ -50,7 +50,7 @@ class Case(models.Model):
     lga = models.ForeignKey(
         "accounts.LGA", on_delete=models.PROTECT, related_name="cases"
     )
-    location = gis_models.PointField(srid=4326, null=True, blank=True)
+    location = models.CharField(max_length=255, blank=True, null=True)  # was PointField
     documents = models.JSONField(default=list, blank=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="cases_created"

@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='migrant',
             name='gps_coordinates',
-            field=django.contrib.gis.db.models.fields.PointField(blank=True, help_text='GPS coordinates captured by ODK Collect', null=True, srid=4326),
+            field=django.contrib.gis.db.models.fields.PointField(blank=True, help_text='GPS coordinates captured by ODK Collect', null=True),
         ),
         migrations.AlterField(
             model_name='migrant',

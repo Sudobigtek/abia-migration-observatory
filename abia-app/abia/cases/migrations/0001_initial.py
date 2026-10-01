@@ -80,7 +80,7 @@ class Migration(migrations.Migration):
                 (
                     "location",
                     django.contrib.gis.db.models.fields.PointField(
-                        blank=True, null=True, srid=4326
+                        blank=True, null=True
                     ),
                 ),
                 ("documents", models.JSONField(blank=True, default=list)),

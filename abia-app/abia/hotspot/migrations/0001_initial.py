@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
                 (
                     "centroid",
                     django.contrib.gis.db.models.fields.PointField(
-                        blank=True, null=True, srid=4326
+                        blank=True, null=True
                     ),
                 ),
                 ("analysis_period_start", models.DateField()),
